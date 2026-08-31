@@ -47,3 +47,8 @@ e abra `index.html?app=1`. A prévia não deve receber credenciais ou dados reai
 - Só configure o remoto e envie alterações ao GitHub depois de confirmar o
   repositório de destino e verificar que nenhum arquivo ignorado está sendo
   enviado.
+
+## Teste de sincronização
+
+Este registro confirma o fluxo de teste do GitHub; não altera o aplicativo,
+suas regras ou os dados das empresas.
