@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T12:47:09.908Z",
-  "codeHash": "232754ced39977d4f27dbd7248f0da83bd93900c89f1060a1439cdf06bc2f367",
+  "generatedAt": "2026-08-31T12:55:46.132Z",
+  "codeHash": "eb399d40fa583975a608a44b9d194247a10ec008d460201271c58d2160e162e4",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4907333,
-    "totalLines": 20532,
+    "totalBytes": 4906741,
+    "totalLines": 20523,
     "findingCount": 186,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163686,
+      "bytes": 1163690,
       "lines": 3071,
-      "sha256": "7e3b757de0b1d875924bc5339e034f7ee76f32c05dc5ff9c29dcbaf363544c1d",
+      "sha256": "c573392096c6fc1906df5c2e30b7ce0ed569dd9e60e32c1b30533412479dc035",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -1121,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-phase-density-v1.css",
       "scope": "application",
-      "bytes": 5955,
-      "lines": 109,
-      "sha256": "e567f7521479aee56a3d41c2ea18b7703205948baf65ed449071c4c7c5c37e3f",
+      "bytes": 5359,
+      "lines": 100,
+      "sha256": "8ef8c92a56e36db36f2c75ad2c8bce388dedd69cf40e1183dca9d4404c0bc02f",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "1b2c153416d1182020ff759a5622d998722fe3168b1c8c15977c64b6c8538693",
+      "sha256": "753c33d08a12f0a6abc9f2c7c254343fc7e13b5e6b75bcf07ec67472e58357fd",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2107,7 +2107,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163686 bytes e 3071 linhas",
+      "evidence": "1163690 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
