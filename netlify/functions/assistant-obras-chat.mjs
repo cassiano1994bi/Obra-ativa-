@@ -8,6 +8,7 @@ import {
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { buildReadOnlyContext } from './_assistant/assistant-context.mjs';
+import { persistentDailyUsage } from './_assistant/assistant-usage.mjs';
 import { createAssistantProvider, providerDescriptor } from './_assistant/assistant-provider.mjs';
 import { validateAssistantResponse } from './_assistant/assistant-response.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
@@ -46,7 +47,6 @@ import {
 
 const pending = new Set();
 const responseCache = new Map();
-const usageByCompany = new Map();
 const CACHE_TTL_MS = 2 * 60 * 1000;
 
 const json = (status, body) => new Response(JSON.stringify(body), {
@@ -151,17 +151,6 @@ function conversationContextFingerprint({ companyId, userId, history }) {
   return requestFingerprint({ companyId, userId, action: 'conversation_context', payload: { history } });
 }
 
-function dayKey() {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-}
-
-function usageState(companyId) {
-  const key = `${companyId}:${dayKey()}`;
-  const current = usageByCompany.get(key) || { key, count: 0 };
-  usageByCompany.set(key, current);
-  return current;
-}
-
 function cacheGet(key) {
   const entry = responseCache.get(key);
   if (!entry) return null;
@@ -208,7 +197,7 @@ function publicResponse({ requestId, reply, plan, usage, limit, cached, provider
   };
 }
 
-function capabilityResponse({ companyId, user, subscription, question, requestId }) {
+async function capabilityResponse({ companyId, user, subscription, question, requestId, authorization, config }) {
   const plan = { intent: 'assistant_capabilities', selectedModules: [] };
   const fingerprint = requestFingerprint({
     companyId,
@@ -217,33 +206,33 @@ function capabilityResponse({ companyId, user, subscription, question, requestId
     payload: { question: question.toLowerCase(), version: ASSISTANT_CAPABILITIES_VERSION }
   });
   const auditBase = { requestId, companyId, userId: user.id, action: 'assistant_capabilities', fingerprint };
-  const usage = usageState(companyId);
   const limit = dailyLimitForPlan(subscription.plan);
   const cached = cacheGet(fingerprint);
+  const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: !cached });
   if (cached) return { response: json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false })), auditBase };
-  if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} mensagens desta empresa foi atingido.`);
   const reply = validateAssistantResponse(buildCapabilityReply({ question }));
-  usage.count += 1;
   cacheSet(fingerprint, reply);
   writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: 0, provider: 'deterministic-capability-manifest', model: ASSISTANT_CAPABILITIES_VERSION }));
   return { response: json(200, publicResponse({ requestId, reply, plan, usage, limit, cached: false, providerUsed: false })), auditBase };
 }
 
-async function technicalReviewResponse({ companyId, user, membership, subscription, question, history, requestId }) {
+async function technicalReviewResponse({ companyId, user, membership, subscription, question, history, requestId, authorization, config }) {
   try { assertTechnicalMembership(membership); }
   catch (error) { throw new AssistantHttpError(403, error?.code || 'TECHNICAL_REVIEW_FORBIDDEN', error?.message || 'A revisão técnica não está autorizada.'); }
   const plan = { intent: 'technical_review', selectedModules: [] };
   const contextFingerprint = conversationContextFingerprint({ companyId, userId: user.id, history });
   const fingerprint = requestFingerprint({ companyId, userId: user.id, action: 'technical_review', payload: { question: question.toLowerCase(), codeHash: technicalEvidence(question).snapshot.codeHash, contextFingerprint } });
   const auditBase = { requestId, companyId, userId: user.id, action: 'technical_review', fingerprint };
-  const usage = usageState(companyId);
   const limit = dailyLimitForPlan(subscription.plan);
   const cached = cacheGet(fingerprint);
-  if (cached) return { response: json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false })), fingerprint: '', auditBase };
-  if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} mensagens desta empresa foi atingido.`);
+  if (cached) {
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: false });
+    return { response: json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false })), fingerprint: '', auditBase };
+  }
   if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta revisão técnica já está em andamento. Aguarde a resposta.');
   pending.add(fingerprint);
   try {
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: true });
     const providerInfo = providerDescriptor();
     let providerResult = {};
     let providerUsed = false;
@@ -257,7 +246,6 @@ async function technicalReviewResponse({ companyId, user, membership, subscripti
       }
     }
     const reply = validateAssistantResponse(buildTechnicalReply({ providerResult, question, reference: technicalReference(fingerprint) }));
-    usage.count += 1;
     cacheSet(fingerprint, reply);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: 0, provider: providerInfo.provider, model: providerInfo.model }));
     return { response: json(200, publicResponse({ requestId, reply, plan, usage, limit, cached: false, providerUsed })), fingerprint, auditBase };
@@ -267,7 +255,7 @@ async function technicalReviewResponse({ companyId, user, membership, subscripti
   }
 }
 
-async function qualityAuditResponse({ companyId, user, subscription, question, history, qualityContext, requestId, verifiedProductAdmin = false }) {
+async function qualityAuditResponse({ companyId, user, subscription, question, history, qualityContext, requestId, authorization, config, verifiedProductAdmin = false }) {
   try { assertQualityAuditAdmin(user, process.env, verifiedProductAdmin); }
   catch (error) {
     throw new AssistantHttpError(403, error?.code || 'QUALITY_AUDIT_FORBIDDEN', error?.message || 'A auditoria completa não está autorizada.');
@@ -281,14 +269,16 @@ async function qualityAuditResponse({ companyId, user, subscription, question, h
   const fingerprint = requestFingerprint({ companyId, userId: user.id, action: 'quality_audit', payload: { question: question.toLowerCase(), intent, codeHash: snapshot.codeHash, previousCodeHash: previous?.codeHash || '', previousFindingCount: previous?.findings?.length || 0, contextFingerprint } });
   const reference = qualityReference(fingerprint);
   const auditBase = { requestId, companyId, userId: user.id, action: 'quality_audit', fingerprint };
-  const usage = usageState(companyId);
   const limit = dailyLimitForPlan(subscription.plan);
   const cached = cacheGet(fingerprint);
-  if (cached) return { response: json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false })), fingerprint: '', auditBase };
-  if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} mensagens desta empresa foi atingido.`);
+  if (cached) {
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: false });
+    return { response: json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false })), fingerprint: '', auditBase };
+  }
   if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta auditoria técnica já está em andamento. Aguarde o relatório.');
   pending.add(fingerprint);
   try {
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: true });
     const report = buildQualityReport({ question, reference, qualityContext: previous });
     const providerInfo = providerDescriptor();
     let providerResult = {};
@@ -304,7 +294,6 @@ async function qualityAuditResponse({ companyId, user, subscription, question, h
     }
     const validated = validateAssistantResponse(buildQualityReply({ providerResult, report }));
     const reply = attachQualityReport(validated, report);
-    usage.count += 1;
     cacheSet(fingerprint, reply);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: Date.now() - startedAt, provider: providerInfo.provider, model: providerInfo.model }));
     return { response: json(200, publicResponse({ requestId, reply, plan, usage, limit, cached: false, providerUsed })), fingerprint, auditBase };
@@ -317,7 +306,6 @@ async function qualityAuditResponse({ companyId, user, subscription, question, h
 export function resetAssistantChatStateForTests() {
   pending.clear();
   responseCache.clear();
-  usageByCompany.clear();
 }
 
 export default async (request) => {
@@ -339,20 +327,20 @@ export default async (request) => {
     const subscription = await loadSubscription({ companyId, authorization, config });
     const requestId = cleanIdentifier(request.headers.get('x-request-id') || input.requestId || crypto.randomUUID(), 80);
     if (action === 'technical_review') {
-      const technical = await technicalReviewResponse({ companyId, user, membership, subscription, question, history, requestId });
+      const technical = await technicalReviewResponse({ companyId, user, membership, subscription, question, history, requestId, authorization, config });
       claimedFingerprint = technical.fingerprint;
       auditBase = technical.auditBase;
       return technical.response;
     }
     if (action === 'quality_audit') {
       const verifiedProductAdmin = await verifyProductAdmin({ authorization, config });
-      const quality = await qualityAuditResponse({ companyId, user, subscription, question, history, qualityContext: input.qualityContext, requestId, verifiedProductAdmin });
+      const quality = await qualityAuditResponse({ companyId, user, subscription, question, history, qualityContext: input.qualityContext, requestId, authorization, config, verifiedProductAdmin });
       claimedFingerprint = quality.fingerprint;
       auditBase = quality.auditBase;
       return quality.response;
     }
     if (classifyCapabilityQuestion(question)) {
-      const capability = capabilityResponse({ companyId, user, subscription, question, requestId });
+      const capability = await capabilityResponse({ companyId, user, subscription, question, requestId, authorization, config });
       auditBase = capability.auditBase;
       return capability.response;
     }
@@ -365,13 +353,15 @@ export default async (request) => {
     auditBase = { requestId, companyId, userId: user.id, action: 'ask', fingerprint };
 
     const cached = cacheGet(fingerprint);
-    const usage = usageState(companyId);
     const limit = dailyLimitForPlan(subscription.plan);
-    if (cached) return json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false }));
-    if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} mensagens desta empresa foi atingido.`);
+    if (cached) {
+      const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: false });
+      return json(200, publicResponse({ requestId, reply: cached, plan, usage, limit, cached: true, providerUsed: false }));
+    }
     if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta pergunta já está sendo analisada. Aguarde a resposta.');
     pending.add(fingerprint);
     claimedFingerprint = fingerprint;
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_chat', limit, authorization, config, consume: true });
 
     const context = buildReadOnlyContext({ data: state.db, allowedModules: plan.selectedModules, period });
     const deterministic = buildDeterministicAnalysis({ plan, context, period, settings: state.db.settings || {} });
@@ -390,7 +380,6 @@ export default async (request) => {
       }
     }
     const reply = validateAssistantResponse(candidate);
-    usage.count += 1;
     cacheSet(fingerprint, reply);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: Date.now() - startedAt, provider: providerInfo.provider, model: providerInfo.model }));
     return json(200, publicResponse({ requestId, reply, plan, usage, limit, cached: false, providerUsed }));

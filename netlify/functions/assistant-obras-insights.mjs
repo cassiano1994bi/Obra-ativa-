@@ -8,12 +8,12 @@ import {
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import { persistentDailyUsage } from './_assistant/assistant-usage.mjs';
 import { resolveAnalysisPeriod } from './_assistant/assistant-tools.mjs';
 import { buildInsightPreview, validateInsightPreview } from './_assistant/assistant-insights.mjs';
 
 const pending = new Set();
 const insightCache = new Map();
-const usageByCompany = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const json = (status, body) => new Response(JSON.stringify(body), {
@@ -64,17 +64,6 @@ async function loadCompanyState({ companyId, authorization, config }) {
   return { db: row?.data?.db && typeof row.data.db === 'object' ? row.data.db : {}, updatedAt: String(row?.updated_at || '') };
 }
 
-function dayKey() {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-}
-
-function usageState(companyId) {
-  const key = `${companyId}:${dayKey()}`;
-  const current = usageByCompany.get(key) || { key, count: 0 };
-  usageByCompany.set(key, current);
-  return current;
-}
-
 function cacheGet(key) {
   const entry = insightCache.get(key);
   if (!entry) return null;
@@ -89,7 +78,6 @@ function cacheSet(key, value) {
 export function resetAssistantInsightStateForTests() {
   pending.clear();
   insightCache.clear();
-  usageByCompany.clear();
 }
 
 export default async (request) => {
@@ -113,20 +101,21 @@ export default async (request) => {
     auditBase = { requestId, companyId, userId: user.id, action: 'automatic_insights', fingerprint };
     const cached = cacheGet(fingerprint);
     const subscription = await loadSubscription({ companyId, authorization, config });
-    const usage = usageState(companyId);
     const limit = dailyLimitForPlan(subscription.plan);
-    if (cached) return json(200, { ok: true, phase: 4, insights: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, readOnly: true, automatic: true });
-    if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} análises desta empresa foi atingido.`);
+    if (cached) {
+      const usage = await persistentDailyUsage({ companyId, scope: 'assistant_insights', limit, authorization, config, consume: false });
+      return json(200, { ok: true, phase: 4, insights: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, readOnly: true, automatic: true });
+    }
     if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta análise já está sendo preparada. Aguarde.');
     pending.add(fingerprint);
     claimedFingerprint = fingerprint;
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_insights', limit, authorization, config, consume: true });
     const insights = validateInsightPreview(buildInsightPreview({
       data: state.db,
       allowedModules,
       period,
       company: { id: companyId, name: state.db.settings?.company || '' }
     }));
-    usage.count += 1;
     cacheSet(fingerprint, insights);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: Date.now() - startedAt }));
     return json(200, { ok: true, phase: 4, insights, usage: { usedToday: usage.count, dailyLimit: limit, cached: false }, readOnly: true, automatic: true });

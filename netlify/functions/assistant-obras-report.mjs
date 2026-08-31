@@ -9,12 +9,12 @@ import {
 } from './_assistant/assistant-policy.mjs';
 import { buildReadOnlyContext } from './_assistant/assistant-context.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import { persistentDailyUsage } from './_assistant/assistant-usage.mjs';
 import { resolveAnalysisPeriod } from './_assistant/assistant-tools.mjs';
 import { REPORT_DEFINITIONS, allowedReportTypes, buildReportPreview, reportDefinition, validateReportPreview } from './_assistant/assistant-reports.mjs';
 
 const pending = new Set();
 const reportCache = new Map();
-const usageByCompany = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const json = (status, body) => new Response(JSON.stringify(body), {
@@ -65,17 +65,6 @@ async function loadCompanyState({ companyId, authorization, config }) {
   return { db: row?.data?.db && typeof row.data.db === 'object' ? row.data.db : {}, updatedAt: String(row?.updated_at || '') };
 }
 
-function dayKey() {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-}
-
-function usageState(companyId) {
-  const key = `${companyId}:${dayKey()}`;
-  const current = usageByCompany.get(key) || { key, count: 0 };
-  usageByCompany.set(key, current);
-  return current;
-}
-
 function cacheGet(key) {
   const entry = reportCache.get(key);
   if (!entry) return null;
@@ -100,7 +89,6 @@ function activeOptions(db, allowedModules) {
 export function resetAssistantReportStateForTests() {
   pending.clear();
   reportCache.clear();
-  usageByCompany.clear();
 }
 
 export default async (request) => {
@@ -140,23 +128,24 @@ export default async (request) => {
     const period = resolveAnalysisPeriod({ ...(input.period || {}), kind: requestedKind }, state.db.settings || {});
     const context = buildReadOnlyContext({ data: state.db, allowedModules: definition.modules, period });
     const subscription = await loadSubscription({ companyId, authorization, config });
-    const usage = usageState(companyId);
     const limit = dailyLimitForPlan(subscription.plan);
     const fingerprint = requestFingerprint({ companyId, userId: user.id, action: 'report_preview', payload: { type, targetId, period, updatedAt: state.updatedAt } });
     auditBase = { ...auditBase, fingerprint };
     const cached = cacheGet(fingerprint);
-    if (cached) return json(200, { ok: true, phase: 3, report: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, previewOnly: true, readOnly: true });
-    if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} prévias desta empresa foi atingido.`);
+    if (cached) {
+      const usage = await persistentDailyUsage({ companyId, scope: 'assistant_report', limit, authorization, config, consume: false });
+      return json(200, { ok: true, phase: 3, report: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, previewOnly: true, readOnly: true });
+    }
     if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta prévia já está sendo preparada. Aguarde.');
     pending.add(fingerprint);
     claimedFingerprint = fingerprint;
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_report', limit, authorization, config, consume: true });
     const candidate = buildReportPreview({
       type, context, period, targetId,
       company: { id: companyId, name: state.db.settings?.company || '' },
       settings: state.db.settings || {}
     });
     const report = validateReportPreview(candidate);
-    usage.count += 1;
     cacheSet(fingerprint, report);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: Date.now() - startedAt }));
     return json(200, { ok: true, phase: 3, report, usage: { usedToday: usage.count, dailyLimit: limit, cached: false }, previewOnly: true, readOnly: true });

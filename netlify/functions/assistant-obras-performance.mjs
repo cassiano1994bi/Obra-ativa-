@@ -8,11 +8,11 @@ import {
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import { persistentDailyUsage } from './_assistant/assistant-usage.mjs';
 import { buildEmployeePerformanceExplanation, validateEmployeePerformanceExplanation } from './_assistant/assistant-performance.mjs';
 
 const pending = new Set();
 const responseCache = new Map();
-const usageByCompany = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const json = (status, body) => new Response(JSON.stringify(body), {
@@ -75,17 +75,6 @@ function filtersFrom(input = {}) {
   return result;
 }
 
-function dayKey() {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-}
-
-function usageState(companyId) {
-  const key = `${companyId}:${dayKey()}`;
-  const current = usageByCompany.get(key) || { key, count: 0 };
-  usageByCompany.set(key, current);
-  return current;
-}
-
 function cacheGet(key) {
   const entry = responseCache.get(key);
   if (!entry) return null;
@@ -100,7 +89,6 @@ function cacheSet(key, value) {
 export function resetAssistantPerformanceStateForTests() {
   pending.clear();
   responseCache.clear();
-  usageByCompany.clear();
 }
 
 export default async (request) => {
@@ -129,13 +117,15 @@ export default async (request) => {
     auditBase = { requestId, companyId, userId: user.id, action: 'employee_performance_explanation', fingerprint };
     const cached = cacheGet(fingerprint);
     const subscription = await loadSubscription({ companyId, authorization, config });
-    const usage = usageState(companyId);
     const limit = dailyLimitForPlan(subscription.plan);
-    if (cached) return json(200, { ok: true, phase: 5, performance: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, readOnly: true, officialFormulaPreserved: true });
-    if (usage.count >= limit) throw new AssistantHttpError(429, 'DAILY_LIMIT_REACHED', `O limite diário de ${limit} explicações desta empresa foi atingido.`);
+    if (cached) {
+      const usage = await persistentDailyUsage({ companyId, scope: 'assistant_performance', limit, authorization, config, consume: false });
+      return json(200, { ok: true, phase: 5, performance: cached, usage: { usedToday: usage.count, dailyLimit: limit, cached: true }, readOnly: true, officialFormulaPreserved: true });
+    }
     if (pending.has(fingerprint)) throw new AssistantHttpError(429, 'REPEATED_REQUEST', 'Esta explicação já está sendo preparada. Aguarde.');
     pending.add(fingerprint);
     claimedFingerprint = fingerprint;
+    const usage = await persistentDailyUsage({ companyId, scope: 'assistant_performance', limit, authorization, config, consume: true });
     let performance;
     try {
       performance = validateEmployeePerformanceExplanation(buildEmployeePerformanceExplanation({ data: state.db, allowedModules, filters, employeeId }));
@@ -144,7 +134,6 @@ export default async (request) => {
       if (error?.code === 'PERFORMANCE_PERMISSION_DENIED') throw new AssistantHttpError(403, error.code, error.message);
       throw error;
     }
-    usage.count += 1;
     cacheSet(fingerprint, performance);
     writeAudit(createAuditEvent({ ...auditBase, status: 'ok', durationMs: Date.now() - startedAt }));
     return json(200, { ok: true, phase: 5, performance, usage: { usedToday: usage.count, dailyLimit: limit, cached: false }, readOnly: true, officialFormulaPreserved: true });
