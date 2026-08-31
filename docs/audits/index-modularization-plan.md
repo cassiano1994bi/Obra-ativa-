@@ -14,7 +14,7 @@ Nesta fase nenhuma extração de código foi executada.
 - CSS adicional criado em tempo de execução: 77 blocos.
 - JavaScript embutido: 15 blocos funcionais e um bloco de abertura.
 - Bloco JavaScript principal: aproximadamente 948 KB e 748 funções nomeadas.
-- Eventos HTML como `onclick`, `onsubmit` e semelhantes: 799 ocorrências.
+- Eventos HTML como `onclick`, `onsubmit` e semelhantes: 802 ocorrências.
 - Encadeamentos que guardam/substituem uma função anterior: aproximadamente 204.
 - Scripts externos existentes no final da página: 36 após a camada visual móvel isolada da Fase 8 e a padronização da marca do aplicativo.
 
@@ -111,7 +111,7 @@ Risco: médio, causado pela ordem da cascata e pelos pontos de quebra móveis.
 - Começar pelos blocos menores das linhas finais e deixar o bloco de 948 KB por
   último.
 - Extrair o bloco principal inteiro para um único arquivo antes de tentar separá-lo.
-- Manter temporariamente os 799 eventos HTML e seus nomes globais.
+- Manter temporariamente os 802 eventos HTML e seus nomes globais.
 
 Risco: alto para o bloco principal; baixo a médio para os blocos finais menores.
 
@@ -166,7 +166,7 @@ Risco: médio a alto em celular e no Financeiro, onde há muitas camadas tardias
 |---|---:|---|---|
 | Bloco principal | Alto | 948 KB e 748 funções | Extração integral antes da divisão |
 | Sobrescritas encadeadas | Alto | Cerca de 204 dependências de ordem | Teste de ordem e aliases |
-| Eventos HTML | Alto | 799 chamadas globais | Migração tela por tela |
+| Eventos HTML | Alto | 802 chamadas globais | Migração tela por tela |
 | Financeiro/pagamentos | Alto | Cálculos e várias camadas posteriores | Testes de valores e histórico |
 | CloudSync/empresas | Alto | Autenticação e isolamento | Mocks locais, sem conta real |
 | CSS móvel | Alto | Muitas regras tardias e específicas | Comparação visual em 6 tamanhos |

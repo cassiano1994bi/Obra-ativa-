@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T09:51:26.169Z",
-  "codeHash": "6039b5c9b33f1606cce2fdf9588fb4f9a51e2ae6bbde0488c5d71dd6b31c40e6",
+  "generatedAt": "2026-08-31T10:04:58.704Z",
+  "codeHash": "a5e9792f650e6b2364bd639fc754e52906050c32cac28b5df7b4a7ce62aa9f7e",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4883348,
-    "totalLines": 20294,
+    "totalBytes": 4888159,
+    "totalLines": 20300,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,13 +230,13 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1158845,
-      "lines": 3065,
-      "sha256": "ce469de7b21539025358eea9098e897ec30f35f1d5dd89c40f25920b41c18d17",
-      "functions": 824,
+      "bytes": 1163656,
+      "lines": 3071,
+      "sha256": "e2dbd53f32b7f0e75321bab4de0073db6244f5ee04022175a14cfa1cc59ecc72",
+      "functions": 829,
       "fetches": 2,
-      "domWrites": 254,
-      "inlineHandlers": 811
+      "domWrites": 255,
+      "inlineHandlers": 814
     },
     {
       "path": "manifest.webmanifest",
@@ -1297,7 +1297,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "index.html",
       "line": 1,
-      "evidence": "254 escrita(s) dinâmica(s) de HTML",
+      "evidence": "255 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -1358,7 +1358,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-16C46B8F8D38",
+      "id": "QF-B5ADFA8CF5B4",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1368,7 +1368,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2425,
+      "line": 2431,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1376,7 +1376,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-48BBF285BFE4",
+      "id": "QF-8D7937253D5D",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1386,7 +1386,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2428,
+      "line": 2434,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2143,7 +2143,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1158845 bytes e 3065 linhas",
+      "evidence": "1163656 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -2161,7 +2161,7 @@ export default Object.freeze({
       "title": "Muitos eventos declarados dentro do HTML",
       "file": "index.html",
       "line": 1,
-      "evidence": "811 manipulador(es) inline",
+      "evidence": "814 manipulador(es) inline",
       "probableCause": "A ligação de eventos cresceu junto com os templates HTML.",
       "impact": "A manutenção e a política de segurança de conteúdo podem ficar mais complexas.",
       "recommendation": "Considerar delegação de eventos apenas em refatoração aprovada e coberta por testes.",
