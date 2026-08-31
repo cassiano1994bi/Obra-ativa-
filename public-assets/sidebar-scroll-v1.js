@@ -41,10 +41,14 @@
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .obraativa-nav-icon{flex-basis:28px!important;width:28px!important;height:28px!important}
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .mobile-nav-icon{font-size:20px!important}
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .mobile-nav-label{font-size:10px!important;line-height:1.1!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button[data-obraativa-nav="planning"]>span:last-child,
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button[data-nav-key="planning"]>span:last-child{position:relative!important;left:2px!important;font-size:9.5px!important;letter-spacing:-.02em!important;white-space:nowrap!important}
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button{min-height:54px!important;padding:6px 4px!important;gap:3px!important;font-size:10px!important;font-weight:700!important;line-height:1.1!important}
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .obraativa-nav-icon{flex-basis:30px!important;width:30px!important;height:30px!important}
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .mobile-nav-icon{font-size:21px!important}
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .mobile-nav-label{font-size:10px!important;line-height:1.1!important}
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button[data-obraativa-nav="planning"]>span:last-child,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button[data-nav-key="planning"]>span:last-child{position:relative!important;left:2px!important;font-size:9.5px!important;letter-spacing:-.02em!important;white-space:nowrap!important}
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[onclick="go('home')"],
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],

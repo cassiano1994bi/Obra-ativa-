@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T10:04:58.704Z",
-  "codeHash": "a5e9792f650e6b2364bd639fc754e52906050c32cac28b5df7b4a7ce62aa9f7e",
+  "generatedAt": "2026-08-31T10:12:09.797Z",
+  "codeHash": "a90a596f57410fd5f110a79af774bb14e0c54fe8e985c1fd2177416196e0d2d6",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4888159,
-    "totalLines": 20300,
+    "totalBytes": 4888928,
+    "totalLines": 20304,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163656,
+      "bytes": 1163663,
       "lines": 3071,
-      "sha256": "e2dbd53f32b7f0e75321bab4de0073db6244f5ee04022175a14cfa1cc59ecc72",
+      "sha256": "434372cfb00f7c97a5a8ccf623b912bdbe0cd35443f0ca637754853d001c44f1",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -1077,9 +1077,9 @@ export default Object.freeze({
     {
       "path": "public-assets/sidebar-scroll-v1.js",
       "scope": "application",
-      "bytes": 7395,
-      "lines": 108,
-      "sha256": "ae3174e118664c1a3ddee4b7ee1d39aecaed8f69ff10aa3c8bc56ce1cbbd56d3",
+      "bytes": 8157,
+      "lines": 112,
+      "sha256": "299a1a09d67c5826a5b36d6f5287cd002798a714860a99c172619514f0cd79e3",
       "functions": 5,
       "fetches": 0,
       "domWrites": 1,
@@ -2143,7 +2143,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163656 bytes e 3071 linhas",
+      "evidence": "1163663 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
