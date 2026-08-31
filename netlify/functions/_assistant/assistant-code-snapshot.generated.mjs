@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T08:47:50.979Z",
-  "codeHash": "e39cbfe7942cadd838a7228c1b9b6e0e361eb2b43f55bbce8630950870a3fb56",
+  "generatedAt": "2026-08-31T08:56:22.240Z",
+  "codeHash": "81ddb7303e7325282ebb383c2e9aca924e672f9ce50671c888aad4becce16d7c",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 112,
-    "totalBytes": 4875983,
-    "totalLines": 20255,
+    "totalBytes": 4877458,
+    "totalLines": 20264,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1154798,
+      "bytes": 1154812,
       "lines": 3061,
-      "sha256": "b77e8a70dc195d116bdd8353b7acadc9658fd62b5813e931a79789b07ed8cfc9",
+      "sha256": "babafbe9be246390bfd50aea1b072d27e9a250a5868bd5c3cf193a83f3725ca7",
       "functions": 821,
       "fetches": 2,
       "domWrites": 252,
@@ -1077,9 +1077,9 @@ export default Object.freeze({
     {
       "path": "public-assets/sidebar-scroll-v1.js",
       "scope": "application",
-      "bytes": 5934,
-      "lines": 99,
-      "sha256": "dbb9b47925a8b2c192f2d5c34469ca2d47b43a1382ccb24577037de969101961",
+      "bytes": 7395,
+      "lines": 108,
+      "sha256": "ae3174e118664c1a3ddee4b7ee1d39aecaed8f69ff10aa3c8bc56ce1cbbd56d3",
       "functions": 5,
       "fetches": 0,
       "domWrites": 1,
@@ -1200,7 +1200,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6198,
       "lines": 156,
-      "sha256": "58669a8702b281b44b03ff5746f7e98c7abc3904ac7c268c5fb9d6c6d8e7bef3",
+      "sha256": "8acf6044201ffc6241bc0861bbd07c671e19f882117a34a507e0b4dd34c20939",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2132,7 +2132,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1154798 bytes e 3061 linhas",
+      "evidence": "1154812 bytes e 3061 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",

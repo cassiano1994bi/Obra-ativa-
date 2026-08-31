@@ -21,6 +21,7 @@
         #app:not(.public-app) .side .nav>button[onclick="go('home')"].active{background:#2b79d3!important}
         #app:not(.public-app) .side .nav .nav-more,
         #app:not(.public-app) .side>.nav-more-docked{display:none!important}
+        #app:not(.public-app) .side .nav .obraativa-nav-icon{flex-basis:28px!important;width:28px!important;height:28px!important}
       }
       @media(orientation:landscape) and (max-height:600px) and (max-width:1024px){
         #app:not(.public-app) .side .brand{margin-bottom:8px!important}
@@ -36,6 +37,14 @@
         body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text span{display:block!important;margin:0!important;color:#fff!important;font-size:9px!important;font-weight:800!important;letter-spacing:-.02em!important;line-height:1!important;white-space:nowrap!important}
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand .brand-text span b,
         body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text span b{color:#21d66f!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button{min-height:52px!important;padding:5px 3px!important;gap:3px!important;font-size:10px!important;font-weight:700!important;line-height:1.1!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .obraativa-nav-icon{flex-basis:28px!important;width:28px!important;height:28px!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .mobile-nav-icon{font-size:20px!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav button .mobile-nav-label{font-size:10px!important;line-height:1.1!important}
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button{min-height:54px!important;padding:6px 4px!important;gap:3px!important;font-size:10px!important;font-weight:700!important;line-height:1.1!important}
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .obraativa-nav-icon{flex-basis:30px!important;width:30px!important;height:30px!important}
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .mobile-nav-icon{font-size:21px!important}
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav button .mobile-nav-label{font-size:10px!important;line-height:1.1!important}
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],
         body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[onclick="go('home')"],
         body.responsive-v3-tablet #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],
