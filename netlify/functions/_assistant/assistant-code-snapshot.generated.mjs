@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T10:12:09.797Z",
-  "codeHash": "a90a596f57410fd5f110a79af774bb14e0c54fe8e985c1fd2177416196e0d2d6",
+  "generatedAt": "2026-08-31T10:46:59.801Z",
+  "codeHash": "2e20a4cac58c5d4e71466aa366d55d217b696f46c9c5c3c159ca75c0c55ef3a0",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4888928,
-    "totalLines": 20304,
+    "totalBytes": 4901196,
+    "totalLines": 20415,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163663,
+      "bytes": 1163646,
       "lines": 3071,
-      "sha256": "434372cfb00f7c97a5a8ccf623b912bdbe0cd35443f0ca637754853d001c44f1",
+      "sha256": "90c87af906a57e8ab76c68d88b168797160bf9ca1e5bcfd5648735072e1d9b8a",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -714,9 +714,9 @@ export default Object.freeze({
     {
       "path": "public-assets/assistant-obras-phase1-v1.js",
       "scope": "application",
-      "bytes": 13952,
-      "lines": 233,
-      "sha256": "846c07fead1c37b7ba5d61175bd35d12cb4b6ec541a621b761efd22c4535238f",
+      "bytes": 13636,
+      "lines": 227,
+      "sha256": "56b4ab45b72b48b17e903ca083868fc3a3adef367d62715947cb023f0e333fe4",
       "functions": 12,
       "fetches": 1,
       "domWrites": 3,
@@ -824,9 +824,9 @@ export default Object.freeze({
     {
       "path": "public-assets/home-shortcut-editor-v1.css",
       "scope": "application",
-      "bytes": 8167,
-      "lines": 80,
-      "sha256": "7c6a954de948a18296058cb368e78496ede922d75729239b3bb158d5a648fb1a",
+      "bytes": 15954,
+      "lines": 131,
+      "sha256": "02cc33e8f49b84d30a0973cc9f346c8bcdc70cb489ac308a99ca7aa438cbee4a",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -835,10 +835,10 @@ export default Object.freeze({
     {
       "path": "public-assets/home-shortcut-editor-v1.js",
       "scope": "application",
-      "bytes": 22567,
-      "lines": 466,
-      "sha256": "bf651eaefb5bc1926f3d3d55fb20513490e116ade64a056c29bfc07f59810b65",
-      "functions": 30,
+      "bytes": 27381,
+      "lines": 532,
+      "sha256": "b11580e27d160bea5f0384e9cb9249185094026106de67ee72e8c42a2f20746e",
+      "functions": 35,
       "fetches": 0,
       "domWrites": 4,
       "inlineHandlers": 0
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "a196d7d874a9fe54602d24275bb6c59e3d7b4bc448c5500b0f111b43e0bc13db",
+      "sha256": "968a285575acbc042b0bfb451d8fbca80e24804583c3f0620c332437f2fb1f8d",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2143,7 +2143,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163663 bytes e 3071 linhas",
+      "evidence": "1163646 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
