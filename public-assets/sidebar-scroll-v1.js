@@ -24,6 +24,22 @@
       }
       @media(orientation:landscape) and (max-height:600px) and (max-width:1024px){
         #app:not(.public-app) .side .brand{margin-bottom:8px!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.brand{margin-bottom:0!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav{padding-top:8px!important;padding-bottom:10px!important;scroll-padding-block:8px 12px!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand .brand-text,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text{display:block!important;width:100%!important;margin-top:3px!important;text-align:center!important;line-height:1!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand .brand-text small,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text small{display:none!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand .brand-text span,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text span{display:block!important;margin:0!important;color:#fff!important;font-size:9px!important;font-weight:800!important;letter-spacing:-.02em!important;line-height:1!important;white-space:nowrap!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.brand .brand-text span b,
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.brand .brand-text span b{color:#21d66f!important}
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],
+        body.responsive-v3-landscape-phone #app:not(.public-app)>.side>.nav>button[onclick="go('home')"],
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav>button[data-nav-key="home"],
+        body.responsive-v3-tablet #app:not(.public-app)>.side>.nav>button[onclick="go('home')"]{top:0!important}
       }
     </style>`);
   }

@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T08:34:58.281Z",
-  "codeHash": "0aee158a7ef2938bfccd6454edde4d60d433a65dd25c2ab462ca4d35b0db03a0",
+  "generatedAt": "2026-08-31T08:47:50.979Z",
+  "codeHash": "e39cbfe7942cadd838a7228c1b9b6e0e361eb2b43f55bbce8630950870a3fb56",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 112,
-    "totalBytes": 4873944,
-    "totalLines": 20238,
+    "totalBytes": 4875983,
+    "totalLines": 20255,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -637,9 +637,9 @@ export default Object.freeze({
     {
       "path": "public-assets/app-brand-lock-v1.css",
       "scope": "application",
-      "bytes": 877,
-      "lines": 7,
-      "sha256": "665ea0274d4e29a17f5f9ad091a0e012022911842452f650a63b0eecb4ed8843",
+      "bytes": 984,
+      "lines": 8,
+      "sha256": "4641615d1e3de222871d32c3a0e280cdbc0a994489c0d4ea9e2fcaa53ead42db",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1077,13 +1077,13 @@ export default Object.freeze({
     {
       "path": "public-assets/sidebar-scroll-v1.js",
       "scope": "application",
-      "bytes": 4002,
-      "lines": 83,
-      "sha256": "dbca86b3c19a35675bc44033381a8ea5f372a640b339a29e3210b25f16718186",
+      "bytes": 5934,
+      "lines": 99,
+      "sha256": "dbb9b47925a8b2c192f2d5c34469ca2d47b43a1382ccb24577037de969101961",
       "functions": 5,
       "fetches": 0,
       "domWrites": 1,
-      "inlineHandlers": 2
+      "inlineHandlers": 4
     },
     {
       "path": "public-assets/vendor/pdfjs/pdf.min.mjs",
@@ -1200,7 +1200,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6198,
       "lines": 156,
-      "sha256": "798f53d3d57218742d8a612990adb10815ee7d6100bfc74809eb395b7c6c13ce",
+      "sha256": "58669a8702b281b44b03ff5746f7e98c7abc3904ac7c268c5fb9d6c6d8e7bef3",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,

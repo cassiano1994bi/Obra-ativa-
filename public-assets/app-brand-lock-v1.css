@@ -1,5 +1,6 @@
 #app:not(.public-app) .side .brand{display:flex;align-items:center;gap:10px;min-width:0}
-#app:not(.public-app) .side .brand-logo{display:block;flex:0 0 54px;width:54px;height:54px;padding:1px;border:1px solid #ffffff38;border-radius:15px;background:#061a2a;object-fit:contain;filter:drop-shadow(0 6px 11px #00111f70)}
+#app:not(.public-app) .side .brand-logo{display:block;flex:0 0 54px;width:54px;height:54px;padding:1px;border:0!important;border-radius:15px;background:#061a2a;object-fit:contain;filter:drop-shadow(0 6px 11px #00111f70)}
+#app:not(.public-app) .side .brand .obraativa-brand-mark{border:0!important;box-shadow:0 9px 24px #0007!important}
 #app:not(.public-app) .side .brand-text{min-width:0}
 #app:not(.public-app) .top .obraativa-mobile-top-logo{display:block;width:50px;height:50px;padding:1px;border-color:#bcd8d1;background-color:#071d2d;object-fit:contain;box-shadow:0 7px 18px #0c2b3f24}
 @media(max-width:1024px){#app:not(.public-app) .side .brand-logo{flex-basis:48px;width:48px;height:48px;border-radius:13px}#app:not(.public-app) .top .obraativa-mobile-top-logo{width:46px;height:46px}}
