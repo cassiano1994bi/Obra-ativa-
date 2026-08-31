@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T04:45:49.978Z",
-  "codeHash": "bb3a2c973a472d6d57c4fda8bc94380c3ea5074473242eced7d7d28fa61554d1",
+  "generatedAt": "2026-08-31T04:54:09.801Z",
+  "codeHash": "37bd1799f997a3dfaab72a3b48d116dcd2e7097e1faa7298f89ed748073edc5d",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 107,
-    "totalBytes": 4738300,
-    "totalLines": 18357,
+    "fileCount": 109,
+    "totalBytes": 4742100,
+    "totalLines": 18450,
     "findingCount": 186,
     "severityCounts": {
       "critical": 0,
@@ -1132,9 +1132,31 @@ export default Object.freeze({
     {
       "path": "scripts/quality/check-public-performance.mjs",
       "scope": "application",
-      "bytes": 2632,
-      "lines": 61,
-      "sha256": "f48e5cc9a66c00db92199e7ac3e876effeca5241279019b86661b737e82a1090",
+      "bytes": 2631,
+      "lines": 60,
+      "sha256": "1f9368cebe76f6ddf8a89c3edd7b2e1e66fd8c5cb72b4fb0cb42cfc6490cf1ef",
+      "functions": 1,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "scripts/quality/check-release-assets.mjs",
+      "scope": "application",
+      "bytes": 2233,
+      "lines": 52,
+      "sha256": "353fa8651d615c29e3be97f5e8f3e16c1817b79634fbc5a5893088d892f10776",
+      "functions": 2,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "scripts/quality/run-general-regression.mjs",
+      "scope": "application",
+      "bytes": 1568,
+      "lines": 42,
+      "sha256": "5f0cfc0e90b22f2bba993f168169aef8aa2bc238b05058bb1de9d0de583aba03",
       "functions": 1,
       "fetches": 0,
       "domWrites": 0,
