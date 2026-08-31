@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T09:39:10.434Z",
-  "codeHash": "8c165de1307ebea8bde7a267473e71e150b3e9064f703efa10ed7a2d3ac2ea65",
+  "generatedAt": "2026-08-31T09:51:26.169Z",
+  "codeHash": "6039b5c9b33f1606cce2fdf9588fb4f9a51e2ae6bbde0488c5d71dd6b31c40e6",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4881400,
-    "totalLines": 20293,
+    "totalBytes": 4883348,
+    "totalLines": 20294,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,12 +230,12 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1156897,
-      "lines": 3064,
-      "sha256": "2a54ea72beb61e5c2423f75a0521ac4b29598e2197a6b11bc1ff7d0fa5d00f37",
-      "functions": 823,
+      "bytes": 1158845,
+      "lines": 3065,
+      "sha256": "ce469de7b21539025358eea9098e897ec30f35f1d5dd89c40f25920b41c18d17",
+      "functions": 824,
       "fetches": 2,
-      "domWrites": 253,
+      "domWrites": 254,
       "inlineHandlers": 811
     },
     {
@@ -1297,7 +1297,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "index.html",
       "line": 1,
-      "evidence": "253 escrita(s) dinâmica(s) de HTML",
+      "evidence": "254 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -2143,7 +2143,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1156897 bytes e 3064 linhas",
+      "evidence": "1158845 bytes e 3065 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
