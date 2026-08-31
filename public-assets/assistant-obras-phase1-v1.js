@@ -189,13 +189,7 @@
   }
 
   function installNavigation() {
-    if (typeof navs !== 'undefined' && Array.isArray(navs) && !navs.some((item) => item[0] === PAGE_KEY)) {
-      const before = navs.findIndex((item) => item[0] === 'textpdf');
-      navs.splice(before >= 0 ? before : navs.length, 0, [PAGE_KEY, '🤖 Assistente da Obra']);
-    }
-    if (typeof MOBILE_NAV_META !== 'undefined' && MOBILE_NAV_META) {
-      MOBILE_NAV_META[PAGE_KEY] = ['🤖', 'Assistente'];
-    }
+    // A conversa é aberta pela bolha flutuante; não cria um atalho duplicado na barra lateral.
 
     const renderBeforeAssistant = render;
     render = function renderWithAssistantPhaseOne() {
