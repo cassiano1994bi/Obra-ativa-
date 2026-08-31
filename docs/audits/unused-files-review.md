@@ -48,3 +48,13 @@ As pastas `deploy-*`, `release-*`, `backups/`, `tmp/`, builds Android e arquivos
 2. Testar ícone, atalhos, navegação, assistente, presença, financeiro e telas legais.
 3. Verificar URLs diretas usadas em instalações antigas.
 4. Remover somente os candidatos aprovados e registrar a exclusão em commit separado e reversível.
+
+## Resolução na Fase 2 de reorganização
+
+Com autorização específica para remover código morto e duplicado, o inventário foi refeito sem conta real, banco ou rede:
+
+- `finance-attendance-assignment-v1.js` foi confirmado sem carregamento, import ou referência ativa e removido.
+- As 18 imagens de marca/interface listadas acima foram retiradas de `public-assets/` e preservadas em `docs/design-sources/legacy-unused/`.
+- Aproximadamente 6,64 MiB deixaram de fazer parte dos arquivos públicos, sem apagar as fontes do repositório.
+- Os ícones ativos do manifesto, atalhos PWA e recursos Android por densidade permaneceram em seus caminhos originais.
+- A produção não foi alterada nesta fase local.

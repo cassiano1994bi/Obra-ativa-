@@ -2,12 +2,17 @@ import AssistantActionsCore from '../../public-assets/assistant-actions-core-v1.
 import {
   AssistantHttpError,
   allowedModulesForMembership,
-  assistantSupabaseConfig,
   cleanIdentifier,
   requestFingerprint,
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import {
+  assistantServerConfig as serverConfig,
+  authenticateAssistantRequest,
+  loadAssistantCompanyState as loadCompanyState,
+  loadAssistantMembership as loadMembership
+} from './_assistant/assistant-data.mjs';
 
 const pending = new Set();
 const confirmed = new Map();
@@ -18,41 +23,8 @@ const json = (status, body) => new Response(JSON.stringify(body), {
   headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' }
 });
 
-function serverConfig(env = process.env) {
-  return assistantSupabaseConfig(env);
-}
-
-async function callSupabase(path, { authorization, config, fetchImpl = fetch } = {}) {
-  const response = await fetchImpl(`${config.supabaseUrl}${path}`, { method: 'GET', headers: { apikey: config.anonKey, authorization, accept: 'application/json' } });
-  const raw = await response.text();
-  let body = null;
-  try { body = raw ? JSON.parse(raw) : null; } catch { body = null; }
-  const invalidSession = path === '/auth/v1/user' && (response.status === 401 || response.status === 403);
-  if (!response.ok) throw new AssistantHttpError(invalidSession ? 401 : 502, invalidSession ? 'INVALID_SESSION' : 'DATA_SERVICE_UNAVAILABLE', invalidSession ? 'Sua sessão expirou. Entre novamente.' : 'Não foi possível consultar as fontes autorizadas agora.');
-  return body;
-}
-
 async function authenticate(request, config) {
-  const authorization = request.headers.get('authorization') || '';
-  if (!authorization.startsWith('Bearer ')) throw new AssistantHttpError(401, 'AUTH_REQUIRED', 'Entre na sua conta para preparar ações.');
-  const user = await callSupabase('/auth/v1/user', { authorization, config });
-  if (!validUuid(user?.id)) throw new AssistantHttpError(401, 'INVALID_SESSION', 'Sua sessão não pôde ser validada.');
-  return { authorization, user };
-}
-
-async function loadMembership({ companyId, userId, authorization, config }) {
-  const query = new URLSearchParams({ company_id: `eq.${companyId}`, user_id: `eq.${userId}`, status: 'eq.active', select: 'company_id,user_id,role,permission_profile,permissions', limit: '1' });
-  const rows = await callSupabase(`/rest/v1/company_members?${query}`, { authorization, config });
-  const membership = Array.isArray(rows) ? rows[0] : null;
-  if (!membership || membership.company_id !== companyId || membership.user_id !== userId) throw new AssistantHttpError(403, 'COMPANY_ACCESS_DENIED', 'Você não possui acesso ativo a esta empresa.');
-  return membership;
-}
-
-async function loadCompanyState({ companyId, authorization, config }) {
-  const query = new URLSearchParams({ company_id: `eq.${companyId}`, select: 'data,updated_at', limit: '1' });
-  const rows = await callSupabase(`/rest/v1/company_app_state?${query}`, { authorization, config });
-  const row = Array.isArray(rows) ? rows[0] : null;
-  return { db: row?.data?.db && typeof row.data.db === 'object' ? row.data.db : {}, updatedAt: String(row?.updated_at || '') };
+  return authenticateAssistantRequest(request, config, 'Entre na sua conta para preparar ações.');
 }
 
 function allowedActions(allowedModules) {
