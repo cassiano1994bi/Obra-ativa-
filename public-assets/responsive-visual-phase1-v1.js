@@ -132,6 +132,17 @@
           touch-action:manipulation!important;
         }
 
+        html body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="works"] .internal-work-card-actions .internal-work-edit-action,
+        html body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="works"] .internal-work-card-actions .internal-work-delete-action {
+          min-height:34px!important;
+          padding:5px 7px!important;
+          border:0!important;
+          background:transparent!important;
+          box-shadow:none!important;
+          font-size:10px!important;
+          font-weight:700!important;
+        }
+
         html body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="works"] .internal-work-card-top {
           padding-right:42px!important;
         }

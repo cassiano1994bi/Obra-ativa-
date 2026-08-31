@@ -52,28 +52,20 @@
     document.head.insertAdjacentHTML('beforeend', `<style id="assistantDigitalEmployeeStyle">
       #assistantDigitalEmployee{--assistant-fab-bottom:18px;--assistant-fab-size:78px;position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(var(--assistant-fab-bottom),calc(env(safe-area-inset-bottom) + 12px));z-index:92;display:block;width:var(--assistant-fab-size);height:var(--assistant-fab-size);pointer-events:none;font-family:inherit;touch-action:none}
       #assistantDigitalEmployee[hidden]{display:none!important}
-      .assistant-employee-notice{position:absolute;right:0;bottom:calc(100% + 9px);width:max-content;max-width:min(310px,calc(100vw - 30px));padding:10px 13px;border:1px solid #cfdeec;border-radius:14px 14px 4px 14px;background:#fff;color:#234d65;box-shadow:0 10px 28px #102e4930;font-size:12px;font-weight:750;line-height:1.4;opacity:0;transform:translateY(7px) scale(.98);transform-origin:right bottom;transition:opacity .2s ease,transform .2s ease;pointer-events:auto}
+      .assistant-employee-notice{position:absolute;right:0;bottom:calc(100% + 9px);width:max-content;max-width:min(310px,calc(100vw - 30px));padding:10px 13px;border:1px solid #cfdeec;border-radius:14px 14px 4px 14px;background:#fff;color:#234d65;box-shadow:0 10px 28px #102e4930;font-size:12px;font-weight:750;line-height:1.4;opacity:0;transform:translateY(7px) scale(.98);transform-origin:right bottom;pointer-events:auto}
       #assistantDigitalEmployee.is-left .assistant-employee-notice{right:auto;left:0;border-radius:14px 14px 14px 4px;transform-origin:left bottom}
       .assistant-employee-notice.show{opacity:1;transform:none}.assistant-employee-notice.attention{border-color:#f0cf7a;background:#fffaf0}.assistant-employee-notice.alert{border-color:#efb7b7;background:#fff6f6}
-      .assistant-employee-button{position:relative;width:100%;height:100%;padding:0;overflow:visible;border:3px solid #fff;border-radius:50%;background:linear-gradient(145deg,#0f65cb,#123f86);box-shadow:0 10px 28px #123c6e55,0 0 0 2px #f4bd2e;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate;transition:transform .18s ease,box-shadow .18s ease}
-      .assistant-employee-button:hover{transform:translateY(-2px);box-shadow:0 14px 32px #123c6e66,0 0 0 3px #f4bd2e}.assistant-employee-button:focus-visible{outline:4px solid #8dc4ff;outline-offset:4px}
-      #assistantDigitalEmployee.is-dragging .assistant-employee-button{cursor:grabbing;transform:none;transition:none}
-      .assistant-employee-avatar{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:cover;object-position:center;border-radius:50%;animation:assistantEmployeeBreathe 4.8s ease-in-out infinite;transform-origin:center 72%}
+      .assistant-employee-button{position:relative;width:100%;height:100%;padding:0;overflow:visible;border:3px solid #fff;border-radius:50%;background:linear-gradient(145deg,#0f65cb,#123f86);box-shadow:0 10px 28px #123c6e55,0 0 0 2px #f4bd2e;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate}
+      .assistant-employee-button:hover{box-shadow:0 14px 32px #123c6e66,0 0 0 3px #f4bd2e}.assistant-employee-button:focus-visible{outline:4px solid #8dc4ff;outline-offset:4px}
+      #assistantDigitalEmployee.is-dragging .assistant-employee-button{cursor:grabbing;transform:none}
+      .assistant-employee-avatar{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:cover;object-position:center;border-radius:50%;pointer-events:none;-webkit-user-drag:none}
       .assistant-employee-eyelids{position:absolute;z-index:2;left:26%;top:35%;width:48%;height:5%;border-radius:999px;background:linear-gradient(90deg,transparent 0 7%,#4f352e 8% 34%,transparent 35% 65%,#4f352e 66% 92%,transparent 93%);opacity:0;transform:scaleY(.35);pointer-events:none}
-      .assistant-employee-button.is-blinking .assistant-employee-eyelids{animation:assistantEmployeeBlink .18s ease-in-out}
       .assistant-employee-status{position:absolute;z-index:3;right:-3px;bottom:2px;width:19px;height:19px;border:3px solid #fff;border-radius:50%;background:#29b779;box-shadow:0 3px 8px #173e6240}
-      .assistant-employee-button[data-state="thinking"]{box-shadow:0 10px 28px #123c6e55,0 0 0 3px #55b8ff}.assistant-employee-button[data-state="thinking"] .assistant-employee-avatar{animation:assistantEmployeeThink 1.35s ease-in-out infinite}.assistant-employee-button[data-state="thinking"] .assistant-employee-status{background:#39aaf0;animation:assistantEmployeePulse .85s ease-in-out infinite}
-      .assistant-employee-button[data-state="responding"] .assistant-employee-avatar{animation:assistantEmployeeRespond .72s ease-in-out infinite}.assistant-employee-button[data-state="responding"] .assistant-employee-status{background:#f4bd2e;animation:assistantEmployeePulse .72s ease-in-out infinite}
-      .assistant-employee-button[data-state="alert"]{box-shadow:0 10px 28px #123c6e55,0 0 0 4px #f4bd2e}.assistant-employee-button[data-state="alert"] .assistant-employee-avatar{animation:assistantEmployeeAlert 1.8s ease-in-out infinite}.assistant-employee-button[data-state="alert"] .assistant-employee-status{background:#f2a620;animation:assistantEmployeePulse .8s ease-in-out infinite}
-      @keyframes assistantEmployeeBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
-      @keyframes assistantEmployeeBlink{0%,100%{opacity:0}35%,65%{opacity:.92}}
-      @keyframes assistantEmployeeThink{0%,100%{transform:rotate(0) scale(1.01)}50%{transform:rotate(-2.4deg) scale(1.035)}}
-      @keyframes assistantEmployeeRespond{0%,100%{transform:translateY(0) scale(1.01)}50%{transform:translateY(-1.5px) scale(1.035)}}
-      @keyframes assistantEmployeeAlert{0%,100%{filter:saturate(1);transform:scale(1)}50%{filter:saturate(1.16);transform:scale(1.035)}}
-      @keyframes assistantEmployeePulse{0%,100%{transform:scale(.88)}50%{transform:scale(1.14)}}
+      .assistant-employee-button[data-state="thinking"]{box-shadow:0 10px 28px #123c6e55,0 0 0 3px #55b8ff}.assistant-employee-button[data-state="thinking"] .assistant-employee-status{background:#39aaf0}
+      .assistant-employee-button[data-state="responding"] .assistant-employee-status{background:#f4bd2e}
+      .assistant-employee-button[data-state="alert"]{box-shadow:0 10px 28px #123c6e55,0 0 0 4px #f4bd2e}.assistant-employee-button[data-state="alert"] .assistant-employee-status{background:#f2a620}
       @media(max-width:820px){#assistantDigitalEmployee{--assistant-fab-size:66px;right:max(11px,env(safe-area-inset-right))}.assistant-employee-notice{max-width:min(270px,calc(100vw - 24px));font-size:11px}}
       @media(max-height:500px) and (orientation:landscape){#assistantDigitalEmployee{--assistant-fab-size:58px}.assistant-employee-status{width:16px;height:16px}.assistant-employee-notice{max-width:245px;padding:8px 10px;font-size:10px}}
-      @media(prefers-reduced-motion:reduce){.assistant-employee-avatar,.assistant-employee-status,.assistant-employee-eyelids{animation:none!important}.assistant-employee-button,.assistant-employee-notice{transition:none!important}}
     </style>`);
   }
 
@@ -81,7 +73,7 @@
     return `<aside id="assistantDigitalEmployee" hidden aria-label="Funcionária digital do aplicativo">
       <div class="assistant-employee-notice" id="assistantEmployeeNotice" role="status" aria-live="polite"></div>
       <button class="assistant-employee-button" id="assistantEmployeeButton" type="button" data-state="idle" aria-label="Abrir conversa com a Assistente da Obra; arraste para mover" title="Assistente da Obra · toque para abrir ou arraste para mover">
-        <img class="assistant-employee-avatar" src="${AVATAR}" alt="" width="384" height="384" decoding="async">
+        <img class="assistant-employee-avatar" src="${AVATAR}" alt="" width="384" height="384" decoding="async" draggable="false">
         <span class="assistant-employee-eyelids" aria-hidden="true"></span><span class="assistant-employee-status" aria-hidden="true"></span>
       </button>
     </aside>`;
@@ -95,6 +87,11 @@
       button.dataset.ready = 'true';
       button.addEventListener('click', openAssistant);
       button.addEventListener('pointerdown', beginDrag);
+      button.addEventListener('pointermove', moveDrag, { passive: false });
+      button.addEventListener('pointerup', endDrag);
+      button.addEventListener('pointercancel', endDrag);
+      button.addEventListener('lostpointercapture', endDrag);
+      button.addEventListener('dragstart', (event) => event.preventDefault());
     }
     return document.getElementById('assistantDigitalEmployee');
   }
@@ -278,32 +275,38 @@
     updateVisibility();
     updateAvoidance();
   });
-  root.addEventListener('pointermove', moveDrag, { passive: false });
-  root.addEventListener('pointerup', endDrag);
-  root.addEventListener('pointercancel', endDrag);
   root.addEventListener('assistant-insights-updated', (event) => {
     const attention = Number(event.detail?.attention || 0);
     state.latestInsights = attention > 0 ? { id: `automatic-insights-${attention}`, level: 'attention', message: attention === 1 ? 'A Assistente encontrou 1 ponto para você conferir.' : `A Assistente encontrou ${attention} pontos para você conferir.`, route: 'assistant' } : null;
     refreshSignals();
   });
-  root.addEventListener('resize', updateAvoidance, { passive: true });
-
-  function blink() {
-    const button = document.getElementById('assistantEmployeeButton');
-    if (button && !button.closest('[hidden]')) {
-      button.classList.remove('is-blinking'); void button.offsetWidth; button.classList.add('is-blinking');
-      setTimeout(() => button.classList.remove('is-blinking'), 240);
-    }
-    setTimeout(blink, 4800 + Math.round(Math.random() * 3200));
-  }
+  root.addEventListener('resize', queueTick, { passive: true });
+  root.addEventListener('orientationchange', queueTick, { passive: true });
 
   function tick() {
     updateVisibility(); updateAvoidance(); decorateExistingAssistant();
   }
 
+  let tickFrame = 0;
+  function queueTick() {
+    if (tickFrame) return;
+    tickFrame = root.requestAnimationFrame(() => {
+      tickFrame = 0;
+      tick();
+    });
+  }
+
   function boot() {
-    ensureHost(); tick(); blink();
-    setInterval(tick, 1600);
+    ensureHost(); tick();
+    // Reavalia depois de interações que podem abrir/fechar telas, sem manter
+    // medições de layout rodando durante a rolagem do aplicativo.
+    document.addEventListener('click', queueTick, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') queueTick();
+    }, { passive: true });
+    setInterval(() => {
+      if (document.visibilityState !== 'hidden') queueTick();
+    }, 15000);
     setTimeout(refreshSignals, 3200);
     setInterval(refreshSignals, 60000);
   }

@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v36';
+const CACHE_VERSION = 'v39';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -22,6 +22,7 @@ const CORE_ASSETS = [
 /* Recursos complementares são armazenados individualmente: a indisponibilidade
    temporária de um deles não impede a instalação segura do restante do PWA. */
 const OPTIONAL_ASSETS = [
+  '/public-assets/action-feedback-v1.js',
   '/public-assets/obraativa-ui-icons-v2.png',
   '/public-assets/obraativa-ui-works-v2.png',
   '/public-assets/obraativa-ui-attendance-v2.png',

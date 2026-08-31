@@ -3,15 +3,48 @@
 
   const STYLE_ID = 'homeWeatherV1Style';
   const CARD_CLASS = 'home-weather-card';
+  const LOCATION_STORAGE_KEY = 'obraativaWeatherLocationV1';
   let refreshPending = false;
   let loading = false;
   let forecast = null;
   let status = 'idle';
   let message = '';
   let locationAttempt = 0;
+  let savedLocationChecked = false;
   const renderedCards = new WeakMap();
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+
+  function roundedCoordinate(value) {
+    return Math.round(Number(value) * 100) / 100;
+  }
+
+  function readSavedLocation() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(LOCATION_STORAGE_KEY) || 'null');
+      const latitude = Number(saved?.latitude);
+      const longitude = Number(saved?.longitude);
+      if (!saved?.enabled || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return null;
+      return { latitude, longitude, savedAt: saved.savedAt || '' };
+    } catch {
+      return null;
+    }
+  }
+
+  function saveLocationChoice(latitude, longitude) {
+    const saved = { enabled: true, latitude: roundedCoordinate(latitude), longitude: roundedCoordinate(longitude), savedAt: new Date().toISOString() };
+    try { localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(saved)); } catch { /* armazenamento do aparelho pode estar indisponível */ }
+    return saved;
+  }
+
+  function forgetLocationChoice() {
+    try { localStorage.removeItem(LOCATION_STORAGE_KEY); } catch { /* armazenamento do aparelho pode estar indisponível */ }
+    forecast = null;
+    status = 'idle';
+    message = '';
+    savedLocationChecked = true;
+    queueRefresh();
+  }
 
   function installStyle() {
     if (document.getElementById(STYLE_ID)) return;
@@ -66,7 +99,7 @@
   function idleMarkup() {
     const text = status === 'loading' ? message || 'Localizando o aparelho…' : status === 'error' ? message : 'Veja temperatura, chuva e próximos dias sem sair da tela inicial.';
     const buttonLabel = status === 'loading' ? 'Localizando…' : status === 'error' ? 'Tentar novamente' : 'Usar minha localização';
-    return `<div class="home-weather-idle"><div class="home-weather-idle-main"><span>${status === 'error' ? '⚠️' : '🌦️'}</span><div><b>Previsão do tempo</b><small aria-live="polite">${escapeHtml(text)} A localização aproximada não é salva.</small></div></div><button class="home-weather-button" data-home-weather-location type="button" ${loading ? 'disabled aria-busy="true"' : ''}>${buttonLabel}</button></div>`;
+    return `<div class="home-weather-idle"><div class="home-weather-idle-main"><span>${status === 'error' ? '⚠️' : '🌦️'}</span><div><b>Previsão do tempo</b><small aria-live="polite">${escapeHtml(text)} Sua escolha fica salva neste dispositivo usando apenas uma região aproximada.</small></div></div><button class="home-weather-button" data-home-weather-location type="button" ${loading ? 'disabled aria-busy="true"' : ''}>${buttonLabel}</button></div>`;
   }
 
   function forecastMarkup() {
@@ -85,6 +118,11 @@
     const home = document.querySelector('#app:not(.public-app) #view .home-operational');
     document.querySelectorAll(`.${CARD_CLASS}`).forEach((card) => { if (!home || !home.contains(card)) card.remove(); });
     if (!home) return;
+    if (!savedLocationChecked) {
+      savedLocationChecked = true;
+      const saved = readSavedLocation();
+      if (saved) window.setTimeout(() => loadForCoordinates(saved.latitude, saved.longitude), 0);
+    }
     let card = home.querySelector(`.${CARD_CLASS}`);
     if (!card) {
       card = document.createElement('section');
@@ -171,6 +209,7 @@
         position = await locate(positionOptions(true));
       }
       if (attempt !== locationAttempt) return;
+      saveLocationChoice(position.coords.latitude, position.coords.longitude);
       await loadForCoordinates(position.coords.latitude, position.coords.longitude);
     } catch (error) {
       if (attempt !== locationAttempt) return;
@@ -197,10 +236,12 @@
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
     button.textContent = 'Localizando…';
-    requestLocation();
+    const saved = readSavedLocation();
+    if (saved && status === 'error') loadForCoordinates(saved.latitude, saved.longitude);
+    else requestLocation();
   }, true);
 
-  window.HomeWeatherV1 = { refresh: queueRefresh, requestLocation, loadForCoordinates };
+  window.HomeWeatherV1 = { refresh: queueRefresh, requestLocation, loadForCoordinates, readSavedLocation, forgetLocationChoice };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();
 })();
