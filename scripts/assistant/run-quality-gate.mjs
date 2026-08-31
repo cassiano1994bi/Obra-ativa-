@@ -25,6 +25,7 @@ function run(relative) {
 }
 
 run('scripts/quality/check-project-conventions.mjs');
+run('scripts/quality/check-public-performance.mjs');
 run('scripts/assistant/generate-code-snapshot.mjs');
 for (const test of tests) run(test);
 console.log(`ASSISTANT_QUALITY_GATE_OK: snapshot atualizado e ${tests.length} suítes isoladas aprovadas; nenhuma publicação ou dado empresarial foi alterado.`);

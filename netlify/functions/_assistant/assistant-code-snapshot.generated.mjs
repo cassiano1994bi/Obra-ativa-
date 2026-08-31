@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T04:39:52.463Z",
-  "codeHash": "dbaa1a35fb2ff9b14f54e74cd28639e61246fc48ce675dc937558ec1662ccacb",
+  "generatedAt": "2026-08-31T04:45:49.978Z",
+  "codeHash": "bb3a2c973a472d6d57c4fda8bc94380c3ea5074473242eced7d7d28fa61554d1",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 106,
-    "totalBytes": 4735552,
-    "totalLines": 18296,
+    "fileCount": 107,
+    "totalBytes": 4738300,
+    "totalLines": 18357,
     "findingCount": 186,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1154528,
+      "bytes": 1154592,
       "lines": 3059,
-      "sha256": "26e564821c335c33140f24be252df258f92fe53773b40cfbd33dbd42cd3e29aa",
+      "sha256": "4f25e9483895864db04c53ac4bd40e146cd17e441704ce22ba88897966517668",
       "functions": 821,
       "fetches": 2,
       "domWrites": 252,
@@ -1110,9 +1110,9 @@ export default Object.freeze({
     {
       "path": "scripts/assistant/run-quality-gate.mjs",
       "scope": "application",
-      "bytes": 1349,
-      "lines": 31,
-      "sha256": "8a251bc747f65a5f6adef1ecb870e517f89869141ff4ec618a36c50a60359ef1",
+      "bytes": 1402,
+      "lines": 32,
+      "sha256": "ecc88b393b873851da6f8602b5fda23bd518542424f986a033678edc375790fd",
       "functions": 1,
       "fetches": 0,
       "domWrites": 0,
@@ -1121,9 +1121,20 @@ export default Object.freeze({
     {
       "path": "scripts/quality/check-project-conventions.mjs",
       "scope": "application",
-      "bytes": 2502,
-      "lines": 67,
-      "sha256": "89d297369107a3f989d32f80f1b23ec11128dd9c8cb2e9cd53c8877f6ab55aa6",
+      "bytes": 2501,
+      "lines": 66,
+      "sha256": "43c59dcd15762230b4919307cf03f8e4c49be63746ffc658784c61273b9b51f7",
+      "functions": 1,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "scripts/quality/check-public-performance.mjs",
+      "scope": "application",
+      "bytes": 2632,
+      "lines": 61,
+      "sha256": "f48e5cc9a66c00db92199e7ac3e876effeca5241279019b86661b737e82a1090",
       "functions": 1,
       "fetches": 0,
       "domWrites": 0,
@@ -2048,7 +2059,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1154528 bytes e 3059 linhas",
+      "evidence": "1154592 bytes e 3059 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
