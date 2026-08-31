@@ -10,8 +10,9 @@
     if (document.getElementById(STYLE_ID)) return;
     document.head.insertAdjacentHTML('beforeend', `<style id="${STYLE_ID}">
       @media(min-width:761px), (orientation:landscape) and (max-height:600px) and (max-width:1024px){
-        #app:not(.public-app) .side{overflow:hidden!important}
-        #app:not(.public-app) .side .nav{height:auto!important;max-height:none!important;min-height:0!important;flex:1 1 auto!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:none!important}
+        #app:not(.public-app) .side{display:flex!important;flex-direction:column!important;height:100dvh!important;max-height:100dvh!important;min-height:0!important;overflow:hidden!important}
+        #app:not(.public-app) .side .brand{position:relative!important;z-index:4!important;flex:0 0 auto!important}
+        #app:not(.public-app) .side .nav{height:auto!important;max-height:none!important;min-height:0!important;flex:1 1 auto!important;padding-bottom:10px!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;scroll-padding-block:4px 12px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}
         #app:not(.public-app) .side .nav::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
         #app:not(.public-app) .side .nav .nav-extra-scroll{position:static!important;inset:auto!important;display:grid!important;max-height:none!important;min-height:0!important;flex:0 0 auto!important;overflow:visible!important}
         #app:not(.public-app) .side .nav>button[data-nav-key="home"],
@@ -20,6 +21,9 @@
         #app:not(.public-app) .side .nav>button[onclick="go('home')"].active{background:#2b79d3!important}
         #app:not(.public-app) .side .nav .nav-more,
         #app:not(.public-app) .side>.nav-more-docked{display:none!important}
+      }
+      @media(orientation:landscape) and (max-height:600px) and (max-width:1024px){
+        #app:not(.public-app) .side .brand{margin-bottom:8px!important}
       }
     </style>`);
   }

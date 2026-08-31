@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T08:14:59.536Z",
-  "codeHash": "8cb4dcc765f78b6cfaeb6970f2f569af04fdd6393a86cc0ab9842f40b25f02af",
+  "generatedAt": "2026-08-31T08:34:58.281Z",
+  "codeHash": "0aee158a7ef2938bfccd6454edde4d60d433a65dd25c2ab462ca4d35b0db03a0",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 112,
-    "totalBytes": 4873393,
-    "totalLines": 20234,
+    "totalBytes": 4873944,
+    "totalLines": 20238,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -1077,9 +1077,9 @@ export default Object.freeze({
     {
       "path": "public-assets/sidebar-scroll-v1.js",
       "scope": "application",
-      "bytes": 3451,
-      "lines": 79,
-      "sha256": "12d7b5d27060612d9aadae070483070e0eacc2fb63765237933f1a4686c10f56",
+      "bytes": 4002,
+      "lines": 83,
+      "sha256": "dbca86b3c19a35675bc44033381a8ea5f372a640b339a29e3210b25f16718186",
       "functions": 5,
       "fetches": 0,
       "domWrites": 1,
@@ -1200,7 +1200,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6198,
       "lines": 156,
-      "sha256": "15935b683ad9975797b194c13fe9a5f7d28289184258c389eb9cd4fb2e79e095",
+      "sha256": "798f53d3d57218742d8a612990adb10815ee7d6100bfc74809eb395b7c6c13ce",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
