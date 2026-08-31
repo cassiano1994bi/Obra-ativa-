@@ -217,7 +217,7 @@
     loading.setAttribute('role', 'status');
     loading.setAttribute('aria-live', 'polite');
     loading.setAttribute('aria-busy', 'true');
-    loading.insertAdjacentHTML('afterbegin', '<i class="obraativa-auth-spinner" aria-hidden="true"></i>');
+    loading.insertAdjacentHTML('afterbegin', '<img class="obraativa-loading-mark" src="/public-assets/obraativa-app-icon-v2-192.png" alt=""><i class="obraativa-auth-spinner" aria-hidden="true"></i>');
   }
 
   function enhanceOnboarding(card) {

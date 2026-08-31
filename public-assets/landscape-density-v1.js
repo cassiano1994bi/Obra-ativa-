@@ -140,6 +140,57 @@
           min-height:40px!important;
         }
 
+        /* Pagamentos: cada funcionário vira uma linha compacta e legível. */
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-page {gap:8px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-page-header {align-items:center!important;padding:9px 11px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-page-header .page-title {font-size:18px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-page-header .sub {margin:2px 0 0!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-page-header .btn,
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-controls .btn {min-height:32px!important;padding:5px 8px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-controls {gap:5px!important;margin:0!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-label {padding:5px 8px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card {display:block!important;min-width:0!important;padding:8px 9px!important;border-radius:10px!important;background:#fff!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card > h2 {margin:0!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card > .sub {margin:3px 0 5px!important;font-size:8px!important;line-height:1.25!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card .notice {display:grid!important;grid-template-columns:minmax(82px,1fr) minmax(0,1.35fr)!important;align-items:center!important;gap:7px!important;min-height:29px!important;margin:0!important;padding:5px 2px!important;border:0!important;border-top:1px solid #e1eae5!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;line-height:1.2!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card .notice br {display:none!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card .notice b {min-width:0!important;overflow:hidden!important;font-size:9px!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-group-card .notice small {min-width:0!important;color:#5b7065!important;font-size:8px!important;line-height:1.2!important;text-align:right!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-summary {padding:9px 10px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-summary h2 {font-size:14px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-summary p {margin:3px 0!important;font-size:9px!important;line-height:1.35!important}
+
+        /* Administrador: mantém todos os dados e reduz a altura ocupada. */
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-hero {gap:8px!important;padding:8px 11px!important;border-radius:11px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-hero h1 {font-size:18px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-hero p {margin-top:2px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-tabs {gap:4px!important;padding-bottom:3px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-tabs button {min-height:32px!important;padding:5px 8px!important;border-radius:8px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-info {grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-info div {padding:7px 8px!important;border-radius:8px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-card {padding:10px!important}
+
+        /* A configuração aberta fica acima da navegação e da assistente. */
+        body.responsive-landscape-density #modal.show:has(.landscape-compact-settings-dialog) {z-index:10020!important;padding:8px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog {width:min(760px,calc(100vw - 16px))!important;max-width:760px!important;max-height:calc(100dvh - 16px)!important;padding:11px 13px 9px!important;overflow:auto!important;border-radius:13px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog > h2 {margin:0 32px 2px 0!important;font-size:18px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog > p {margin:0 0 7px!important;font-size:9px!important;line-height:1.3!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .form {display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px 8px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .field {min-width:0!important;margin:0!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .field.wide {grid-column:1/-1!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .field > label {margin-bottom:3px!important;font-size:8px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog input:not([type="checkbox"]),
+        body.responsive-landscape-density .landscape-compact-settings-dialog select,
+        body.responsive-landscape-density .landscape-compact-settings-dialog textarea {min-height:34px!important;padding:6px 8px!important;font-size:10px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .company-logo-upload {min-height:42px!important;padding:5px 7px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .company-logo-upload img {width:38px!important;height:38px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .check-line {grid-column:1/-1!important;min-height:28px!important;margin:0!important;padding:4px 7px!important;font-size:9px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .landscape-settings-shortcuts {display:flex!important;gap:6px!important;margin:5px 0 0!important;padding:0!important;border:0!important;background:transparent!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .landscape-settings-shortcuts .btn {min-height:31px!important;padding:5px 8px!important;font-size:9px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog footer {position:sticky!important;bottom:-9px!important;z-index:2!important;display:flex!important;justify-content:flex-end!important;gap:6px!important;margin:5px -13px -9px!important;padding:7px 13px calc(7px + env(safe-area-inset-bottom))!important;border-top:1px solid #dce5e1!important;background:#fff!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog footer .btn {flex:0 0 auto!important;width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:9px!important}
+
         body.responsive-landscape-density #view[data-landscape-page="planning"],
         body.responsive-landscape-density #view[data-landscape-page="team"],
         body.responsive-landscape-density #view[data-landscape-page="vehicles"],
@@ -1150,6 +1201,29 @@
           font-size:8px!important;
           white-space:nowrap!important;
         }
+
+        /* Prioridade final contra as grades genéricas carregadas nas outras camadas. */
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page] .payment-group-grid {
+          display:grid!important;
+          grid-template-columns:repeat(2,minmax(0,1fr))!important;
+          gap:8px!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page] .payment-group-card .notice {
+          display:grid!important;
+          grid-template-columns:minmax(110px,1fr) minmax(0,1.25fr)!important;
+          align-items:center!important;
+          gap:7px!important;
+          min-height:29px!important;
+          margin:0!important;
+          padding:5px 2px!important;
+          border:0!important;
+          border-top:1px solid #e1eae5!important;
+          border-radius:0!important;
+          background:transparent!important;
+          font-size:9px!important;
+          line-height:1.2!important;
+        }
       }
 
       @media (orientation:landscape) and (max-width:760px) {
@@ -1189,9 +1263,11 @@
     const existing = dialog?.querySelector('.landscape-settings-shortcuts');
     if (!enabled || !dialog || !document.getElementById('modal')?.classList.contains('show')) {
       existing?.remove();
+      dialog?.classList.remove('landscape-compact-settings-dialog');
       return;
     }
     const title = dialog.querySelector('h2')?.textContent?.trim().toLocaleLowerCase('pt-BR') || '';
+    dialog.classList.toggle('landscape-compact-settings-dialog', title === 'configurações');
     if (title !== 'configurações' || existing) return;
     const shortcuts = document.createElement('section');
     shortcuts.className = 'landscape-settings-shortcuts';

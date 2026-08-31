@@ -1,4 +1,4 @@
-#cloudGate{background:linear-gradient(135deg,#07111df5 0%,#0b1d2ef0 55%,#123e34ed 100%),url("obraativa-app-icon-v2-source.png") center/560px no-repeat!important}
+#cloudGate{background:radial-gradient(circle at 78% 18%,#27a26d2b,transparent 30%),radial-gradient(circle at 12% 84%,#176fd72b,transparent 34%),linear-gradient(135deg,#07111d 0%,#0b2135 56%,#103d33 100%)!important}
 #cloudGate .cloud-auth-card{border:1px solid #d7e6e5;box-shadow:0 24px 70px #020a1499}
 #cloudGate .obraativa-auth-brand{display:flex;align-items:center;gap:10px;min-height:48px;margin-bottom:16px}
 #cloudGate .obraativa-auth-brand>img{width:46px;height:46px;padding:3px;border:1px solid #d7e6e5;border-radius:13px;background:#07111d;object-fit:cover;box-shadow:0 6px 14px #0c263522}

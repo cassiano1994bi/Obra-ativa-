@@ -13,7 +13,6 @@
     attendance: Object.freeze({ label: 'Presença', aliases: ['presenca', 'lista de presenca'] }),
     payments: Object.freeze({ label: 'Pagamentos', aliases: ['pagamento', 'pagamentos', 'pagamento da equipe'] }),
     financial: Object.freeze({ label: 'Financeiro', aliases: ['financeiro', 'financas', 'financeiro das obras'] }),
-    clients: Object.freeze({ label: 'Clientes', aliases: ['cliente', 'clientes'] }),
     budgets: Object.freeze({ label: 'Orçamentos', aliases: ['orcamento', 'orcamentos'] }),
     team: Object.freeze({ label: 'Equipe', aliases: ['equipe', 'funcionarios', 'funcionario'] }),
     vehicles: Object.freeze({ label: 'Veículos', aliases: ['veiculo', 'veiculos', 'frota'] }),
