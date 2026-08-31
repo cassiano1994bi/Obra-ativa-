@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v14';
+const CACHE_VERSION = 'v21';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -14,6 +14,7 @@ const CORE_ASSETS = [
   '/public-assets/obraativa-app-icon-v2-512.png',
   '/public-assets/obraativa-app-icon-v2-1024.png',
   '/public-assets/obraativa-visual-v1.css',
+  '/public-assets/obraativa-home-premium-v2.css',
   '/public-assets/obraativa-home-v1.js',
   '/public-assets/pwa-register-v1.js'
 ];

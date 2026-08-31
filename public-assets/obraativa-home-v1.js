@@ -44,6 +44,7 @@
   function dashboardAccess() {
     return {
       works: canOpen('works'),
+      planning: canOpen('planning'),
       attendance: canOpen('attendance'),
       payments: canOpen('payments'),
       financial: canOpen('financial')
@@ -59,6 +60,44 @@
     return (Array.isArray(data.works) ? data.works : []).filter((work) => !work.archived && work.status !== 'Finalizada');
   }
 
+  function currentDateKey() {
+    return safeCall(() => typeof today === 'function' ? today() : new Date().toISOString().slice(0, 10), new Date().toISOString().slice(0, 10));
+  }
+
+  function currentDateLabel() {
+    return new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+    }).format(new Date()).replace(/^./, (letter) => letter.toUpperCase());
+  }
+
+  function employeeIsActive(employee) {
+    return employee && employee.active !== false && employee.archived !== true && employee.status !== 'Inativo';
+  }
+
+  function scheduleTodayRows(data, date, works) {
+    const employees = Array.isArray(data.employees) ? data.employees : [];
+    const employeeById = new Map(employees.filter(employeeIsActive).map((employee) => [employee.id, employee]));
+    const workById = new Map(works.map((work) => [work.id, work]));
+    const groups = new Map();
+    (Array.isArray(data.distributions) ? data.distributions : [])
+      .filter((item) => item.date === date && employeeById.has(item.employeeId))
+      .forEach((item) => {
+        const work = workById.get(item.workId);
+        if (!work) return;
+        if (!groups.has(work.id)) groups.set(work.id, { work, people: [] });
+        const employee = employeeById.get(item.employeeId);
+        if (!groups.get(work.id).people.some((person) => person.id === employee.id)) groups.get(work.id).people.push(employee);
+      });
+    return [...groups.values()].sort((a, b) => String(a.work.name || '').localeCompare(String(b.work.name || ''), 'pt-BR'));
+  }
+
+  function scheduleResponsible(group) {
+    const registered = String(group.work?.responsible || '').trim();
+    if (registered) return registered;
+    const lead = group.people.find((person) => /mestre|encarregado|supervisor|respons[aá]vel/i.test(String(person.role || person.function || '')));
+    return lead?.name || 'Responsável não informado';
+  }
+
   function workProgress(work) {
     const phase = safeCall(() => typeof workCurrentPhase === 'function' ? workCurrentPhase(work.id) : null, null);
     const raw = phase?.percent ?? work.progress ?? work.percent ?? (work.status === 'Finalizada' ? 100 : 0);
@@ -68,38 +107,54 @@
 
   function dashboardData() {
     const data = appData();
-    if (window.__OBRAATIVA_PREVIEW_DATA__) return data;
+    const preview = Boolean(window.__OBRAATIVA_PREVIEW_DATA__);
     const access = dashboardAccess();
     const works = access.works ? activeWorkRows(data) : [];
-    const date = safeCall(() => typeof today === 'function' ? today() : new Date().toISOString().slice(0, 10), new Date().toISOString().slice(0, 10));
+    const date = currentDateKey();
     const todayPeople = new Set((access.attendance && Array.isArray(data.attendance) ? data.attendance : [])
       .filter((item) => item.date === date && ['Trabalhou', 'Meio período'].includes(item.status))
       .map((item) => item.employeeId));
-    const cycleRows = access.payments ? safeCall(() => typeof payroll === 'function' && typeof nextFriday === 'function' ? payroll(nextFriday()) : [], []) : [];
-    const pending = cycleRows.reduce((sum, row) => sum + Math.max(Number(row.balance || 0), 0), 0);
-    const financeRows = access.financial ? safeCall(() => typeof workCashRows === 'function' ? workCashRows() : [], []) : [];
-    const received = financeRows.reduce((sum, row) => sum + Number(row.received || 0), 0);
-    const labor = financeRows.reduce((sum, row) => sum + Number(row.labor || 0), 0);
-    const expected = financeRows.reduce((sum, row) => sum + Number(row.expected || 0), 0);
-    const balance = financeRows.reduce((sum, row) => sum + Number(row.cash || 0), 0);
-    const financeHasData = financeRows.some((row) => [row.received, row.labor, row.expected, row.cash]
+    const schedule = access.planning ? scheduleTodayRows(data, date, works) : [];
+    const scheduledPeople = new Set(schedule.flatMap((group) => group.people.map((person) => person.id)));
+    const cycleRows = access.payments && !preview ? safeCall(() => typeof payroll === 'function' && typeof nextFriday === 'function' ? payroll(nextFriday()) : [], []) : [];
+    const pending = preview ? Number(data.pending || 0) : cycleRows.reduce((sum, row) => sum + Math.max(Number(row.balance || 0), 0), 0);
+    const financeRows = access.financial && !preview ? safeCall(() => typeof workCashRows === 'function' ? workCashRows() : [], []) : [];
+    const received = preview ? Number(data.received || 0) : financeRows.reduce((sum, row) => sum + Number(row.received || 0), 0);
+    const labor = preview ? Number(data.labor || 0) : financeRows.reduce((sum, row) => sum + Number(row.labor || 0), 0);
+    const expected = preview ? Number(data.expected || 0) : financeRows.reduce((sum, row) => sum + Number(row.expected || 0), 0);
+    const balance = preview ? Number(data.balance || 0) : financeRows.reduce((sum, row) => sum + Number(row.cash || 0), 0);
+    const financeHasData = preview ? [received, labor, expected, balance].some((value) => value !== 0) : financeRows.some((row) => [row.received, row.labor, row.expected, row.cash]
       .some((value) => Number(value || 0) !== 0));
-    return { works, worksCount: works.length, teamToday: todayPeople.size, pending, received, labor, expected, balance, financeHasData, access };
+    return {
+      works, worksCount: works.length, teamToday: preview ? Number(data.teamToday || 0) : todayPeople.size, schedule,
+      scheduledToday: preview ? Number(data.scheduledToday || scheduledPeople.size) : scheduledPeople.size,
+      pending, received, labor, expected, balance, financeHasData, access, date, dateLabel: currentDateLabel()
+    };
   }
 
   function metricsMarkup(model) {
     const cards = [];
-    if (model.access?.works !== false) cards.push(`<article class="obraativa-metric green"><span class="obraativa-metric-icon">${iconArt('works')}</span><div><small>Obras em andamento</small><strong>${model.worksCount}</strong></div></article>`);
-    if (model.access?.attendance !== false) cards.push(`<article class="obraativa-metric"><span class="obraativa-metric-icon">${iconArt('team')}</span><div><small>Equipe hoje</small><strong>${model.teamToday}</strong></div></article>`);
-    if (model.access?.payments !== false) cards.push(`<article class="obraativa-metric"><span class="obraativa-metric-icon">${iconArt('payments')}</span><div><small>Pagamentos pendentes</small><strong>${localMoney(model.pending)}</strong></div></article>`);
-    if (model.access?.financial !== false) cards.push(`<article class="obraativa-metric green ${model.balance < 0 ? 'negative' : ''}"><span class="obraativa-metric-icon">${iconArt('financial')}</span><div><small>Saldo das obras</small><strong>${localMoney(model.balance)}</strong></div></article>`);
+    if (model.access?.attendance !== false) cards.push(`<article class="obraativa-metric"><span class="obraativa-metric-icon">${iconArt('team')}</span><div><small>Equipe hoje</small><strong>${model.teamToday}</strong><span>presenças confirmadas</span></div></article>`);
+    if (model.access?.financial !== false) cards.push(`<article class="obraativa-metric green ${model.balance < 0 ? 'negative' : ''}"><span class="obraativa-metric-icon">${iconArt('financial')}</span><div><small>Financeiro</small><strong>${localMoney(model.balance)}</strong><span>saldo das obras</span></div></article>`);
     return cards.length ? `<section class="obraativa-metrics" data-count="${cards.length}" aria-label="Resumo da operação">${cards.join('')}</section>` : '';
   }
 
+  function scheduleMarkup(model) {
+    if (model.access?.planning === false) return '';
+    const rows = model.schedule.map((group) => {
+      const people = group.people.map((person) => person.name).filter(Boolean).join(' · ');
+      return `<article class="obraativa-schedule-row"><span class="obraativa-schedule-icon">${iconArt('planning')}</span><div class="obraativa-schedule-copy"><b>${escapeHtml(group.work.name || 'Obra sem nome')}</b><small>${escapeHtml(people || 'Equipe ainda não informada')}</small></div><div class="obraativa-schedule-meta"><strong>${group.people.length}</strong><span>${group.people.length === 1 ? 'profissional' : 'profissionais'}</span></div><div class="obraativa-schedule-lead"><small>RESPONSÁVEL</small><b>${escapeHtml(scheduleResponsible(group))}</b></div></article>`;
+    }).join('');
+    const content = rows || `<div class="obraativa-empty obraativa-schedule-empty"><span>${iconArt('planning')}</span><div><b>Nenhuma escala registrada para hoje.</b><small>Organize a equipe na Escala diária para acompanhar a distribuição por obra aqui.</small></div></div>`;
+    return `<section class="obraativa-panel obraativa-schedule-panel"><header class="obraativa-panel-head"><div><span class="obraativa-section-kicker">ROTINA DO CANTEIRO</span><h2>Escala de Hoje</h2><p>${escapeHtml(model.dateLabel)}</p></div><button class="obraativa-panel-link" type="button" onclick="go('planning')">Abrir escala completa</button></header><div class="obraativa-schedule-list">${content}</div></section>`;
+  }
+
   function worksMarkup(model) {
-    const rows = model.works.slice(0, 2).map((work) => {
+    const rows = model.works.map((work) => {
       const progress = workProgress(work);
-      return `<article class="obraativa-work-row"><span class="obraativa-work-icon">${iconArt('works')}</span><div class="obraativa-work-copy"><b>${escapeHtml(work.name || 'Obra sem nome')}</b><small>${escapeHtml(progress.label)}</small><div class="obraativa-work-progress"><div class="obraativa-progress" aria-label="${progress.percent}% concluído"><i style="width:${progress.percent}%"></i></div><span class="obraativa-work-percent">${progress.percent}%</span></div><button class="obraativa-work-open" type="button" onclick="go('works')">Ver obra</button></div><span class="obraativa-work-chevron" aria-hidden="true">›</span></article>`;
+      const scheduled = model.schedule.find((group) => group.work.id === work.id)?.people.length || 0;
+      const responsible = String(work.responsible || '').trim();
+      return `<article class="obraativa-work-row"><span class="obraativa-work-icon">${iconArt('works')}</span><div class="obraativa-work-copy"><b>${escapeHtml(work.name || 'Obra sem nome')}</b><small>${escapeHtml(progress.label)}${responsible ? ` · ${escapeHtml(responsible)}` : ''}</small><div class="obraativa-work-tags"><span>${scheduled} ${scheduled === 1 ? 'escalado hoje' : 'escalados hoje'}</span><span>${progress.percent}% concluída</span></div><div class="obraativa-work-progress"><div class="obraativa-progress" aria-label="${progress.percent}% concluído"><i style="width:${progress.percent}%"></i></div><span class="obraativa-work-percent">${progress.percent}%</span></div><button class="obraativa-work-open" type="button" onclick="go('works')">Ver detalhes</button></div><span class="obraativa-work-chevron" aria-hidden="true">›</span></article>`;
     }).join('');
     return rows || '<p class="obraativa-empty">Nenhuma obra ativa cadastrada.</p>';
   }
@@ -119,31 +174,47 @@
 
   function overviewMarkup(model) {
     const panels = [];
-    if (model.access?.works !== false) panels.push(`<article class="obraativa-panel obraativa-works-panel"><header class="obraativa-panel-head"><h2>Obras em andamento</h2><button class="obraativa-panel-link" type="button" onclick="go('works')">Ver todas</button></header><div class="obraativa-work-list">${worksMarkup(model)}</div></article>`);
-    if (model.access?.financial !== false) panels.push(`<article class="obraativa-panel obraativa-finance-panel"><header class="obraativa-panel-head"><h2>Resumo financeiro</h2><button class="obraativa-panel-link" type="button" onclick="go('financial')">Abrir financeiro</button></header>${financePanelMarkup(model)}</article>`);
+    if (model.access?.works !== false) panels.push(`<article class="obraativa-panel obraativa-works-panel"><header class="obraativa-panel-head"><div><span class="obraativa-section-kicker">ACOMPANHAMENTO</span><h2>Obras em andamento</h2><p>Situação, equipe e progresso em uma única visão.</p></div><button class="obraativa-panel-link" type="button" onclick="go('works')">Ver todas</button></header><div class="obraativa-work-list">${worksMarkup(model)}</div></article>`);
+    if (model.access?.financial !== false) panels.push(`<article class="obraativa-panel obraativa-finance-panel"><header class="obraativa-panel-head"><div><span class="obraativa-section-kicker">CONTROLE FINANCEIRO</span><h2>Resumo financeiro</h2><p>Leitura rápida sem transformar a Home em planilha.</p></div><button class="obraativa-panel-link" type="button" onclick="go('financial')">Abrir financeiro</button></header>${financePanelMarkup(model)}</article>`);
     return panels.length ? `<section class="obraativa-overview-grid" data-count="${panels.length}" aria-label="Obras e resumo financeiro">${panels.join('')}</section>` : '';
+  }
+
+  function homeBrandMarkup(data) {
+    const logo = String(data.settings?.companyLogo || 'public-assets/obraativa-app-icon-v2-192.png');
+    return `<div class="obraativa-home-brandline"><img src="${escapeHtml(logo)}" alt="ObraAtiva"><span><b>ObraAtiva</b><small>GESTÃO INTELIGENTE DE OBRAS</small></span></div>`;
   }
 
   function decorateHome() {
     const home = document.querySelector('#app:not(.public-app) #view .home-operational');
     if (!home) return;
-    home.classList.add('obraativa-home');
+    home.classList.add('obraativa-home', 'obraativa-home-premium');
     const data = appData();
     const head = home.querySelector('.home-operational-head');
     if (head) {
+      const copyArea = head.querySelector(':scope>div');
+      if (copyArea && !copyArea.querySelector('.obraativa-home-brandline')) copyArea.insertAdjacentHTML('afterbegin', homeBrandMarkup(data));
       const eyebrow = head.querySelector(':scope>div>small');
       const heading = head.querySelector(':scope>div>h1');
       const copy = head.querySelector(':scope>div>p');
       const responsible = String(data.settings?.responsible || '').trim();
       const hour = new Date().getHours();
       const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
-      if (eyebrow) eyebrow.textContent = 'VISÃO GERAL';
-      if (heading) heading.textContent = `${greeting}${responsible ? `, ${responsible}` : ''} 👋`;
+      eyebrow?.remove();
+      if (heading) heading.innerHTML = `<span class="obraativa-home-greeting">${escapeHtml(greeting)}</span>${responsible ? `<span class="obraativa-home-user-name">, ${escapeHtml(responsible)}</span>` : ''} <span aria-hidden="true">👋</span>`;
       if (copy) copy.textContent = 'Aqui está o resumo da sua gestão hoje.';
+      let date = copyArea?.querySelector('.obraativa-home-date');
+      if (!date && copyArea) {
+        copyArea.insertAdjacentHTML('beforeend', `<time class="obraativa-home-date" datetime="${currentDateKey()}">${escapeHtml(currentDateLabel())}</time>`);
+        date = copyArea.querySelector('.obraativa-home-date');
+      }
+      if (date) date.textContent = currentDateLabel();
     }
     const shortcuts = home.querySelector('.home-shortcuts');
     const quickSection = shortcuts?.closest('section');
     quickSection?.classList.add('obraativa-quick-section');
+    shortcuts?.querySelectorAll('.home-shortcut').forEach((button) => {
+      if (navKey(button) === 'financial') button.remove();
+    });
     decorateShortcuts(home);
     home.querySelectorAll('.home-insight-panel').forEach((panel) => {
       const title = panel.querySelector('h2');
@@ -157,7 +228,8 @@
     const model = dashboardData();
     const signature = JSON.stringify({
       works: model.works.map((work) => [work.id, work.name, work.status, work.progress, work.percent]),
-      worksCount: model.worksCount, teamToday: model.teamToday, pending: model.pending,
+      schedule: model.schedule.map((group) => [group.work.id, group.people.map((person) => person.id), scheduleResponsible(group)]),
+      worksCount: model.worksCount, teamToday: model.teamToday, scheduledToday: model.scheduledToday, pending: model.pending,
       received: model.received, labor: model.labor, expected: model.expected, balance: model.balance, financeHasData: model.financeHasData,
       access: model.access
     });
@@ -184,6 +256,22 @@
     } else {
       metrics?.remove();
     }
+    let schedule = home.querySelector(':scope>.obraativa-schedule-panel');
+    const scheduleContent = scheduleMarkup(model);
+    if (scheduleContent) {
+      if (!schedule) {
+        const scheduleAnchor = metrics || quickSection || head;
+        if (scheduleAnchor) scheduleAnchor.insertAdjacentHTML('afterend', scheduleContent);
+        else home.insertAdjacentHTML('beforeend', scheduleContent);
+        schedule = home.querySelector(':scope>.obraativa-schedule-panel');
+      } else if (schedule.dataset.signature !== signature) {
+        schedule.outerHTML = scheduleContent;
+        schedule = home.querySelector(':scope>.obraativa-schedule-panel');
+      }
+      if (schedule) schedule.dataset.signature = signature;
+    } else {
+      schedule?.remove();
+    }
     let overview = home.querySelector(':scope>.obraativa-overview-grid');
     if (!overview) {
       home.insertAdjacentHTML('beforeend', overviewMarkup(model));
@@ -193,6 +281,12 @@
       overview = home.querySelector(':scope>.obraativa-overview-grid');
     }
     if (overview) overview.dataset.signature = signature;
+    const insights = home.querySelector(':scope>.home-insights');
+    const weather = home.querySelector(':scope>.home-weather-card');
+    const assistant = home.querySelector(':scope>.assistant-home-shortcut');
+    [head, quickSection, metrics, weather, schedule, overview, insights, assistant]
+      .filter(Boolean)
+      .forEach((section) => home.appendChild(section));
   }
 
   function navKey(button) {

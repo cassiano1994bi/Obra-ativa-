@@ -7,11 +7,99 @@
   let queued = false;
   let originalShowAuth = null;
   let originalSignOut = null;
+  let originalShowRecovery = null;
+  let originalShowPasswordReset = null;
+  let originalShowOnboarding = null;
+  let originalShowLoading = null;
+  let lastAuthEmail = '';
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
+
+  function humanizeAuthMessage(message) {
+    const text = String(message || '').trim();
+    if (!text) return '';
+    const normalized = text.toLocaleLowerCase('pt-BR');
+    if (/invalid login|invalid credentials|email or password/.test(normalized)) return 'E-mail ou senha não conferem. Revise os dados e tente novamente.';
+    if (/email not confirmed|email.*confirm/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
+    if (/already registered|already exists|user.*registered/.test(normalized)) return 'Este e-mail já possui uma conta. Entre normalmente ou use “Esqueci minha senha”.';
+    if (/password.*(least|characters|weak)|senha.*(fraca|caracteres)/.test(normalized)) return 'Crie uma senha com 8 caracteres, incluindo letra maiúscula, minúscula e número.';
+    if (/failed to fetch|network|networkerror|load failed/.test(normalized)) return 'Não conseguimos conectar agora. Verifique sua internet e tente novamente.';
+    if (/rate limit|too many requests|too many attempts/.test(normalized)) return 'Foram feitas muitas tentativas. Aguarde alguns minutos e tente novamente.';
+    return text;
+  }
+
+  function authMode(card) {
+    const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
+    if (title.includes('criar acesso')) return 'signup';
+    if (title.includes('entrar')) return 'signin';
+    if (title.includes('recuperar senha')) return 'recovery';
+    if (title.includes('nova senha')) return 'reset';
+    if (title.includes('criar sua empresa')) return 'onboarding';
+    return 'generic';
+  }
+
+  function passwordScore(value) {
+    const password = String(value || '');
+    const checks = [password.length >= 8, /[a-z]/.test(password) && /[A-Z]/.test(password), /\d/.test(password)];
+    return { checks, score: checks.filter(Boolean).length };
+  }
+
+  function updatePasswordStrength(input) {
+    const strength = input?.closest('.field')?.querySelector('.obraativa-password-strength');
+    if (!strength) return;
+    const result = passwordScore(input.value);
+    const labels = ['Comece a digitar', 'Fraca', 'Boa', 'Forte'];
+    strength.dataset.score = String(result.score);
+    const label = $('[data-password-strength-label]', strength);
+    if (label) label.textContent = labels[result.score];
+    strength.querySelectorAll('[data-password-rule]').forEach((item, index) => {
+      item.classList.toggle('done', Boolean(result.checks[index]));
+      const icon = $('i', item);
+      if (icon) icon.textContent = result.checks[index] ? '✓' : '•';
+    });
+  }
+
+  function enhancePasswordInput(input, showStrength = false) {
+    if (!input || input.closest('.obraativa-password-shell')) return;
+    const field = input.closest('.field');
+    if (!field) return;
+    const shell = document.createElement('div');
+    shell.className = 'obraativa-password-shell';
+    input.parentNode.insertBefore(shell, input);
+    shell.appendChild(input);
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'obraativa-password-toggle';
+    toggle.dataset.passwordToggle = '1';
+    toggle.setAttribute('aria-label', 'Mostrar senha');
+    toggle.setAttribute('aria-pressed', 'false');
+    toggle.textContent = 'Mostrar';
+    shell.appendChild(toggle);
+    if (!showStrength) return;
+    const strength = document.createElement('div');
+    const strengthId = `${input.id || input.name || 'password'}Strength`;
+    strength.id = strengthId;
+    strength.className = 'obraativa-password-strength';
+    strength.dataset.score = '0';
+    strength.setAttribute('aria-live', 'polite');
+    strength.innerHTML = '<div class="obraativa-password-meter"><i></i></div><b data-password-strength-label>Comece a digitar</b><ul><li data-password-rule><i>•</i> 8 ou mais caracteres</li><li data-password-rule><i>•</i> letra maiúscula e minúscula</li><li data-password-rule><i>•</i> pelo menos um número</li></ul>';
+    shell.insertAdjacentElement('afterend', strength);
+    input.setAttribute('aria-describedby', strengthId);
+    updatePasswordStrength(input);
+  }
+
+  function labelInputs(card) {
+    card.querySelectorAll('.field').forEach((field, index) => {
+      const input = $('input,select,textarea', field);
+      const label = $('label', field);
+      if (!input || !label) return;
+      if (!input.id) input.id = `obraativaAuthField${index + 1}`;
+      label.htmlFor = input.id;
+    });
+  }
 
   function localSessionKey() {
     const params = new URLSearchParams(location.search);
@@ -122,15 +210,78 @@
     return `<section class="obraativa-remembered-account" data-remembered-account><div><small>CONTA LEMBRADA NESTE DISPOSITIVO</small><b>${email}</b><span>A sessão segura está pronta para continuar.</span></div><button type="button" class="btn" data-resume-account>Entrar novamente</button><button type="button" class="cloud-link" data-forget-account>Usar outra conta</button></section>`;
   }
 
-  function enhanceAuthCard(card) {
-    if (!card || card.querySelector('[data-remembered-account]')) return;
-    const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
-    if (!title.includes('entrar')) return;
-    const record = readRemembered();
-    if (!record) return;
+  function enhanceLoading() {
+    const loading = $('#cloudGate .cloud-loading');
+    if (!loading || loading.dataset.authUx === '1') return;
+    loading.dataset.authUx = '1';
+    loading.setAttribute('role', 'status');
+    loading.setAttribute('aria-live', 'polite');
+    loading.setAttribute('aria-busy', 'true');
+    loading.insertAdjacentHTML('afterbegin', '<i class="obraativa-auth-spinner" aria-hidden="true"></i>');
+  }
+
+  function enhanceOnboarding(card) {
     const form = $('.form', card);
-    if (!form) return;
-    form.insertAdjacentHTML('beforebegin', rememberedMarkup(record));
+    if (!form || form.querySelector('.obraativa-auth-optional')) return;
+    const companyField = $('[name="company"]', form)?.closest('.field');
+    const optionalFields = ['responsible', 'whatsapp', 'city', 'firstWork', 'firstService']
+      .map((name) => $(`[name="${name}"]`, form)?.closest('.field'))
+      .filter(Boolean);
+    if (!companyField || !optionalFields.length) return;
+    const details = document.createElement('details');
+    details.className = 'obraativa-auth-optional';
+    details.innerHTML = '<summary>Adicionar informações agora <small>(opcional)</small></summary><div class="obraativa-auth-optional-grid"></div>';
+    companyField.insertAdjacentElement('afterend', details);
+    const grid = $('.obraativa-auth-optional-grid', details);
+    optionalFields.forEach((field) => grid.appendChild(field));
+    const submit = $('button[type="submit"]', form);
+    if (submit) submit.textContent = 'Criar empresa e começar grátis';
+  }
+
+  function enhanceAuthCard(card) {
+    if (!card) return;
+    const mode = authMode(card);
+    const form = $('.form', card);
+    if (mode === 'signin' && !card.querySelector('[data-remembered-account]')) {
+      const record = readRemembered();
+      if (record && form) form.insertAdjacentHTML('beforebegin', rememberedMarkup(record));
+    }
+    if (card.dataset.authUx === '1') return;
+    card.dataset.authUx = '1';
+    card.classList.add('obraativa-auth-experience', `obraativa-auth-${mode}`);
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+    const heading = $('h1', card);
+    if (heading) {
+      if (!heading.id) heading.id = 'obraativaAuthTitle';
+      card.setAttribute('aria-labelledby', heading.id);
+    }
+    if (!card.querySelector('.cloud-close') && ['recovery', 'reset', 'onboarding'].includes(mode)) {
+      card.insertAdjacentHTML('afterbegin', '<button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>');
+    }
+    if (mode === 'signup' && heading) heading.insertAdjacentHTML('beforebegin', '<span class="obraativa-auth-step">ETAPA 1 DE 2 · SUA CONTA</span>');
+    if (mode === 'onboarding' && heading) heading.insertAdjacentHTML('beforebegin', '<span class="obraativa-auth-step">ETAPA 2 DE 2 · SUA EMPRESA</span>');
+    labelInputs(card);
+    const email = $('input[name="email"]', card);
+    if (email && lastAuthEmail && !email.value) email.value = lastAuthEmail;
+    card.querySelectorAll('input[type="password"]').forEach((input, index) => enhancePasswordInput(input, ['signup', 'reset'].includes(mode) && index === 0));
+    const submit = $('button[type="submit"]', card);
+    if (submit) {
+      submit.classList.add('obraativa-auth-primary');
+      if (mode === 'signup') submit.textContent = 'Criar minha conta grátis';
+      if (mode === 'recovery') submit.textContent = 'Enviar instruções por e-mail';
+    }
+    const message = $('.cloud-message', card);
+    if (message) {
+      message.textContent = humanizeAuthMessage(message.textContent);
+      const success = !message.classList.contains('error');
+      message.classList.toggle('success', success);
+      message.setAttribute('role', success ? 'status' : 'alert');
+      message.setAttribute('aria-live', success ? 'polite' : 'assertive');
+    }
+    const notice = $('.notice', card);
+    if (notice && ['signin', 'signup'].includes(mode)) notice.classList.add('obraativa-auth-trust');
+    if (mode === 'onboarding') enhanceOnboarding(card);
   }
 
   async function resumeRemembered() {
@@ -181,26 +332,20 @@
   }
 
   function injectMobileAction() {
-    const existing = document.querySelectorAll('#app:not(.public-app) .obraativa-mobile-account-action');
-    if (!window.matchMedia('(max-width:760px)').matches) {
-      existing.forEach((action) => action.remove());
-      return;
-    }
-    const scroller = $('#app:not(.public-app) #nav .nav-extra-scroll');
-    if (!scroller || scroller.querySelector('.obraativa-mobile-account-action')) return;
-    const target = $('.mobile-more-group:last-of-type', scroller) || scroller;
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'obraativa-mobile-account-action';
-    button.innerHTML = '<span class="mobile-nav-icon" aria-hidden="true">↪</span><span class="mobile-nav-label">Sair da conta</span>';
-    button.addEventListener('click', openSignOut);
-    target.appendChild(button);
+    document.querySelectorAll('#app:not(.public-app) .obraativa-mobile-account-action').forEach((action) => action.remove());
+  }
+
+  function removeDuplicateActions() {
+    document.querySelectorAll('#app:not(.public-app) .sign-out-from-settings, #app:not(.public-app) .obraativa-mobile-account-action')
+      .forEach((action) => action.remove());
   }
 
   function refresh() {
     queued = false;
+    removeDuplicateActions();
     injectSidebarAction();
     injectMobileAction();
+    enhanceLoading();
     document.querySelectorAll('#cloudGate .cloud-auth-card').forEach(enhanceAuthCard);
   }
 
@@ -217,9 +362,45 @@
     installed = true;
     originalShowAuth = window.CloudSync.showAuth?.bind(window.CloudSync);
     originalSignOut = window.CloudSync.signOut?.bind(window.CloudSync);
+    originalShowRecovery = window.CloudSync.showRecovery?.bind(window.CloudSync);
+    originalShowPasswordReset = window.CloudSync.showPasswordReset?.bind(window.CloudSync);
+    originalShowLoading = window.CloudSync.showLoading?.bind(window.CloudSync);
+    originalShowOnboarding = window.CompanyWorkspace?.showOnboarding?.bind(window.CompanyWorkspace);
     if (originalShowAuth) {
       window.CloudSync.showAuth = function (...args) {
+        if (args[1]) args[1] = humanizeAuthMessage(args[1]);
         const result = originalShowAuth(...args);
+        schedule();
+        return result;
+      };
+    }
+    if (originalShowRecovery) {
+      window.CloudSync.showRecovery = function (...args) {
+        if (args[0]) args[0] = humanizeAuthMessage(args[0]);
+        const result = originalShowRecovery(...args);
+        schedule();
+        return result;
+      };
+    }
+    if (originalShowPasswordReset) {
+      window.CloudSync.showPasswordReset = function (...args) {
+        if (args[0]) args[0] = humanizeAuthMessage(args[0]);
+        const result = originalShowPasswordReset(...args);
+        schedule();
+        return result;
+      };
+    }
+    if (originalShowLoading) {
+      window.CloudSync.showLoading = function (...args) {
+        const result = originalShowLoading(...args);
+        schedule();
+        return result;
+      };
+    }
+    if (originalShowOnboarding) {
+      window.CompanyWorkspace.showOnboarding = function (...args) {
+        if (args[0]) args[0] = humanizeAuthMessage(args[0]);
+        const result = originalShowOnboarding(...args);
         schedule();
         return result;
       };
@@ -228,10 +409,39 @@
     document.body.addEventListener('click', (event) => {
       if (event.target.closest('[data-resume-account]')) resumeRemembered();
       if (event.target.closest('[data-forget-account]')) forgetAndShowAuth();
+      const toggle = event.target.closest('[data-password-toggle]');
+      if (toggle) {
+        const input = $('input', toggle.closest('.obraativa-password-shell'));
+        if (!input) return;
+        const visible = input.type === 'password';
+        input.type = visible ? 'text' : 'password';
+        toggle.textContent = visible ? 'Ocultar' : 'Mostrar';
+        toggle.setAttribute('aria-label', visible ? 'Ocultar senha' : 'Mostrar senha');
+        toggle.setAttribute('aria-pressed', String(visible));
+        input.focus();
+      }
     });
+    document.body.addEventListener('input', (event) => {
+      if (event.target.matches('#cloudGate input[name="email"]')) lastAuthEmail = event.target.value.trim();
+      if (event.target.matches('#cloudGate input[name="password"], #cloudGate input[name="confirmation"]')) updatePasswordStrength(event.target);
+    });
+    document.body.addEventListener('submit', (event) => {
+      const form = event.target.closest('#cloudGate form');
+      if (!form) return;
+      const email = $('input[name="email"]', form);
+      if (email) lastAuthEmail = email.value.trim();
+      const submit = $('button[type="submit"]', form);
+      if (!submit) return;
+      const mode = authMode(form.closest('.cloud-auth-card'));
+      const labels = { signin: 'Entrando…', signup: 'Criando sua conta…', recovery: 'Enviando…', reset: 'Salvando…', onboarding: 'Preparando sua empresa…' };
+      submit.disabled = true;
+      submit.classList.add('is-loading');
+      submit.setAttribute('aria-busy', 'true');
+      submit.textContent = labels[mode] || 'Aguarde…';
+    }, true);
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('resize', schedule, { passive: true });
-    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered });
+    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore });
     schedule();
   }
 

@@ -119,18 +119,7 @@
           display:none!important;
         }
 
-        body.responsive-landscape-density #app:not(.public-app) .landscape-top-company-logo {
-          display:block!important;
-          width:40px!important;
-          height:40px!important;
-          flex:0 0 40px!important;
-          padding:3px!important;
-          border:1px solid #d7e3ee!important;
-          border-radius:11px!important;
-          background:#fff!important;
-          object-fit:contain!important;
-          box-shadow:0 4px 12px #163d6814!important;
-        }
+        body.responsive-landscape-density #app:not(.public-app) .landscape-top-company-logo {display:none!important}
 
         body.responsive-landscape-density #app:not(.public-app) #cloudTopActions:empty {
           display:none!important;
@@ -303,6 +292,142 @@
           font-size:10px!important;
         }
 
+        /* Escala diária: funcionários em linhas compactas no modo horizontal. */
+        body.responsive-landscape-density #view[data-landscape-page="planning"] .table-wrap.responsive-v3-card-wrap,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] .table-wrap.mobile-ui-card-wrap {
+          overflow-x:auto!important;
+          border:1px solid #dce6ef!important;
+          border-radius:10px!important;
+          background:#fff!important;
+          box-shadow:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table {
+          display:table!important;
+          width:100%!important;
+          min-width:540px!important;
+          table-layout:fixed!important;
+          border:0!important;
+          border-collapse:collapse!important;
+          background:#fff!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table thead,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table thead {
+          display:table-header-group!important;
+          position:static!important;
+          width:auto!important;
+          height:auto!important;
+          margin:0!important;
+          padding:0!important;
+          overflow:visible!important;
+          clip:auto!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table tbody,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table tbody {
+          display:table-row-group!important;
+          width:auto!important;
+          padding:0!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table tr,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table tr {
+          display:table-row!important;
+          width:auto!important;
+          padding:0!important;
+          border:0!important;
+          border-radius:0!important;
+          background:#fff!important;
+          box-shadow:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table th,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table th {
+          padding:6px 8px!important;
+          border-bottom:1px solid #dce6ef!important;
+          background:#f4f8fc!important;
+          color:#607286!important;
+          font-size:8px!important;
+          font-weight:900!important;
+          line-height:1.2!important;
+          letter-spacing:.045em!important;
+          text-align:left!important;
+          text-transform:uppercase!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table td,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table td {
+          display:table-cell!important;
+          width:auto!important;
+          min-width:0!important;
+          padding:6px 8px!important;
+          border:0!important;
+          border-bottom:1px solid #e7edf3!important;
+          color:#21384f!important;
+          font-size:10px!important;
+          line-height:1.2!important;
+          text-align:left!important;
+          vertical-align:middle!important;
+          white-space:normal!important;
+          overflow-wrap:anywhere!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table tbody tr:last-child td,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table tbody tr:last-child td {
+          border-bottom:0!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table td::before,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table td::before {
+          display:none!important;
+          content:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table th:first-child,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table th:first-child,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table td:first-child,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table td:first-child {
+          width:54px!important;
+          text-align:center!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table th:nth-child(2),
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table th:nth-child(2) {
+          width:34%!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table th:nth-child(3),
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table th:nth-child(3) {
+          width:28%!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table tbody td b {
+          display:inline!important;
+          font-size:10px!important;
+          line-height:1.2!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table tbody td .badge {
+          display:inline-flex!important;
+          align-items:center!important;
+          min-height:22px!important;
+          padding:3px 7px!important;
+          font-size:8px!important;
+          line-height:1.15!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table input[type="checkbox"] {
+          width:16px!important;
+          height:16px!important;
+          margin:0!important;
+        }
+
         /* Relatórios: cada funcionário continua completo em cartões compactos. */
         body.responsive-landscape-density #view[data-landscape-page="reports"] table.responsive-v3-card-table tbody,
         body.responsive-landscape-density #view[data-landscape-page="reports"] table.mobile-ui-card-table tbody {
@@ -420,6 +545,224 @@
           margin:0!important;
           padding:8px!important;
           font-size:10px!important;
+        }
+
+        /* Padrão compacto para todas as abas internas no uso horizontal. */
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) {
+          font-size:11px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .page-title {
+          margin:0!important;
+          font-size:19px!important;
+          line-height:1.15!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .sub {
+          margin:2px 0 6px!important;
+          font-size:10px!important;
+          line-height:1.3!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .section-head {
+          gap:8px!important;
+          margin-bottom:7px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .section {
+          margin-top:8px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .card {
+          padding:9px!important;
+          border-radius:10px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .toolbar {
+          gap:7px!important;
+          margin-bottom:8px!important;
+          padding:8px!important;
+          border-radius:10px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .field label {
+          margin-bottom:3px!important;
+          font-size:8px!important;
+          line-height:1.15!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .field input,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .field select {
+          min-height:34px!important;
+          padding:6px 8px!important;
+          font-size:10px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .btn:not(.assistant-avatar-bubble) {
+          min-height:32px!important;
+          padding:5px 9px!important;
+          font-size:9px!important;
+          line-height:1.2!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .notice {
+          padding:7px 9px!important;
+          border-radius:8px!important;
+          font-size:10px!important;
+          line-height:1.3!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .two,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .grid {
+          gap:8px!important;
+        }
+
+        /* Listas de todas as abas deixam de virar cartões altos e voltam a ser linhas. */
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .table-wrap.responsive-v3-card-wrap,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .table-wrap.mobile-ui-card-wrap {
+          overflow-x:auto!important;
+          overflow-y:visible!important;
+          border:1px solid #dce6ef!important;
+          border-radius:10px!important;
+          background:#fff!important;
+          box-shadow:none!important;
+          scrollbar-width:thin!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table {
+          display:table!important;
+          width:100%!important;
+          min-width:680px!important;
+          table-layout:auto!important;
+          border:0!important;
+          border-collapse:collapse!important;
+          background:#fff!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="planning"] table.mobile-ui-card-table {
+          min-width:540px!important;
+          table-layout:fixed!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="team"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="team"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="vehicles"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="vehicles"] table.mobile-ui-card-table {
+          min-width:720px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page="reports"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="reports"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="financial"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="financial"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="payments"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #view[data-landscape-page="payments"] table.mobile-ui-card-table {
+          min-width:920px!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table thead,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table thead {
+          display:table-header-group!important;
+          position:static!important;
+          width:auto!important;
+          height:auto!important;
+          margin:0!important;
+          padding:0!important;
+          overflow:visible!important;
+          clip:auto!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tbody,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tbody {
+          display:table-row-group!important;
+          width:auto!important;
+          padding:0!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tr,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tr {
+          display:table-row!important;
+          width:auto!important;
+          padding:0!important;
+          border:0!important;
+          border-radius:0!important;
+          background:#fff!important;
+          box-shadow:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tr[hidden],
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tr[hidden] {
+          display:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table th,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table th {
+          padding:6px 8px!important;
+          border-bottom:1px solid #dce6ef!important;
+          background:#f4f8fc!important;
+          color:#607286!important;
+          font-size:8px!important;
+          font-weight:900!important;
+          line-height:1.2!important;
+          letter-spacing:.04em!important;
+          text-align:left!important;
+          text-transform:uppercase!important;
+          white-space:nowrap!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td {
+          display:table-cell!important;
+          width:auto!important;
+          min-width:0!important;
+          padding:6px 8px!important;
+          border:0!important;
+          border-bottom:1px solid #e7edf3!important;
+          color:#21384f!important;
+          font-size:10px!important;
+          line-height:1.2!important;
+          text-align:left!important;
+          vertical-align:middle!important;
+          white-space:normal!important;
+          overflow-wrap:anywhere!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tbody tr:nth-child(even) td,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tbody tr:nth-child(even) td {
+          background:#fbfdff!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tbody tr:last-child td,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tbody tr:last-child td {
+          border-bottom:0!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td::before,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td::before {
+          display:none!important;
+          content:none!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td .btn,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td .btn {
+          display:inline-flex!important;
+          flex:0 0 auto!important;
+          width:auto!important;
+          min-width:0!important;
+          min-height:28px!important;
+          padding:4px 7px!important;
+          font-size:8px!important;
+          white-space:nowrap!important;
+        }
+
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td.empty,
+        body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td.empty {
+          padding:16px 10px!important;
+          text-align:center!important;
         }
 
         /* Início: mesma informação, com hierarquia mais clara e cartões menores. */
@@ -684,6 +1027,129 @@
           width:100%!important;
           margin:0!important;
         }
+
+        /* Prioridade final: mantém o padrão em linhas acima das camadas legadas de cartões. */
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) .table-wrap.responsive-v3-card-wrap,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) .table-wrap.mobile-ui-card-wrap {
+          overflow-x:auto!important;
+          border:1px solid #dce6ef!important;
+          border-radius:10px!important;
+          background:#fff!important;
+          box-shadow:none!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table {
+          display:table!important;
+          width:100%!important;
+          min-width:680px!important;
+          border-collapse:collapse!important;
+          background:#fff!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="planning"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="planning"] table.mobile-ui-card-table {
+          min-width:540px!important;
+          table-layout:fixed!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="team"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="team"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="vehicles"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="vehicles"] table.mobile-ui-card-table {
+          min-width:720px!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="reports"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="reports"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] table.mobile-ui-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="payments"] table.responsive-v3-card-table,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="payments"] table.mobile-ui-card-table {
+          min-width:920px!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table thead,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table thead {
+          display:table-header-group!important;
+          position:static!important;
+          width:auto!important;
+          height:auto!important;
+          margin:0!important;
+          overflow:visible!important;
+          clip:auto!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tbody,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tbody {
+          display:table-row-group!important;
+          width:auto!important;
+          padding:0!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tr,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tr {
+          display:table-row!important;
+          width:auto!important;
+          padding:0!important;
+          border:0!important;
+          border-radius:0!important;
+          background:#fff!important;
+          box-shadow:none!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table tr[hidden],
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table tr[hidden] {
+          display:none!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table th,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table th,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td {
+          display:table-cell!important;
+          width:auto!important;
+          min-width:0!important;
+          padding:6px 8px!important;
+          border:0!important;
+          border-bottom:1px solid #e3eaf1!important;
+          font-size:10px!important;
+          line-height:1.2!important;
+          text-align:left!important;
+          vertical-align:middle!important;
+          white-space:normal!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table th,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table th {
+          padding-top:6px!important;
+          padding-bottom:6px!important;
+          background:#f4f8fc!important;
+          color:#607286!important;
+          font-size:8px!important;
+          font-weight:900!important;
+          letter-spacing:.04em!important;
+          text-transform:uppercase!important;
+          white-space:nowrap!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td::before,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td::before {
+          display:none!important;
+          content:none!important;
+        }
+
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.responsive-v3-card-table td .btn,
+        body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page]:not([data-landscape-page="home"]) table.mobile-ui-card-table td .btn {
+          display:inline-flex!important;
+          flex:0 0 auto!important;
+          width:auto!important;
+          min-width:0!important;
+          min-height:28px!important;
+          padding:4px 7px!important;
+          font-size:8px!important;
+          white-space:nowrap!important;
+        }
       }
 
       @media (orientation:landscape) and (max-width:760px) {
@@ -715,20 +1181,7 @@
   function syncCompactTop(enabled) {
     const top = document.querySelector('#app:not(.public-app) .top');
     if (!top) return;
-    let logo = top.querySelector('.landscape-top-company-logo');
-    if (!enabled) {
-      logo?.remove();
-      return;
-    }
-    if (!logo) {
-      logo = document.createElement('img');
-      logo.className = 'landscape-top-company-logo';
-      const first = top.firstElementChild;
-      top.insertBefore(logo, first || null);
-    }
-    const source = document.querySelector('#app:not(.public-app) .side .brand-logo');
-    logo.src = source?.currentSrc || source?.src || 'public-assets/controle-de-obra-icone-v1.svg';
-    logo.alt = source?.alt || 'Logo da empresa';
+    top.querySelector('.landscape-top-company-logo')?.remove();
   }
 
   function syncSettingsShortcuts(enabled) {

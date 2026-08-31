@@ -1,8 +1,8 @@
-#app:not(.public-app) .obraativa-account-session-footer{flex:0 0 auto;padding:8px 0 0;border-top:1px solid #ffffff1f;background:transparent}
-#app:not(.public-app) .obraativa-account-session-footer button{display:flex;align-items:center;justify-content:flex-start;gap:9px;width:100%;min-height:44px;padding:11px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#dceaff;font-size:14px;line-height:1.2;font-weight:600;cursor:pointer;transition:background .16s ease,border-color .16s ease}
-#app:not(.public-app) .obraativa-account-session-footer button:hover{border-color:transparent;background:#194983}
+#app:not(.public-app) .obraativa-account-session-footer{flex:0 0 auto;margin-top:auto;padding:6px 0 0;border-top:1px solid #ffffff12;background:transparent}
+#app:not(.public-app) .obraativa-account-session-footer button{display:flex;align-items:center;justify-content:flex-start;gap:7px;width:100%;min-height:38px;padding:8px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:#b9cee7;font-size:11px;line-height:1.2;font-weight:550;opacity:.78;cursor:pointer;transition:background .16s ease,color .16s ease,opacity .16s ease}
+#app:not(.public-app) .obraativa-account-session-footer button:hover{border-color:transparent;background:#ffffff0a;color:#e8f3ff;opacity:1}
 #app:not(.public-app) .obraativa-account-session-footer button:focus-visible{outline:3px solid #8fc7ff;outline-offset:2px}
-#app:not(.public-app) .obraativa-account-session-footer button span:first-child{display:grid;place-items:center;width:auto;height:auto;border-radius:0;background:transparent;color:inherit;font-size:17px;line-height:1}
+#app:not(.public-app) .obraativa-account-session-footer button span:first-child{display:grid;place-items:center;width:auto;height:auto;border-radius:0;background:transparent;color:inherit;font-size:13px;line-height:1}
 #app:not(.public-app) .obraativa-account-session-footer button span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:normal}
 #app:not(.public-app) .obraativa-mobile-account-action{color:#a72d39!important;border-top:1px solid #edf0f3!important}
 #app:not(.public-app) .obraativa-mobile-account-action .mobile-nav-icon{color:#c24751}
@@ -10,9 +10,9 @@
   #app:not(.public-app) .obraativa-mobile-account-action{display:none!important}
 }
 @media (min-width:761px) and (max-width:1024px), (orientation:landscape) and (max-height:600px) and (max-width:1024px){
-  #app:not(.public-app) .obraativa-account-session-footer{width:100%;padding:4px 0 0;border-top:0}
-  #app:not(.public-app) .obraativa-account-session-footer button{flex-direction:column;justify-content:center;gap:2px;width:100%;height:44px;min-height:44px;max-height:48px;padding:5px 3px;border-radius:10px;font-size:9px;line-height:1.05;text-align:center;white-space:normal;overflow:hidden}
-  #app:not(.public-app) .obraativa-account-session-footer button span:first-child{font-size:17px}
+  #app:not(.public-app) .obraativa-account-session-footer{width:100%;padding:3px 0 0;border-top:1px solid #ffffff0d}
+  #app:not(.public-app) .obraativa-account-session-footer button{flex-direction:column;justify-content:center;gap:1px;width:100%;height:38px;min-height:38px;max-height:40px;padding:3px 2px;border-radius:8px;font-size:8px;line-height:1.05;text-align:center;white-space:normal;overflow:hidden}
+  #app:not(.public-app) .obraativa-account-session-footer button span:first-child{font-size:12px}
   #app:not(.public-app) .obraativa-account-session-footer button span:last-child{display:block;max-width:100%;text-align:center}
 }
 .obraativa-account-dialog{position:fixed;z-index:2200;inset:0;display:grid;place-items:center;padding:18px;background:#061425a8;backdrop-filter:blur(4px)}
@@ -43,7 +43,91 @@
   .obraativa-account-dialog-card footer{display:grid;grid-template-columns:1fr 1fr}
   .obraativa-account-dialog-card footer .btn{width:100%}
 }
+@media(max-width:760px){body.responsive-v3-landscape-phone #app:not(.public-app) .obraativa-account-session-footer{display:block}}
 @media(max-width:440px){
   .obraativa-remembered-account{grid-template-columns:1fr}
   .obraativa-remembered-account>[data-resume-account]{grid-column:1;grid-row:auto;width:100%}
+}
+
+/* Experiência de acesso: somente apresentação, feedback e acessibilidade. */
+body:has(#cloudGate){overflow:hidden}
+#cloudGate.cloud-gate{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overscroll-behavior:contain;background:radial-gradient(circle at 76% 18%,#18815a2c,transparent 28%),linear-gradient(135deg,#061a30f5,#0b3d58f2 58%,#0d654ef0);backdrop-filter:blur(8px)}
+#cloudGate .cloud-auth-card.obraativa-auth-experience{position:relative;width:min(480px,100%);max-height:calc(100dvh - 24px);padding:27px 28px 24px;border:1px solid #ffffff55;border-radius:20px;scrollbar-width:thin;scrollbar-color:#b9c9d4 transparent;box-shadow:0 28px 80px #020c1d8a,0 0 0 1px #092a3c12}
+#cloudGate .obraativa-auth-experience .top-brand{margin:0 38px 17px 0}
+#cloudGate .obraativa-auth-experience .top-brand span{color:#1671c9;font-size:9px;letter-spacing:.13em}
+#cloudGate .obraativa-auth-experience .top-brand strong{color:#163b4c;font-size:18px}
+#cloudGate .obraativa-auth-experience h1{margin:0 0 7px;color:#10283c;font-size:clamp(24px,3vw,30px);line-height:1.12;letter-spacing:-.035em}
+#cloudGate .obraativa-auth-experience>p{margin:0;color:#5d7181;font-size:14px;line-height:1.48}
+#cloudGate .obraativa-auth-experience .form{gap:12px;margin-top:18px}
+#cloudGate .obraativa-auth-experience .field{min-width:0}
+#cloudGate .obraativa-auth-experience .field>label{display:block;margin-bottom:6px;color:#2c4651;font-size:11px;font-weight:850;letter-spacing:.04em}
+#cloudGate .obraativa-auth-experience input:not([type="checkbox"]):not([type="radio"]),#cloudGate .obraativa-auth-experience select,#cloudGate .obraativa-auth-experience textarea{width:100%;min-height:48px;padding:11px 13px;border:1px solid #cbd9e2;border-radius:10px;background:#fff;color:#122d3f;font-size:16px;line-height:1.25;box-shadow:inset 0 1px 2px #103a4d08;transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}
+#cloudGate .obraativa-auth-experience input:not([type="checkbox"]):not([type="radio"]):hover{border-color:#91adbd}
+#cloudGate .obraativa-auth-experience input:not([type="checkbox"]):not([type="radio"]):focus,#cloudGate .obraativa-auth-experience select:focus,#cloudGate .obraativa-auth-experience textarea:focus{outline:0;border-color:#1675d1;box-shadow:0 0 0 3px #1675d124}
+#cloudGate .obraativa-auth-experience input:not([type="checkbox"]):not([type="radio"])::placeholder{color:#83929c;opacity:1}
+#cloudGate .obraativa-auth-experience .check-line{align-items:flex-start;gap:8px;color:#405966;font-size:12px;line-height:1.4}
+#cloudGate .obraativa-auth-experience .check-line input[type="checkbox"]{flex:0 0 auto;width:18px;height:18px;min-height:18px;margin:0;accent-color:#0874c9}
+#cloudGate .obraativa-auth-experience .obraativa-auth-primary{position:relative;min-height:50px;margin-top:3px;border-radius:10px;background:linear-gradient(135deg,#087bd5,#0757c7);color:#fff;font-size:15px;font-weight:850;box-shadow:0 9px 20px #096bc42e;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+#cloudGate .obraativa-auth-experience .form>.obraativa-auth-primary{grid-column:1/-1;width:100%}
+#cloudGate .obraativa-auth-experience .obraativa-auth-primary:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 12px 24px #096bc43b}
+#cloudGate .obraativa-auth-experience .obraativa-auth-primary:focus-visible,#cloudGate .obraativa-auth-experience .cloud-link:focus-visible,#cloudGate .obraativa-auth-experience summary:focus-visible{outline:3px solid #73b6f2;outline-offset:3px}
+#cloudGate .obraativa-auth-experience .obraativa-auth-primary.is-loading{cursor:wait;opacity:.88}
+#cloudGate .obraativa-auth-experience .obraativa-auth-primary.is-loading::before{content:'';display:inline-block;width:15px;height:15px;margin-right:8px;border:2px solid #ffffff75;border-top-color:#fff;border-radius:50%;vertical-align:-3px;animation:obraativa-auth-spin .8s linear infinite}
+#cloudGate .obraativa-auth-experience .cloud-link{min-height:42px;margin-top:7px;padding:9px 6px;border-radius:8px;color:#1266bf;font-size:13px;font-weight:800;text-decoration:none}
+#cloudGate .obraativa-auth-experience .cloud-link:hover{background:#edf6ff;color:#064f9b}
+#cloudGate .obraativa-auth-experience .cloud-message{position:relative;margin-top:14px;padding:12px 13px 12px 38px;border:1px solid #c9dcee;border-radius:10px;background:#f2f8ff;color:#255b8d;font-size:13px;line-height:1.45}
+#cloudGate .obraativa-auth-experience .cloud-message::before{position:absolute;left:13px;top:12px;content:'i';display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#2a75b7;color:#fff;font-size:11px;font-weight:900}
+#cloudGate .obraativa-auth-experience .cloud-message.error{border-color:#efc8cd;background:#fff3f4;color:#9f2633}
+#cloudGate .obraativa-auth-experience .cloud-message.error::before{content:'!';background:#c23542}
+#cloudGate .obraativa-auth-experience .cloud-message.success{border-color:#bfe2ce;background:#f1fbf5;color:#176943}
+#cloudGate .obraativa-auth-experience .cloud-message.success::before{content:'✓';background:#16945c}
+#cloudGate .obraativa-auth-experience .obraativa-auth-trust{margin:13px 0 0;padding:10px 12px;border:1px solid #d9e8e1;border-radius:9px;background:#f7fbf9;color:#526f62;font-size:11px;line-height:1.45}
+.obraativa-password-shell{position:relative}
+.obraativa-password-shell input{padding-right:76px!important}
+.obraativa-password-toggle{position:absolute;top:50%;right:7px;min-width:68px;min-height:38px;padding:6px 9px;border:0;border-radius:7px;background:#edf4f8;color:#235a76;font-size:11px;font-weight:850;transform:translateY(-50%);cursor:pointer}
+.obraativa-password-toggle:hover{background:#ddebf2;color:#123f58}
+.obraativa-password-toggle:focus-visible{outline:3px solid #73b6f2;outline-offset:1px}
+.obraativa-password-strength{display:grid;grid-template-columns:minmax(80px,1fr) auto;align-items:center;gap:6px 9px;margin-top:7px;color:#61747f;font-size:10px}
+.obraativa-password-meter{height:5px;overflow:hidden;border-radius:99px;background:#e3eaee}
+.obraativa-password-meter i{display:block;width:0;height:100%;border-radius:inherit;background:#c3424c;transition:width .2s ease,background .2s ease}
+.obraativa-password-strength[data-score="1"] .obraativa-password-meter i{width:33%;background:#c3424c}.obraativa-password-strength[data-score="2"] .obraativa-password-meter i{width:66%;background:#bd811a}.obraativa-password-strength[data-score="3"] .obraativa-password-meter i{width:100%;background:#188a58}
+.obraativa-password-strength>b{color:#455e69;font-size:10px}
+.obraativa-password-strength ul{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 10px;margin:0;padding:0;list-style:none}
+.obraativa-password-strength li{color:#70828b}.obraativa-password-strength li.done{color:#18734b}.obraativa-password-strength li i{font-style:normal;font-weight:900}
+.obraativa-auth-step{display:inline-flex;margin:0 0 7px;padding:4px 7px;border-radius:99px;background:#eaf6f1;color:#1b7956;font-size:9px;font-weight:900;letter-spacing:.08em}
+.obraativa-auth-optional{grid-column:1/-1;border:1px solid #d8e3e8;border-radius:10px;background:#f8fbfc}
+.obraativa-auth-optional summary{padding:11px 12px;color:#24536a;font-size:12px;font-weight:850;cursor:pointer}
+.obraativa-auth-optional summary small{color:#758891;font-weight:650}
+.obraativa-auth-optional-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:2px 11px 12px}
+#cloudGate .cloud-loading{display:grid;justify-items:center;gap:8px;max-width:420px;padding:24px;color:#fff;text-align:center;text-shadow:0 2px 12px #00152f80}
+#cloudGate .cloud-loading b{margin:0;font-size:22px}
+#cloudGate .cloud-loading span{font-size:14px;line-height:1.5}
+.obraativa-auth-spinner{width:34px;height:34px;border:3px solid #ffffff48;border-top-color:#fff;border-radius:50%;animation:obraativa-auth-spin .8s linear infinite}
+@keyframes obraativa-auth-spin{to{transform:rotate(360deg)}}
+@media(max-width:560px){
+  #cloudGate .cloud-auth-card.obraativa-auth-experience{padding:23px 18px 19px;border-radius:17px}
+  #cloudGate .obraativa-auth-experience .top-brand{margin-bottom:13px}
+  #cloudGate .obraativa-auth-experience h1{font-size:24px}
+  .obraativa-auth-optional-grid{grid-template-columns:1fr}
+}
+@media(orientation:landscape) and (max-height:600px){
+  #cloudGate.cloud-gate{align-items:center;padding:7px 10px}
+  #cloudGate .cloud-auth-card.obraativa-auth-experience{width:min(690px,100%);max-height:calc(100dvh - 14px);padding:13px 18px 12px;border-radius:15px}
+  #cloudGate .obraativa-auth-experience .top-brand{margin:0 38px 7px 0}
+  #cloudGate .obraativa-auth-experience .top-brand img{width:35px!important;height:35px!important}
+  #cloudGate .obraativa-auth-experience .top-brand span{font-size:7px}
+  #cloudGate .obraativa-auth-experience .top-brand strong{font-size:14px}
+  #cloudGate .obraativa-auth-experience h1{font-size:20px}
+  #cloudGate .obraativa-auth-experience>p{font-size:11px;line-height:1.35}
+  #cloudGate .obraativa-auth-experience .form{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin-top:9px}
+  #cloudGate .obraativa-auth-signin .form>.field.wide,#cloudGate .obraativa-auth-signup .form>.field.wide{grid-column:auto}
+  #cloudGate .obraativa-auth-experience input:not([type="checkbox"]):not([type="radio"]){min-height:44px;padding-top:8px;padding-bottom:8px;font-size:14px}
+  #cloudGate .obraativa-auth-experience .obraativa-auth-primary{grid-column:1/-1;min-height:44px;margin:0}
+  #cloudGate .obraativa-auth-experience .cloud-link{display:inline-flex;width:auto;min-height:40px;margin:3px 6px 0 0;padding:7px 9px}
+  #cloudGate .obraativa-auth-experience .obraativa-auth-trust{display:inline-block;margin-top:4px;padding:6px 8px;font-size:9px}
+  .obraativa-password-strength ul{gap:2px 7px;font-size:9px}
+  .obraativa-auth-step{margin-bottom:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  #cloudGate .obraativa-auth-experience *,#cloudGate .cloud-loading *{scroll-behavior:auto!important;transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
 }

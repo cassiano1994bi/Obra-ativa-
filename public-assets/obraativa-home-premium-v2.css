@@ -1,0 +1,520 @@
+:root{
+  --obra-home-navy:#071a2e;
+  --obra-home-blue:#1268e8;
+  --obra-home-green:#19a765;
+  --obra-home-lime:#7dde8d;
+  --obra-home-ink:#122035;
+  --obra-home-muted:#68778b;
+  --obra-home-line:#dbe4ee;
+  --obra-home-surface:#ffffff;
+  --obra-home-soft:#f4f7fb;
+}
+
+/* Na página inicial, a marca fica exclusivamente na barra lateral. */
+#app:not(.public-app)>.main:has(#view[data-landscape-page="home"])>.top{display:none!important}
+#app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline{display:none!important}
+#app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child{grid-template-columns:minmax(0,1fr)}
+#app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child>:not(.obraativa-home-brandline){grid-column:1}
+
+#app:not(.public-app) .home-operational.obraativa-home-premium{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px!important;
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head,
+#app:not(.public-app) .obraativa-home-premium>.obraativa-quick-section,
+#app:not(.public-app) .obraativa-home-premium>.obraativa-metrics,
+#app:not(.public-app) .obraativa-home-premium>.obraativa-schedule-panel,
+#app:not(.public-app) .obraativa-home-premium>.obraativa-overview-grid,
+#app:not(.public-app) .obraativa-home-premium>.home-insights,
+#app:not(.public-app) .obraativa-home-premium>.home-weather-card,
+#app:not(.public-app) .obraativa-home-premium>.assistant-home-shortcut{
+  grid-column:1/-1!important;
+  grid-row:auto!important;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head{
+  position:relative;
+  isolation:isolate;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center!important;
+  gap:16px!important;
+  min-height:110px!important;
+  padding:12px 16px!important;
+  overflow:hidden;
+  border:1px solid #244765!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 88% -25%,#1680ff66 0,transparent 42%),
+    radial-gradient(circle at 9% 120%,#1bb8734d 0,transparent 38%),
+    linear-gradient(125deg,#071a2e,#0b2a49 62%,#0d3b51)!important;
+  color:#fff;
+  box-shadow:0 20px 44px #071a2e24!important;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head>div:first-child{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  column-gap:14px;
+  align-items:center;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head>div:first-child>.obraativa-home-brandline{
+  grid-column:1;
+  grid-row:1/5;
+  align-self:center;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head>div:first-child>:not(.obraativa-home-brandline){grid-column:2}
+
+#app:not(.public-app) .obraativa-home-premium>.home-operational-head:after{
+  position:absolute;
+  right:-46px;
+  bottom:-72px;
+  z-index:-1;
+  width:250px;
+  height:250px;
+  border:1px solid #ffffff18;
+  border-radius:50%;
+  box-shadow:0 0 0 34px #ffffff08,0 0 0 70px #ffffff05;
+  content:"";
+}
+
+#app:not(.public-app) .obraativa-home-brandline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:7px;
+}
+
+#app:not(.public-app) .obraativa-home-brandline img{
+  width:40px;
+  height:40px;
+  padding:3px;
+  object-fit:contain;
+  border:1px solid #ffffff2b;
+  border-radius:12px;
+  background:#061728;
+  box-shadow:0 8px 18px #0005;
+}
+
+#app:not(.public-app) .obraativa-home-brandline>span{display:grid;gap:1px}
+#app:not(.public-app) .obraativa-home-brandline b{color:#fff;font-size:16px;letter-spacing:-.02em}
+#app:not(.public-app) .obraativa-home-brandline small{color:#8ee7ac!important;font-size:9px!important;font-weight:900!important;letter-spacing:.12em!important}
+#app:not(.public-app) .obraativa-home-premium .home-operational-head>div>small:not(.obraativa-home-brandline small){color:#8ee7ac!important;font-size:10px!important}
+#app:not(.public-app) .obraativa-home-premium .home-operational-head h1{margin:3px 0!important;color:#fff!important;font-size:clamp(24px,2.25vw,31px)!important;line-height:1.08!important;letter-spacing:-.04em!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-home-user-name{font-size:.62em;font-weight:700;letter-spacing:-.01em}
+#app:not(.public-app) .obraativa-home-premium .home-operational-head p{margin:0!important;color:#c9d8e7!important;font-size:13px!important}
+#app:not(.public-app) .obraativa-home-date{display:block;margin-top:5px;color:#a8bdd0;font-size:11px;font-weight:650}
+
+#app:not(.public-app) .obraativa-home-premium .obraativa-home-head-actions{align-self:end}
+#app:not(.public-app) .obraativa-home-premium .obraativa-shortcut-editor-button{
+  min-height:42px!important;
+  padding:9px 13px!important;
+  border-color:#ffffff38!important;
+  background:#ffffff14!important;
+  color:#fff!important;
+  backdrop-filter:blur(8px);
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-shortcut-editor-button:hover{border-color:#8ee7ac!important;background:#ffffff22!important}
+
+#app:not(.public-app) .obraativa-home-premium .home-pay-chip{
+  align-self:end;
+  min-width:210px!important;
+  padding:10px 13px!important;
+  border:1px solid #ffffff2b!important;
+  border-radius:14px!important;
+  background:#ffffff10!important;
+  color:#fff!important;
+  text-align:left!important;
+  backdrop-filter:blur(8px);
+}
+#app:not(.public-app) .obraativa-home-premium .home-pay-chip small{color:#8ee7ac!important;font-size:9px!important;letter-spacing:.09em}
+#app:not(.public-app) .obraativa-home-premium .home-pay-chip b{color:#fff!important;font-size:15px!important}
+
+#app:not(.public-app) .obraativa-home-premium>.obraativa-quick-section{
+  display:grid;
+  gap:12px;
+  margin:0!important;
+}
+#app:not(.public-app) .obraativa-home-premium>.obraativa-quick-section>.home-section-head{display:none!important}
+#app:not(.public-app) .obraativa-home-premium .home-section-head{align-items:end!important}
+#app:not(.public-app) .obraativa-home-premium .home-section-head h2{color:var(--obra-home-ink)!important;font-size:22px!important;letter-spacing:-.03em}
+#app:not(.public-app) .obraativa-home-premium .home-section-head p{margin-top:5px!important;color:var(--obra-home-muted)!important;font-size:13px!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut{
+  position:relative;
+  grid-template-columns:82px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  min-height:136px!important;
+  padding:18px!important;
+  column-gap:18px!important;
+  row-gap:4px!important;
+  overflow:hidden;
+  border:1px solid var(--obra-home-line)!important;
+  border-radius:19px!important;
+  background:linear-gradient(145deg,#fff,#f8fafc)!important;
+  color:var(--obra-home-ink)!important;
+  box-shadow:0 10px 26px #112b4a0d!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut:before{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(#1a77f0,#13a86a);
+  content:"";
+}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut:hover{border-color:#8ebbf1!important;box-shadow:0 16px 30px #124b8f1b!important;transform:translateY(-3px)!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut:focus-visible{outline:3px solid #6aa9ff;outline-offset:3px}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut-icon{
+  grid-row:1/3!important;
+  width:80px!important;
+  height:80px!important;
+  padding:0!important;
+  border:1px solid #d8e6f7!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#eef5ff,#f4fff8)!important;
+  color:#176cdf!important;
+  box-shadow:inset 0 1px #fff,0 7px 15px #143b6b12!important;
+}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut-icon .obraativa-icon-art{width:52px;height:52px}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut b{align-self:end!important;font-size:20px!important;font-weight:700!important;line-height:1.14!important;letter-spacing:-.025em}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut small{align-self:start!important;margin:1px 0 0!important;color:#58687b!important;font-size:13px!important;font-weight:500!important;line-height:1.38!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut.finance{border-color:#cfe8dc!important;background:linear-gradient(145deg,#f5fff9,#fff)!important;color:var(--obra-home-ink)!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut.finance .home-shortcut-icon{background:linear-gradient(145deg,#e6faef,#f4fff9)!important;color:#168255!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut.finance small{color:#60766b!important}
+#app:not(.public-app) .obraativa-home-premium .home-shortcut[hidden]{display:none!important}
+
+/* A camada de densidade é injetada depois do CSS principal. Estes seletores
+   mantêm a proporção premium sem alterar a lógica responsiva ou os cliques. */
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium .home-shortcut,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-shortcut{
+  grid-template-columns:clamp(70px,5vw,82px) minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  min-height:clamp(126px,9vw,140px)!important;
+  padding:clamp(16px,1.35vw,20px)!important;
+  column-gap:clamp(14px,1.25vw,18px)!important;
+  row-gap:4px!important;
+  border-radius:18px!important;
+}
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium .home-shortcut-icon,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-shortcut-icon{
+  grid-row:1/3!important;
+  width:clamp(68px,4.7vw,80px)!important;
+  height:clamp(68px,4.7vw,80px)!important;
+  border-radius:17px!important;
+}
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium .home-shortcut-icon .obraativa-icon-art,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-shortcut-icon .obraativa-icon-art{
+  width:clamp(46px,3.1vw,54px)!important;
+  height:clamp(46px,3.1vw,54px)!important;
+}
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium .home-shortcut b,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-shortcut b{
+  align-self:end!important;
+  font-size:clamp(17px,1.25vw,20px)!important;
+  font-weight:700!important;
+  line-height:1.14!important;
+}
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium .home-shortcut small,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-shortcut small{
+  align-self:start!important;
+  margin:1px 0 0!important;
+  color:#58687b!important;
+  font-size:clamp(12px,.86vw,13.5px)!important;
+  font-weight:500!important;
+  line-height:1.38!important;
+}
+
+#app:not(.public-app) .obraativa-home-premium>.obraativa-metrics{
+  grid-column:1/span 6!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px!important;
+}
+body.responsive-home-desktop #app:not(.public-app) #view .obraativa-home-premium>.obraativa-metrics,
+body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.obraativa-metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric{
+  display:grid!important;
+  grid-template-columns:58px minmax(0,1fr)!important;
+  align-items:center!important;
+  align-content:center!important;
+  gap:11px!important;
+  min-height:132px!important;
+  padding:14px!important;
+  border:1px solid var(--obra-home-line)!important;
+  border-radius:16px!important;
+  background:linear-gradient(135deg,#f7fbff,#fff)!important;
+  box-shadow:0 7px 20px #102d500a!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric:first-child{border-color:#cfe0f5!important;background:linear-gradient(135deg,#eef6ff,#fff)!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric.green{border-color:#cde8db!important;background:linear-gradient(135deg,#effaf4,#fff)!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric:before{display:none!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric-icon{width:58px!important;height:58px!important;border-radius:15px!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric-icon .obraativa-icon-art{width:40px;height:40px}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric small{color:#52677f!important;font-size:12px!important;font-weight:750!important;line-height:1.25!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric strong{display:block;margin-top:5px!important;color:#1268e8!important;font-size:clamp(18px,1.45vw,22px)!important;line-height:1.08!important;overflow-wrap:anywhere}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric>div>span{display:block;margin-top:5px;color:#718196;font-size:10.5px;line-height:1.3}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric.green strong{color:#12915a!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric.amber strong{color:#b87515!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-metric.negative strong{color:#c13d49!important}
+
+#app:not(.public-app) .obraativa-home-premium .obraativa-panel{
+  overflow:hidden;
+  border:1px solid var(--obra-home-line)!important;
+  border-radius:19px!important;
+  background:#fff!important;
+  box-shadow:0 10px 28px #102d500b!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-panel-head{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  min-height:0!important;
+  padding:18px 20px 15px!important;
+  border-bottom:1px solid #e8eef5!important;
+  background:linear-gradient(180deg,#fff,#fbfcfe)!important;
+}
+#app:not(.public-app) .obraativa-section-kicker{display:block;margin-bottom:4px;color:#15925b;font-size:9px;font-weight:900;letter-spacing:.11em}
+#app:not(.public-app) .obraativa-home-premium .obraativa-panel-head h2{margin:0!important;color:var(--obra-home-ink)!important;font-size:20px!important;letter-spacing:-.025em}
+#app:not(.public-app) .obraativa-home-premium .obraativa-panel-head p{margin:4px 0 0;color:#788698;font-size:11px;line-height:1.4}
+#app:not(.public-app) .obraativa-home-premium .obraativa-panel-link{min-height:36px;padding:7px 10px;border:1px solid #cbdcf2!important;border-radius:9px!important;background:#f7faff!important;color:#1268df!important;white-space:nowrap}
+
+#app:not(.public-app) .obraativa-schedule-list{display:grid}
+#app:not(.public-app) .obraativa-schedule-row{
+  display:grid;
+  grid-template-columns:48px minmax(0,1.5fr) minmax(96px,.45fr) minmax(150px,.7fr);
+  align-items:center;
+  gap:14px;
+  padding:14px 20px;
+  border-bottom:1px solid #edf1f5;
+}
+#app:not(.public-app) .obraativa-schedule-row:last-child{border-bottom:0}
+#app:not(.public-app) .obraativa-schedule-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#edf5ff;color:#156bdd}
+#app:not(.public-app) .obraativa-schedule-copy b{display:block;color:#1a2b40;font-size:14px}
+#app:not(.public-app) .obraativa-schedule-copy small{display:block;margin-top:4px;color:#6c7b8d;font-size:11px;line-height:1.4}
+#app:not(.public-app) .obraativa-schedule-meta{padding-left:14px;border-left:1px solid #e5ebf2}
+#app:not(.public-app) .obraativa-schedule-meta strong{display:block;color:#116bdf;font-size:21px}
+#app:not(.public-app) .obraativa-schedule-meta span{color:#768598;font-size:10px}
+#app:not(.public-app) .obraativa-schedule-lead small{display:block;color:#8290a1;font-size:8px;font-weight:900;letter-spacing:.07em}
+#app:not(.public-app) .obraativa-schedule-lead b{display:block;margin-top:4px;color:#294058;font-size:12px;line-height:1.35}
+#app:not(.public-app) .obraativa-schedule-empty{display:flex!important;align-items:center;gap:12px;padding:22px!important}
+#app:not(.public-app) .obraativa-schedule-empty>span{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#edf5ff;color:#156bdd}
+#app:not(.public-app) .obraativa-schedule-empty b{display:block;color:#32475d;font-size:13px}
+#app:not(.public-app) .obraativa-schedule-empty small{display:block;margin-top:3px;color:#778698;font-size:11px}
+
+#app:not(.public-app) .obraativa-home-premium>.obraativa-overview-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr)!important;
+  gap:18px!important;
+}
+#app:not(.public-app) .obraativa-home-premium>.obraativa-overview-grid>.obraativa-panel{
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-works-panel .obraativa-work-list{
+  height:auto!important;
+  grid-template-rows:none!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-row{
+  grid-template-columns:66px minmax(0,1fr) 16px!important;
+  gap:14px!important;
+  min-height:138px!important;
+  padding:14px 18px!important;
+}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-icon{width:62px!important;height:62px!important;border-radius:16px!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-row b{font-size:13px!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-row small{font-size:10px!important}
+#app:not(.public-app) .obraativa-work-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+#app:not(.public-app) .obraativa-work-tags span{padding:3px 7px;border-radius:999px;background:#eff5fb;color:#587089;font-size:9px;font-weight:750}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-progress{margin-top:8px}
+#app:not(.public-app) .obraativa-home-premium .obraativa-work-open{margin-top:8px!important}
+#app:not(.public-app) .obraativa-home-premium .obraativa-finance-body{padding:18px!important}
+
+#app:not(.public-app) .obraativa-home-premium>.home-insights{display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr)!important;gap:18px!important}
+#app:not(.public-app) .obraativa-home-premium>.home-insights>.home-insight-panel{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  min-height:0!important;
+}
+#app:not(.public-app) .obraativa-home-premium .home-insight-panel{border:1px solid var(--obra-home-line)!important;border-radius:18px!important;box-shadow:0 8px 24px #102d500a!important}
+#app:not(.public-app) .obraativa-home-premium>.home-weather-card{
+  grid-column:7/-1!important;
+  grid-template-columns:minmax(180px,1.2fr) repeat(3,minmax(85px,.65fr))!important;
+  align-items:center!important;
+  min-height:132px!important;
+  padding:38px 9px 10px!important;
+  border:1px solid var(--obra-home-line)!important;
+  border-radius:18px!important;
+  box-shadow:0 8px 24px #102d500a!important;
+}
+#app:not(.public-app) .obraativa-home-premium>.home-weather-card>.home-weather-current{grid-column:auto!important;padding:0 3px!important}
+#app:not(.public-app) .obraativa-home-premium>.home-weather-card>.home-weather-day{min-height:0;padding:4px!important}
+
+@media(max-width:1180px){
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head{min-height:120px!important;padding:12px 14px!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline>span{display:none}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-operational-head h1{font-size:22px!important}
+  #app:not(.public-app) .obraativa-home-premium>.obraativa-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut{grid-template-columns:70px minmax(0,1fr)!important;min-height:126px!important;padding:16px!important;column-gap:14px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut-icon{width:68px!important;height:68px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut-icon .obraativa-icon-art{width:46px;height:46px}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut b{font-size:18px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut small{font-size:12.5px!important}
+}
+
+@media(max-width:900px){
+  #app:not(.public-app) .obraativa-home-premium>.home-operational-head{grid-template-columns:minmax(0,1fr) auto!important;min-height:124px!important;padding:13px 15px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-pay-chip{grid-column:1/-1;width:100%}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #app:not(.public-app) .home-operational.obraativa-home-premium .home-shortcuts.obraativa-shortcuts-columns-3,
+  #app:not(.public-app) .home-operational.obraativa-home-premium .home-shortcuts.obraativa-shortcuts-columns-4,
+  #app:not(.public-app) .home-operational.obraativa-home-premium .home-shortcuts.obraativa-shortcuts-columns-5{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  body.responsive-home-desktop #app:not(.public-app) #view .home-operational.obraativa-home-premium .home-shortcuts,
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #app:not(.public-app) .obraativa-home-premium>.obraativa-overview-grid,
+  #app:not(.public-app) .obraativa-home-premium>.home-insights{grid-template-columns:1fr!important}
+  #app:not(.public-app) .obraativa-home-premium>.obraativa-metrics,
+  #app:not(.public-app) .obraativa-home-premium>.home-weather-card{grid-column:1/-1!important}
+  #app:not(.public-app) .obraativa-schedule-row{grid-template-columns:46px minmax(0,1fr) 96px}
+  #app:not(.public-app) .obraativa-schedule-lead{grid-column:2/-1}
+}
+
+@media(max-width:600px){
+  #app:not(.public-app) .home-operational.obraativa-home-premium{display:grid!important;grid-template-columns:1fr;gap:14px!important}
+  #app:not(.public-app) .obraativa-home-premium>.home-operational-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;min-height:0!important;padding:14px!important;border-radius:18px!important}
+  #app:not(.public-app) .obraativa-home-premium>.home-operational-head>div:first-child{display:block}
+  #app:not(.public-app) .obraativa-home-brandline{margin-bottom:7px}
+  #app:not(.public-app) .obraativa-home-brandline img{width:38px;height:38px}
+  #app:not(.public-app) .obraativa-home-brandline b{font-size:16px}
+  #app:not(.public-app) .obraativa-home-premium .home-operational-head h1{font-size:23px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-home-head-actions{width:100%}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-shortcut-editor-button{width:100%!important;justify-content:center}
+  #app:not(.public-app) .obraativa-home-premium .home-pay-chip{min-width:0!important}
+  #app:not(.public-app) .obraativa-home-premium .home-section-head h2{font-size:20px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto auto auto!important;align-content:center!important;justify-items:center!important;min-height:150px!important;padding:14px!important;gap:7px!important;text-align:center!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut-icon{grid-row:auto!important;width:64px!important;height:64px!important;border-radius:17px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut-icon .obraativa-icon-art{width:42px;height:42px}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut b{font-size:17px!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut small{color:#5d6b7d!important;font-size:11.5px!important;line-height:1.35!important}
+  #app:not(.public-app) .obraativa-home-premium>.obraativa-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-metric{grid-template-columns:42px minmax(0,1fr)!important;min-height:104px!important;padding:12px!important;gap:9px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-metric-icon{width:42px!important;height:42px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-metric strong{font-size:17px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-metric>div>span{font-size:9px}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-panel-head{align-items:stretch!important;flex-direction:column!important;padding:15px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-panel-link{width:100%;text-align:center}
+  #app:not(.public-app) .obraativa-schedule-row{grid-template-columns:42px minmax(0,1fr);gap:10px;padding:13px 15px}
+  #app:not(.public-app) .obraativa-schedule-icon{width:40px;height:40px}
+  #app:not(.public-app) .obraativa-schedule-meta{grid-column:2;padding-left:0;border-left:0}
+  #app:not(.public-app) .obraativa-schedule-meta strong{display:inline;margin-right:5px;font-size:16px}
+  #app:not(.public-app) .obraativa-schedule-meta span{font-size:10px}
+  #app:not(.public-app) .obraativa-schedule-lead{grid-column:2}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-work-row{grid-template-columns:50px minmax(0,1fr)!important;min-height:0!important;padding:13px!important;gap:10px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-work-icon{width:48px!important;height:48px!important}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-work-chevron{display:none}
+  #app:not(.public-app) .obraativa-home-premium .obraativa-work-open{width:100%}
+  #app:not(.public-app) .obraativa-home-premium>.home-insights{grid-template-columns:1fr!important}
+}
+
+@media(max-width:380px){
+  #app:not(.public-app) .obraativa-home-premium .home-shortcuts{grid-template-columns:1fr!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut{grid-template-columns:66px minmax(0,1fr)!important;grid-template-rows:auto auto!important;align-items:center!important;justify-items:start!important;min-height:112px!important;text-align:left!important}
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut-icon{grid-row:1/3!important}
+  #app:not(.public-app) .obraativa-home-premium>.obraativa-metrics{grid-template-columns:1fr}
+}
+
+@media(orientation:landscape) and (max-width:960px){
+  body.responsive-v3-landscape-phone #app:not(.public-app)>.main:has(#view[data-landscape-page="home"])>.top{
+    display:none!important;
+  }
+  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand{
+    display:grid!important;
+    place-items:center!important;
+    min-height:0!important;
+    padding:3px 0 8px!important;
+  }
+  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand .obraativa-brand-mark,
+  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand .brand-logo{
+    width:42px!important;
+    height:42px!important;
+    margin:0!important;
+    border-radius:12px!important;
+  }
+  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand .brand-text{display:none!important}
+  body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline{display:none!important}
+  body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child{grid-template-columns:minmax(0,1fr)}
+  body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child>:not(.obraativa-home-brandline){grid-column:1}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    align-items:center!important;
+    gap:8px!important;
+    min-height:96px!important;
+    padding:8px 10px!important;
+    border-radius:16px!important;
+  }
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline{margin-bottom:0}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline img{width:36px;height:36px}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline>span{display:none}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-operational-head h1{font-size:20px!important;line-height:1.12!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-operational-head p{font-size:11px!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-date{margin-top:3px;font-size:10px}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-head-actions{width:auto}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-shortcut-editor-button{width:auto!important;padding:8px 10px!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-pay-chip{grid-column:auto!important;width:auto;min-width:170px!important;padding:8px 10px!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcuts{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcut{
+    grid-template-columns:62px minmax(0,1fr)!important;
+    min-height:108px!important;
+    padding:12px!important;
+    column-gap:11px!important;
+  }
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcut-icon{
+    width:60px!important;
+    height:60px!important;
+  }
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcut-icon .obraativa-icon-art{
+    width:40px!important;
+    height:40px!important;
+  }
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcut b{font-size:16px!important}
+  body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="home"] .home-operational.obraativa-home-premium .home-shortcut small{font-size:11px!important}
+}
+
+@media(orientation:landscape) and (min-width:961px) and (max-width:1200px){
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head{
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    gap:10px!important;
+    min-height:104px!important;
+    padding:8px 12px!important;
+  }
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline{margin-bottom:0}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline>span{display:none}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-operational-head h1{font-size:20px!important;line-height:1.15!important}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-date{margin-top:3px;font-size:10px}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .home-pay-chip{grid-column:auto!important;width:auto;min-width:180px!important;padding:8px 10px!important}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-weather-card{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:46px 67px!important;height:176px!important;min-height:176px!important;padding:46px 8px 9px!important;gap:6px!important}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-weather-card:after{top:10px!important}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-weather-card>.home-weather-current{grid-column:1/-1!important}
+  #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-weather-card .home-weather-icon{width:40px;height:40px;font-size:23px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #app:not(.public-app) .obraativa-home-premium .home-shortcut{transition:none!important}
+}
