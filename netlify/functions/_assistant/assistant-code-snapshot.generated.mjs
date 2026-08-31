@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T11:20:46.405Z",
-  "codeHash": "1dffb4201b891498fa3abda9b90c6f2585697c25bc0ea701a85921919f0dca35",
+  "generatedAt": "2026-08-31T11:33:11.783Z",
+  "codeHash": "09c2fa4d95080618894e00e77df5214c3bf30ade2b3c0405729531a4d42dc2f1",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,7 +28,7 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4902468,
+    "totalBytes": 4902473,
     "totalLines": 20444,
     "findingCount": 187,
     "severityCounts": {
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163659,
+      "bytes": 1163663,
       "lines": 3071,
-      "sha256": "ac94ae2465987f8b78ff3faf74ca9d87524a75cb91be6e847b1a2e1ae3ddd46d",
+      "sha256": "20e248d95e648f6365474d50e1675e131959b5797318bb6944a66b3e6675883a",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -637,9 +637,9 @@ export default Object.freeze({
     {
       "path": "public-assets/app-brand-lock-v1.css",
       "scope": "application",
-      "bytes": 1052,
+      "bytes": 1100,
       "lines": 8,
-      "sha256": "ec7bcd0f4391ff053583432b70c183f5aee89993ed8ee14c9bae1908e904f4aa",
+      "sha256": "06e66a660249e69690d66f8e174cec535fd70c05f614d90a467e8cf07af9d934",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -945,9 +945,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-mobile-brand-v1.css",
       "scope": "application",
-      "bytes": 1068,
+      "bytes": 1021,
       "lines": 16,
-      "sha256": "6d64e5eb0ed031668d469de90097f5b2dde111f739948a56e7fe69aa055e96cf",
+      "sha256": "07886cb3f6a1ce1cd7cd6bba8e5e5409ce38db157047658f5cfc4d0f738d4bfe",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "dd67a8c9c4eb8b335713fdab9ed728c9a7879c92c6fac6cd18bb8c2dd5cac08f",
+      "sha256": "c0205914cfbb401810eb97dfce0a49a26b753c8b539291ace30c13df5bce114d",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2125,7 +2125,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163659 bytes e 3071 linhas",
+      "evidence": "1163663 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",

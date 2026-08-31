@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v28';
+const CACHE_VERSION = 'v29';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
