@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T04:34:03.669Z",
-  "codeHash": "0b91f42eacf4d996d9605c05e3ead2c65e887646c143502440290dd0c05eb8b8",
+  "generatedAt": "2026-08-31T04:39:52.463Z",
+  "codeHash": "dbaa1a35fb2ff9b14f54e74cd28639e61246fc48ce675dc937558ec1662ccacb",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 104,
-    "totalBytes": 4733485,
-    "totalLines": 18247,
+    "fileCount": 106,
+    "totalBytes": 4735552,
+    "totalLines": 18296,
     "findingCount": 186,
     "severityCounts": {
       "critical": 0,
@@ -316,6 +316,17 @@ export default Object.freeze({
       "inlineHandlers": 0
     },
     {
+      "path": "netlify/functions/_assistant/assistant-http.mjs",
+      "scope": "application",
+      "bytes": 337,
+      "lines": 13,
+      "sha256": "e31fc52211a3c0f57b9c28fc81dbdb10f809cfa10a1d2cf6bfd0ecadeff429af",
+      "functions": 1,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
       "path": "netlify/functions/_assistant/assistant-insights.mjs",
       "scope": "application",
       "bytes": 30598,
@@ -439,9 +450,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras-actions.mjs",
       "scope": "application",
-      "bytes": 6795,
-      "lines": 121,
-      "sha256": "ba068eaff4f04ffecafb594a9d2152643b5e9ddd0b9c359190310a720fceb705",
+      "bytes": 6662,
+      "lines": 117,
+      "sha256": "1e29fe27ffc0d3819e2a6c1448f30c6c2e6672846ea5c54ce5a3bb74a087e504",
       "functions": 5,
       "fetches": 0,
       "domWrites": 0,
@@ -450,9 +461,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras-chat.mjs",
       "scope": "application",
-      "bytes": 19929,
-      "lines": 346,
-      "sha256": "00f1750e6c9376d0f65ee2f7b7d8441c0fcd4b9f7b342799f3056c0372aa3d14",
+      "bytes": 19782,
+      "lines": 338,
+      "sha256": "dcd0168105486063c5871298ee369916448050a7d19af6c135d292d5ab25e7ce",
       "functions": 12,
       "fetches": 0,
       "domWrites": 0,
@@ -461,9 +472,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras-insights.mjs",
       "scope": "application",
-      "bytes": 4928,
-      "lines": 91,
-      "sha256": "babc52e5e39d8e36ee9c235965a16190ba8cc6c5a80f6cef48d4f57cbc1336b7",
+      "bytes": 4795,
+      "lines": 87,
+      "sha256": "76bc740aacbd174d8fc96929e8acb188244f76730f86ee82e8dbb6be65e64601",
       "functions": 2,
       "fetches": 0,
       "domWrites": 0,
@@ -472,9 +483,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras-performance.mjs",
       "scope": "application",
-      "bytes": 6505,
-      "lines": 109,
-      "sha256": "4d6fda4c240a312f6a205ec0ea5bbc101c1e82e57582bb2440653dbeb7a7d49f",
+      "bytes": 6372,
+      "lines": 105,
+      "sha256": "cbfb0a158b0812c015abcdc893c86d1f16476eefff08fe87da357d6d02dd317c",
       "functions": 3,
       "fetches": 0,
       "domWrites": 0,
@@ -483,9 +494,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras-report.mjs",
       "scope": "application",
-      "bytes": 7238,
-      "lines": 121,
-      "sha256": "b495dafcd5cfd59cfda92fd7ecefb49941a76a2a5e1bbb2d2fe93e4fff2dbc2b",
+      "bytes": 7105,
+      "lines": 117,
+      "sha256": "649eb0f9cf154c0694fc7101873120280800677b34d468f6d4a44205a505dfef",
       "functions": 3,
       "fetches": 0,
       "domWrites": 0,
@@ -494,9 +505,9 @@ export default Object.freeze({
     {
       "path": "netlify/functions/assistant-obras.mjs",
       "scope": "application",
-      "bytes": 6427,
-      "lines": 176,
-      "sha256": "1114d3ff49a1a3f6d5d1b5b93d2b571b2507a413fea1a2fff7020cdf6fd6d664",
+      "bytes": 6280,
+      "lines": 168,
+      "sha256": "5cfcef1f2f39fde23b5a2eb15c5b74d6849afe904316d53c11ed3de2a1b4e70b",
       "functions": 5,
       "fetches": 0,
       "domWrites": 0,
@@ -1099,9 +1110,20 @@ export default Object.freeze({
     {
       "path": "scripts/assistant/run-quality-gate.mjs",
       "scope": "application",
-      "bytes": 1295,
-      "lines": 30,
-      "sha256": "a7a4ec5f6168c71a3a1f3f3fcf204a9ddccd3427b268662493bf79b998979c0b",
+      "bytes": 1349,
+      "lines": 31,
+      "sha256": "8a251bc747f65a5f6adef1ecb870e517f89869141ff4ec618a36c50a60359ef1",
+      "functions": 1,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "scripts/quality/check-project-conventions.mjs",
+      "scope": "application",
+      "bytes": 2502,
+      "lines": 67,
+      "sha256": "89d297369107a3f989d32f80f1b23ec11128dd9c8cb2e9cd53c8877f6ab55aa6",
       "functions": 1,
       "fetches": 0,
       "domWrites": 0,
@@ -2717,7 +2739,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-2763F9C7E600",
+      "id": "QF-83F29B967AB1",
       "recurrenceKey": "f303a77aa66fffe2bd3d99e5",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -2727,7 +2749,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "netlify/functions/assistant-obras-actions.mjs",
-      "line": 26,
+      "line": 22,
       "evidence": "authenticate aparece em 6 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",

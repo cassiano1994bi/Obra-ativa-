@@ -13,17 +13,9 @@ import {
 } from './_assistant/assistant-policy.mjs';
 import { providerDescriptor } from './_assistant/assistant-provider.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import { assistantJsonResponse as json } from './_assistant/assistant-http.mjs';
 
 const repeatGuard = createRepeatGuard({ ttlMs: 15000 });
-
-const json = (status, body) => new Response(JSON.stringify(body), {
-  status,
-  headers: {
-    'content-type': 'application/json; charset=utf-8',
-    'cache-control': 'no-store',
-    'x-content-type-options': 'nosniff'
-  }
-});
 
 function serverConfig(env = process.env) {
   return assistantSupabaseConfig(env);

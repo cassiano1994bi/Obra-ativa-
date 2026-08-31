@@ -7,6 +7,7 @@ import {
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { createAuditEvent, writeAudit } from './_assistant/assistant-audit.mjs';
+import { assistantJsonResponse as json } from './_assistant/assistant-http.mjs';
 import {
   assistantServerConfig as serverConfig,
   authenticateAssistantRequest,
@@ -17,11 +18,6 @@ import {
 const pending = new Set();
 const confirmed = new Map();
 const CONFIRMATION_TTL_MS = 2 * 60 * 1000;
-
-const json = (status, body) => new Response(JSON.stringify(body), {
-  status,
-  headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' }
-});
 
 async function authenticate(request, config) {
   return authenticateAssistantRequest(request, config, 'Entre na sua conta para preparar ações.');

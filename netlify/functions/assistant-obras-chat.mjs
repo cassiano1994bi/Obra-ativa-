@@ -7,6 +7,7 @@ import {
   validUuid
 } from './_assistant/assistant-policy.mjs';
 import { buildReadOnlyContext } from './_assistant/assistant-context.mjs';
+import { assistantJsonResponse as json } from './_assistant/assistant-http.mjs';
 import {
   assistantServerConfig as serverConfig,
   authenticateAssistantRequest,
@@ -56,15 +57,6 @@ const pending = new Set();
 const responseCache = new Map();
 const CACHE_TTL_MS = 2 * 60 * 1000;
 const { get: cacheGet, set: cacheSet } = createAssistantTtlCache(responseCache, CACHE_TTL_MS);
-
-const json = (status, body) => new Response(JSON.stringify(body), {
-  status,
-  headers: {
-    'content-type': 'application/json; charset=utf-8',
-    'cache-control': 'no-store',
-    'x-content-type-options': 'nosniff'
-  }
-});
 
 export async function verifyProductAdmin({ authorization, config, fetchImpl = fetch } = {}) {
   try {
