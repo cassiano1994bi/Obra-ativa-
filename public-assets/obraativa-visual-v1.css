@@ -1,0 +1,584 @@
+:root{
+  --obraativa-green:#28c76f;
+  --obraativa-blue:#1677ff;
+  --obraativa-navy:#0d1117;
+  --obraativa-gray:#6b7280;
+  --obraativa-light:#f3f4f6;
+  --obraativa-line:#dfe5ec;
+  --obraativa-text:#111827;
+}
+
+/* Camada visual ObraAtiva. Mantém estrutura, dados e ações originais. */
+#app:not(.public-app){
+  background:var(--obraativa-light);
+  color:var(--obraativa-text);
+  font-family:Poppins,Inter,"Segoe UI",Arial,sans-serif;
+}
+html body #app:not(.public-app) .side{
+  background:
+    radial-gradient(circle at 0 0,#173154 0,transparent 34%),
+    linear-gradient(180deg,#081421 0%,var(--obraativa-navy) 64%,#07111c 100%);
+  color:#fff;
+  border-right:1px solid #ffffff0d;
+  box-shadow:10px 0 32px #07111c14;
+  scrollbar-width:none!important;
+}
+html body #app:not(.public-app) .side::-webkit-scrollbar,
+#app:not(.public-app) .nav::-webkit-scrollbar,
+#app:not(.public-app) .nav-extra-scroll::-webkit-scrollbar{width:0!important;height:0!important}
+#app:not(.public-app) .nav,
+#app:not(.public-app) .nav-extra-scroll{scrollbar-width:none!important}
+#app:not(.public-app) .brand{
+  min-height:76px;
+  padding:13px 12px 16px;
+  gap:10px;
+}
+#app:not(.public-app) .obraativa-brand-mark{
+  display:block;
+  flex:0 0 46px;
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  background-image:url("obraativa-app-icon-v2-512.png");
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 9px 24px #0007,0 0 0 1px #ffffff12;
+}
+#app:not(.public-app) .brand.obraativa-default-logo .brand-logo{display:none!important}
+#app:not(.public-app) .brand:not(.obraativa-default-logo) .obraativa-brand-mark{display:none}
+#app:not(.public-app) .brand:not(.obraativa-default-logo) .brand-logo{
+  width:46px;
+  height:46px;
+  padding:4px;
+  border-radius:14px;
+  background:#fff;
+  object-fit:contain;
+}
+#app:not(.public-app) .brand-text{min-width:0;line-height:1}
+#app:not(.public-app) .brand-text small{
+  color:#8ea4bc;
+  font-size:6.5px;
+  font-weight:800;
+  letter-spacing:.09em;
+  white-space:nowrap;
+}
+#app:not(.public-app) .brand-text span{
+  display:block;
+  margin-top:5px;
+  color:#fff;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.045em;
+  white-space:nowrap;
+}
+#app:not(.public-app) .brand-text span b{color:var(--obraativa-green);font-weight:800}
+#app:not(.public-app) .nav{gap:4px}
+#app:not(.public-app) .nav>button:not(.nav-more),
+#app:not(.public-app) .nav-extra-scroll>button{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:46px;
+  padding:10px 12px!important;
+  border:1px solid transparent!important;
+  border-radius:11px!important;
+  background:transparent!important;
+  color:#cbd7e5!important;
+  font:700 12px/1.2 Poppins,Inter,"Segoe UI",sans-serif!important;
+  text-align:left!important;
+  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;
+}
+#app:not(.public-app) .nav>button:not(.nav-more):hover,
+#app:not(.public-app) .nav-extra-scroll>button:hover{
+  background:#ffffff0b!important;
+  color:#fff!important;
+  transform:translateX(2px);
+}
+#app:not(.public-app) .nav>button.active,
+#app:not(.public-app) .nav-extra-scroll>button.active{
+  border-color:#4aa0ff55!important;
+  background:linear-gradient(135deg,#0f65db,#1677ff)!important;
+  color:#fff!important;
+  box-shadow:0 10px 22px #0066ea35;
+}
+#app:not(.public-app) .obraativa-nav-icon{
+  display:grid;
+  place-items:center;
+  flex:0 0 24px;
+  width:24px;
+  height:24px;
+  color:#8aa6c4;
+}
+#app:not(.public-app) .nav button.active .obraativa-nav-icon{color:#fff}
+.obraativa-icon-art{
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:24%;
+  background-image:url("obraativa-ui-icons-v2.png");
+  background-repeat:no-repeat;
+  background-size:400% 400%;
+}
+.obraativa-icon-home{background-position:0 0}
+.obraativa-icon-works{background-position:33.333333% 0}
+.obraativa-icon-planning{background-position:66.666667% 0}
+.obraativa-icon-attendance{background-position:100% 0}
+.obraativa-icon-financial{background-position:0 33.333333%}
+.obraativa-icon-clients{background-position:33.333333% 33.333333%}
+.obraativa-icon-budgets{background-position:66.666667% 33.333333%}
+.obraativa-icon-team{background-position:100% 33.333333%}
+.obraativa-icon-vehicles{background-position:0 66.666667%}
+.obraativa-icon-reports{background-position:33.333333% 66.666667%}
+.obraativa-icon-assistant{background-position:66.666667% 66.666667%}
+.obraativa-icon-admin,.obraativa-icon-permissions{background-position:100% 66.666667%}
+.obraativa-icon-payments{background-position:0 100%}
+.obraativa-icon-routine{background-position:33.333333% 100%}
+.obraativa-icon-textpdf{background-position:66.666667% 100%}
+.obraativa-icon-site{background-position:100% 100%}
+#app:not(.public-app) .main{background:var(--obraativa-light)}
+#app:not(.public-app) .top{
+  border-bottom:1px solid #e3e8ef;
+  background:#ffffffed;
+  box-shadow:0 5px 20px #0d111707;
+  backdrop-filter:blur(12px);
+}
+#app:not(.public-app) .top-brand span{color:var(--obraativa-blue)}
+#app:not(.public-app) .top-brand strong{color:#172033}
+#app:not(.public-app) .user{
+  border-color:#cbead7;
+  background:#f0fbf5;
+  color:#147449;
+  font-weight:750;
+}
+#app:not(.public-app) .content{max-width:1500px;background:var(--obraativa-light)}
+
+/* Tela inicial aprovada. */
+#app:not(.public-app) .home-operational.obraativa-home{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:16px;
+  width:100%;
+  min-width:0;
+}
+#app:not(.public-app) .obraativa-home>.home-operational-head{grid-column:1/-1;grid-row:1}
+#app:not(.public-app) .obraativa-home>.obraativa-metrics{grid-column:1/-1;grid-row:3}
+#app:not(.public-app) .obraativa-home>.obraativa-overview-grid{display:contents!important}
+#app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-works-panel{grid-column:1/6;grid-row:4/6}
+#app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-finance-panel{grid-column:6/-1;grid-row:4}
+#app:not(.public-app) .obraativa-home>.home-weather-card{grid-column:9/-1;grid-row:5}
+#app:not(.public-app) .obraativa-home>.home-insights{display:contents!important}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel{grid-column:6/9;grid-row:5}
+#app:not(.public-app) .obraativa-home .obraativa-attention-panel{grid-column:1/-1;grid-row:6}
+#app:not(.public-app) .obraativa-home>.obraativa-quick-section{grid-column:1/-1;grid-row:2}
+#app:not(.public-app) .obraativa-home>.assistant-home-shortcut{grid-column:1/-1;grid-row:7}
+#app:not(.public-app) .obraativa-home>.home-operational-head{
+  align-items:center;
+  min-height:94px;
+  padding:8px 6px;
+  border:0!important;
+  border-radius:0;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+#app:not(.public-app) .obraativa-home .home-operational-head>div>small{
+  color:#168956;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+#app:not(.public-app) .obraativa-home .home-operational-head h1{
+  margin:4px 0 2px;
+  color:#111827;
+  font-size:clamp(25px,2.25vw,34px);
+  font-weight:800;
+  letter-spacing:-.055em;
+}
+#app:not(.public-app) .obraativa-home .home-operational-head p{
+  margin:0;
+  color:#687386;
+  font-size:13px;
+}
+#app:not(.public-app) .obraativa-home .home-pay-chip{
+  min-width:185px;
+  padding:11px 14px;
+  border:1px solid #ccebd9;
+  border-radius:12px;
+  background:#f2fbf6;
+  color:#1b6747;
+}
+#app:not(.public-app) .obraativa-home .home-pay-chip small{color:#54816d}
+#app:not(.public-app) .obraativa-home .home-pay-chip b{color:#175f40}
+.obraativa-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  min-width:0;
+}
+.obraativa-metric{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  min-height:132px;
+  padding:18px;
+  border:1px solid #dfe5ec;
+  border-radius:15px;
+  background:#fff;
+  box-shadow:0 8px 22px #11182709;
+}
+.obraativa-metric-icon{
+  display:grid;
+  place-items:center;
+  width:58px;
+  height:58px;
+  padding:0;
+  border-radius:14px;
+  background:transparent;
+  color:#1268dc;
+  overflow:hidden;
+  box-shadow:0 8px 18px #07111c24;
+}
+.obraativa-metric.green .obraativa-metric-icon{background:transparent;color:#159957}
+.obraativa-metric small{
+  display:block;
+  color:#586476;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.25;
+  white-space:normal;
+}
+.obraativa-metric strong{
+  display:block;
+  margin-top:8px;
+  overflow:hidden;
+  color:#136ee9;
+  font-size:clamp(24px,2.25vw,34px);
+  font-weight:800;
+  letter-spacing:-.045em;
+  line-height:1;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.obraativa-metric:nth-child(n+3) strong{font-size:clamp(17px,1.55vw,25px)}
+.obraativa-metric.green strong{color:#159957}
+.obraativa-metric.negative .obraativa-metric-icon{background:transparent;color:#d14343}
+.obraativa-metric.negative strong{color:#d14343}
+#app:not(.public-app) .obraativa-home .home-section-head h2{color:#142033;font-size:17px}
+#app:not(.public-app) .obraativa-home .home-section-head p{color:#6b7280}
+#app:not(.public-app) .obraativa-home .home-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#app:not(.public-app) .obraativa-home .home-shortcut{
+  grid-template-columns:52px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-items:center;
+  column-gap:12px;
+  min-height:112px;
+  padding:14px;
+  border-color:#dfe5ec;
+  border-radius:13px;
+  color:#1f2b3d;
+  box-shadow:0 6px 18px #11182707;
+}
+#app:not(.public-app) .obraativa-home .home-shortcut:hover{border-color:#94bdff;box-shadow:0 10px 22px #1677ff13}
+#app:not(.public-app) .obraativa-home .home-shortcut.finance{
+  border-color:#b9dafd;
+  background:linear-gradient(135deg,#1677ff,#0b63db);
+  color:#fff;
+}
+#app:not(.public-app) .obraativa-home .home-shortcut-icon{
+  grid-row:1/3;
+  width:52px;
+  height:52px;
+  padding:0;
+  border-radius:11px;
+  background:transparent;
+  color:#176cdf;
+  font-size:0;
+  overflow:hidden;
+  box-shadow:0 6px 14px #07111c20;
+}
+#app:not(.public-app) .obraativa-home .home-shortcut.finance .home-shortcut-icon{background:transparent;color:#fff}
+#app:not(.public-app) .obraativa-home .home-shortcut b{align-self:end;font-size:14px;line-height:1.15}
+#app:not(.public-app) .obraativa-home .home-shortcut small{align-self:start;margin:0;color:#748092;font-size:11px;line-height:1.3}
+#app:not(.public-app) .obraativa-home .home-shortcut.finance small{color:#deedff}
+.obraativa-overview-grid{
+  min-width:0;
+}
+#app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-panel:only-child{
+  grid-column:1/-1!important;
+  grid-row:4!important;
+}
+.obraativa-panel{
+  min-width:0;
+  overflow:hidden;
+  border:1px solid #dfe5ec;
+  border-radius:15px;
+  background:#fff;
+  box-shadow:0 8px 22px #11182708;
+}
+.obraativa-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:60px;
+  padding:14px 18px;
+  border-bottom:1px solid #edf0f4;
+}
+.obraativa-panel-head h2{margin:0;color:#152033;font-size:19px}
+.obraativa-panel-link{
+  padding:5px;
+  border:0;
+  background:transparent;
+  color:#1269df;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.obraativa-work-list{display:grid}
+.obraativa-works-panel .obraativa-work-list{height:calc(100% - 60px);grid-template-rows:repeat(2,minmax(0,1fr))}
+.obraativa-work-row{
+  display:grid;
+  grid-template-columns:128px minmax(0,1fr) 20px;
+  align-items:center;
+  gap:18px;
+  min-height:174px;
+  padding:18px 20px;
+  border-bottom:1px solid #edf0f4;
+}
+.obraativa-works-panel .obraativa-work-row{min-height:0}
+.obraativa-work-row:last-child{border-bottom:0}
+.obraativa-work-icon{
+  display:grid;
+  place-items:center;
+  width:118px;
+  height:118px;
+  padding:0;
+  border:0;
+  border-radius:16px;
+  background:transparent;
+  color:#18334f;
+  overflow:hidden;
+  box-shadow:0 12px 24px #07111c24;
+}
+.obraativa-work-row b{
+  display:block;
+  overflow:hidden;
+  color:#1c2738;
+  font-size:14px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.obraativa-work-row small{display:block;margin-top:5px;color:#7a8494;font-size:11px}
+.obraativa-work-progress{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:11px;margin-top:14px}
+.obraativa-progress{height:8px;overflow:hidden;border-radius:999px;background:#dfe5ec}
+.obraativa-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#28c76f,#39d98a)}
+.obraativa-work-percent{color:#27364a;font-size:15px;font-weight:800}
+.obraativa-work-open{min-width:88px;min-height:36px;margin-top:14px;padding:7px 14px;border:1px solid #1677ff;border-radius:9px;background:#fff;color:#1268dc;font-size:11px;font-weight:800;cursor:pointer}
+.obraativa-work-open:hover{background:#f3f7ff}
+.obraativa-work-chevron{color:#172a40;font-size:28px;line-height:1}
+.obraativa-empty{margin:0;padding:20px;color:#6b7280;font-size:12px;text-align:center}
+.obraativa-finance-body{display:grid;gap:17px;min-height:214px;padding:18px}
+.obraativa-finance-total{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.obraativa-finance-total article{padding:14px;border:1px solid #e2e7ee;border-radius:12px;background:#f8fafc}
+.obraativa-finance-total small{display:block;color:#727d8d;font-size:9px;font-weight:800;letter-spacing:.06em}
+.obraativa-finance-total b{display:block;margin-top:6px;overflow-wrap:anywhere;color:#176cdf;font-size:20px}
+.obraativa-finance-total article:last-child b{color:#159957}
+.obraativa-bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:18px;min-height:132px}
+.obraativa-bar-row{display:grid;grid-template-columns:1fr;grid-template-rows:auto 82px auto;justify-items:center;align-items:end;gap:7px;min-width:0}
+.obraativa-bar-row span{color:#5d6878;font-size:10px}
+.obraativa-bar-track{display:flex;align-items:flex-end;width:36px;height:82px;overflow:hidden;border-radius:7px 7px 3px 3px;background:#e8edf3}
+.obraativa-bar-track i{display:block;width:100%!important;height:var(--obraativa-bar);border-radius:6px 6px 2px 2px;background:#1677ff}
+.obraativa-bar-row.green .obraativa-bar-track i{background:#28c76f}
+.obraativa-bar-row b{grid-row:1;color:#465163;font-size:10px;white-space:nowrap}
+.obraativa-bar-row .obraativa-bar-track{grid-row:2}
+.obraativa-bar-row span{grid-row:3}
+#app:not(.public-app) .obraativa-home .home-insights{gap:14px}
+#app:not(.public-app) .obraativa-home .home-insight-panel,
+#app:not(.public-app) .obraativa-home .home-weather-card,
+#app:not(.public-app) .obraativa-home .assistant-home-shortcut{
+  border-color:#dfe5ec;
+  background:#fff;
+  box-shadow:0 8px 22px #11182708;
+}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel{
+  min-width:0;
+  min-height:214px;
+  overflow:hidden;
+  border-radius:15px;
+}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel .home-insight-head{padding:14px 15px 10px}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel .home-insight-head h2{font-size:15px}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel .home-insight-head p{display:none}
+#app:not(.public-app) .obraativa-home .obraativa-activity-panel .home-activity-item{padding:11px 15px;font-size:10px}
+#app:not(.public-app) .obraativa-home .obraativa-attention-panel{border-radius:15px}
+#app:not(.public-app) .obraativa-home>.home-weather-card{
+  position:relative;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  align-content:start;
+  min-width:0;
+  min-height:214px;
+  padding:50px 11px 16px!important;
+  border-radius:15px!important;
+}
+#app:not(.public-app) .obraativa-home>.home-weather-card:after{
+  position:absolute;
+  top:14px;
+  left:16px;
+  color:#152033;
+  font-size:15px;
+  font-weight:800;
+  content:"Clima da obra";
+}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-current{grid-column:1/-1;padding:0 4px 8px}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-icon{width:46px;height:46px;font-size:26px}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-day{grid-template-columns:1fr;grid-template-areas:"icon" "date" "temperature" "rain";justify-items:center;gap:2px;padding:7px 4px;text-align:center}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-day>span{font-size:18px}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-day em{font-size:7px}
+#app:not(.public-app) .obraativa-home>.home-weather-card .home-weather-credit{right:8px;bottom:3px;font-size:5px;opacity:.56}
+#app:not(.public-app) .obraativa-home .home-weather-card:before{background:linear-gradient(#28c76f,#1677ff)}
+#app:not(.public-app) .obraativa-home .home-weather-button{border-color:#9dc5ff;color:#1268dc}
+#app:not(.public-app) .obraativa-home .home-weather-button:hover{border-color:#1677ff;background:#f4f8ff}
+
+/* Abertura visual independente de autenticação e dados. */
+#obraAtivaSplash[hidden]{display:none!important}
+#obraAtivaSplash{
+  position:fixed;
+  inset:0;
+  z-index:2147483000;
+  display:grid;
+  place-items:center;
+  padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 20%,#1677ff38 0,transparent 32%),
+    radial-gradient(circle at 22% 82%,#28c76f22 0,transparent 34%),
+    linear-gradient(145deg,#07111d,#0d1117 58%,#0b1d2e);
+  color:#fff;
+  opacity:1;
+  transition:opacity .32s ease,visibility .32s ease;
+}
+#obraAtivaSplash.obraativa-splash-leave{visibility:hidden;opacity:0}
+.obraativa-splash-card{display:grid;justify-items:center;max-width:520px;text-align:center}
+.obraativa-splash-card::before{content:"";display:block;width:min(482px,86vw);aspect-ratio:482 / 173;background:url("obraativa-launch-screen-v1.png") center bottom/100% auto no-repeat;filter:drop-shadow(0 22px 42px #0008);animation:obraativa-mark-enter .7s cubic-bezier(.2,.9,.2,1) both}
+.obraativa-splash-mark,.obraativa-splash-name,.obraativa-splash-subtitle,.obraativa-splash-slogan{display:none!important}
+.obraativa-splash-mark{
+  width:88px;
+  height:88px;
+  border-radius:24px;
+  background-image:url("obraativa-app-icon-v2-512.png");
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 24px 50px #0009,0 0 0 1px #ffffff18;
+  animation:obraativa-mark-enter .7s cubic-bezier(.2,.9,.2,1) both;
+}
+.obraativa-splash-name{
+  margin-top:22px;
+  font-size:clamp(34px,5vw,54px);
+  font-weight:800;
+  letter-spacing:-.055em;
+  line-height:1;
+}
+.obraativa-splash-name b{color:var(--obraativa-green);font-weight:800}
+.obraativa-splash-subtitle{margin-top:9px;color:#c3cfdb;font-size:11px;font-weight:750;letter-spacing:.16em}
+.obraativa-splash-slogan{margin-top:22px;color:#e8eef5;font-size:14px}
+.obraativa-splash-slogan b{color:var(--obraativa-green)}
+.obraativa-splash-progress{width:min(280px,62vw);height:3px;margin-top:24px;overflow:hidden;border-radius:999px;background:#ffffff17}
+.obraativa-splash-progress i{display:block;width:42%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--obraativa-blue),var(--obraativa-green));animation:obraativa-progress 1.15s ease-in-out both}
+@keyframes obraativa-mark-enter{from{opacity:0;transform:translateY(12px) scale(.88)}to{opacity:1;transform:none}}
+@keyframes obraativa-progress{from{transform:translateX(-130%)}to{transform:translateX(240%)}}
+
+@media(max-width:1180px){
+  .obraativa-metric{grid-template-columns:44px minmax(0,1fr);gap:9px;min-height:100px;padding:12px}
+  .obraativa-metric-icon{width:42px;height:42px;padding:0}
+  .obraativa-metric strong{font-size:clamp(18px,2vw,24px)}
+  .obraativa-work-row{grid-template-columns:86px minmax(0,1fr) 16px;gap:12px;min-height:138px;padding:13px}
+  .obraativa-work-icon{width:80px;height:80px;padding:0}
+  .obraativa-work-row b{font-size:11px}.obraativa-work-row small{font-size:9px}
+  .obraativa-work-open{min-width:72px;min-height:32px;margin-top:10px;padding:5px 9px;font-size:9px}
+  .obraativa-finance-body{min-height:190px;padding:13px}.obraativa-finance-total b{font-size:15px}
+  .obraativa-bars{min-height:105px}.obraativa-bar-track{height:64px}
+  #app:not(.public-app) .obraativa-home .obraativa-activity-panel,
+  #app:not(.public-app) .obraativa-home>.home-weather-card{min-height:190px}
+  #app:not(.public-app) .obraativa-home .home-shortcut{grid-template-columns:44px minmax(0,1fr);padding:11px;column-gap:9px}
+  #app:not(.public-app) .obraativa-home .home-shortcut-icon{width:42px;height:42px;padding:0}
+  #app:not(.public-app) .obraativa-home .home-shortcut b{font-size:12px}
+  #app:not(.public-app) .obraativa-home .home-shortcut small{font-size:10px}
+}
+@media(max-width:900px){
+  .obraativa-metric{grid-template-columns:38px minmax(0,1fr);gap:7px;padding:9px}
+  .obraativa-metric-icon{width:36px;height:36px;padding:0}
+  .obraativa-metric small{font-size:8px;line-height:1.2;white-space:normal}
+  .obraativa-metric strong{font-size:14px;white-space:nowrap}
+  #app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-works-panel{grid-column:1/7;grid-row:4/7}
+  #app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-finance-panel{grid-column:7/-1;grid-row:4}
+  #app:not(.public-app) .obraativa-home .obraativa-activity-panel{grid-column:7/-1;grid-row:5}
+  #app:not(.public-app) .obraativa-home>.home-weather-card{grid-column:7/-1;grid-row:6}
+  #app:not(.public-app) .obraativa-home .obraativa-attention-panel{grid-row:7}
+  #app:not(.public-app) .obraativa-home>.obraativa-metrics{grid-row:3}
+  #app:not(.public-app) .obraativa-home>.obraativa-quick-section{grid-row:2}
+  #app:not(.public-app) .obraativa-home>.assistant-home-shortcut{grid-row:8}
+  #app:not(.public-app) .obraativa-home .home-shortcuts{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:960px) and (orientation:landscape){
+  .obraativa-metric:nth-child(n+3) strong{font-size:13px}
+}
+@media(max-width:760px) and (orientation:landscape){
+  #app:not(.public-app) .content{padding:10px!important}
+  #app:not(.public-app) .home-operational.obraativa-home{gap:9px}
+  #app:not(.public-app) .obraativa-home>.home-operational-head{min-height:68px;padding:5px 2px}
+  #app:not(.public-app) .obraativa-home .home-operational-head h1{font-size:20px!important}
+  #app:not(.public-app) .obraativa-home .home-operational-head p{font-size:10px}
+  #app:not(.public-app) .obraativa-home .home-pay-chip{min-width:150px;padding:8px 10px}
+  .obraativa-metrics{gap:7px}
+  .obraativa-metric{grid-template-columns:32px minmax(0,1fr);gap:7px;min-height:70px;padding:8px;border-radius:11px}
+  .obraativa-metric-icon{width:31px;height:31px;padding:0;border-radius:9px}
+  .obraativa-metric small{font-size:8px}
+  .obraativa-metric strong{margin-top:4px;font-size:16px}
+  .obraativa-metric:nth-child(n+3) strong{font-size:13px}
+  #app:not(.public-app) .obraativa-home .home-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+  #app:not(.public-app) .obraativa-home .home-shortcut{grid-template-columns:44px minmax(0,1fr);min-height:84px;padding:10px;column-gap:8px}
+  #app:not(.public-app) .obraativa-home .home-shortcut-icon{width:42px;height:42px;padding:0}
+  #app:not(.public-app) .obraativa-home .home-shortcut b{font-size:12px;line-height:1.1}
+  #app:not(.public-app) .obraativa-home .home-shortcut small{font-size:9px;line-height:1.2}
+  .obraativa-panel-head{min-height:40px;padding:8px 10px}.obraativa-panel-head h2{font-size:12px}
+  .obraativa-works-panel .obraativa-work-list{height:calc(100% - 40px)}
+  .obraativa-work-row{grid-template-columns:48px minmax(0,1fr) 10px;min-height:82px;padding:7px 9px;gap:7px}
+  .obraativa-work-icon{width:45px;height:45px;padding:0;border-radius:9px}
+  .obraativa-work-row b{font-size:9px}.obraativa-work-row small,.obraativa-work-percent{font-size:8px}
+  .obraativa-work-progress{gap:5px;margin-top:6px}.obraativa-progress{height:4px}
+  .obraativa-work-open{min-width:58px;min-height:25px;margin-top:6px;padding:3px 6px;font-size:7px}
+  .obraativa-finance-body{gap:7px;padding:8px 10px}.obraativa-finance-total article{padding:7px}.obraativa-finance-total small{font-size:7px}.obraativa-finance-total b{font-size:11px}
+  .obraativa-bars{grid-template-columns:1fr;gap:5px;min-height:0}
+  .obraativa-bar-row{grid-template-columns:48px minmax(0,1fr) auto;grid-template-rows:1fr;align-items:center;justify-items:stretch;gap:5px}
+  .obraativa-bar-row span{grid-column:1;grid-row:1}.obraativa-bar-row .obraativa-bar-track{grid-column:2;grid-row:1;width:auto;height:6px;border-radius:999px}.obraativa-bar-row .obraativa-bar-track i{width:var(--obraativa-bar)!important;height:100%;border-radius:inherit}.obraativa-bar-row b{grid-column:3;grid-row:1}.obraativa-bar-row span,.obraativa-bar-row b{font-size:7px}
+  #app:not(.public-app) .obraativa-home>.home-weather-card{padding-top:42px!important}
+}
+@media(max-width:900px) and (orientation:portrait){
+  #app:not(.public-app) .home-operational.obraativa-home{grid-template-columns:1fr}
+  #app:not(.public-app) .obraativa-home>.home-operational-head{grid-column:1;grid-row:1}
+  #app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-works-panel{grid-column:1;grid-row:4}
+  #app:not(.public-app) .obraativa-home>.obraativa-overview-grid>.obraativa-finance-panel{grid-column:1;grid-row:5}
+  #app:not(.public-app) .obraativa-home .obraativa-activity-panel{grid-column:1;grid-row:6}
+  #app:not(.public-app) .obraativa-home>.home-weather-card{grid-column:1;grid-row:7}
+  #app:not(.public-app) .obraativa-home .obraativa-attention-panel{grid-column:1;grid-row:8}
+  #app:not(.public-app) .obraativa-home>.obraativa-metrics{grid-column:1;grid-row:3}
+  #app:not(.public-app) .obraativa-home>.obraativa-quick-section{grid-column:1;grid-row:2}
+  #app:not(.public-app) .obraativa-home>.assistant-home-shortcut{grid-column:1;grid-row:9}
+  .obraativa-metrics{grid-template-columns:1fr 1fr}
+  #app:not(.public-app) .obraativa-home .home-shortcuts{grid-template-columns:1fr 1fr}
+  .obraativa-works-panel .obraativa-work-list{height:auto}
+  .obraativa-work-row{grid-template-columns:64px minmax(0,1fr) 14px;min-height:118px;padding:12px}
+  .obraativa-work-icon{width:60px;height:60px;padding:0}
+}
+@media(max-width:390px) and (orientation:portrait){
+  .obraativa-metrics{grid-template-columns:1fr 1fr}
+  #app:not(.public-app) .obraativa-home .home-shortcuts{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  #obraAtivaSplash,.obraativa-splash-mark,.obraativa-splash-progress i,
+  #app:not(.public-app) .nav button{animation:none!important;transition:none!important}
+}

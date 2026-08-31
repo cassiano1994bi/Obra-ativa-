@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Controle de Obra</title>
+  <desc id="description">Ícone de gestão de obras com casa, estrutura e marca de confirmação.</desc>
+  <defs>
+    <linearGradient id="background" x1="72" y1="56" x2="440" y2="466" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#123B66"/>
+      <stop offset="1" stop-color="#071B31"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="166" y1="126" x2="355" y2="373" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6D78C"/>
+      <stop offset="1" stop-color="#C9902E"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#background)"/>
+  <path d="M104 246 256 116l152 130v149c0 17-14 31-31 31H135c-17 0-31-14-31-31V246Z" fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="26"/>
+  <path d="M193 381v-91c0-13 11-24 24-24h78c13 0 24 11 24 24v91" fill="none" stroke="#F7FAFC" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
+  <path d="m315 328 25 25 57-65" fill="none" stroke="#F7FAFC" stroke-linecap="round" stroke-linejoin="round" stroke-width="22"/>
+  <circle cx="378" cy="195" r="20" fill="#F6D78C"/>
+</svg>

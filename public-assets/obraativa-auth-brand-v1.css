@@ -1,0 +1,10 @@
+#cloudGate{background:linear-gradient(135deg,#07111df5 0%,#0b1d2ef0 55%,#123e34ed 100%),url("obraativa-app-icon-v2-source.png") center/560px no-repeat!important}
+#cloudGate .cloud-auth-card{border:1px solid #d7e6e5;box-shadow:0 24px 70px #020a1499}
+#cloudGate .obraativa-auth-brand{display:flex;align-items:center;gap:10px;min-height:48px;margin-bottom:16px}
+#cloudGate .obraativa-auth-brand>img{width:46px;height:46px;padding:3px;border:1px solid #d7e6e5;border-radius:13px;background:#07111d;object-fit:cover;box-shadow:0 6px 14px #0c263522}
+#cloudGate .obraativa-auth-brand>span{display:grid;gap:2px}
+#cloudGate .obraativa-auth-brand small{color:#1d6fd0;font-size:9px;font-weight:900;letter-spacing:.1em}
+#cloudGate .obraativa-auth-brand strong{color:#122f47;font-size:19px;letter-spacing:-.03em;line-height:1}
+#cloudGate .obraativa-auth-brand strong b{color:#179b5e}
+#cloudGate .cloud-loading b{color:#fff}
+@media(max-width:600px){#cloudGate{background-size:auto,320px}}

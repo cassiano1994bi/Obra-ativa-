@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.escritoriodaminhaobra.controledeobra",
+      "sha256_cert_fingerprints": [
+        "39:78:D0:27:9C:1C:27:E3:05:19:D1:BE:2B:55:9B:DD:F9:7C:AE:C0:AE:A7:DB:72:82:DE:B9:80:57:E5:9A:B4"
+      ]
+    }
+  }
+]

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title desc">
+  <title id="title">Controle de Obra</title>
+  <desc id="desc">Arte promocional oficial do aplicativo Controle de Obra.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071B31"/>
+      <stop offset="0.58" stop-color="#103864"/>
+      <stop offset="1" stop-color="#1769C2"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="118" y1="106" x2="350" y2="396" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8DF9E"/>
+      <stop offset="1" stop-color="#C9902E"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#03101F" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+  <g opacity="0.08" stroke="#FFFFFF" fill="none">
+    <path d="M0 86H1024M0 170H1024M0 254H1024M0 338H1024M0 422H1024"/>
+    <path d="M86 0V500M170 0V500M254 0V500M338 0V500M422 0V500M506 0V500M590 0V500M674 0V500M758 0V500M842 0V500M926 0V500"/>
+    <circle cx="897" cy="88" r="164" stroke-width="2"/>
+  </g>
+  <circle cx="886" cy="102" r="226" fill="#2B78CE" opacity="0.16"/>
+  <circle cx="960" cy="420" r="156" fill="#F0B94F" opacity="0.1"/>
+  <g transform="translate(62 66) scale(.72)" filter="url(#shadow)">
+    <rect width="512" height="512" rx="116" fill="#0A2745"/>
+    <path d="M104 246 256 116l152 130v149c0 17-14 31-31 31H135c-17 0-31-14-31-31V246Z" fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="26"/>
+    <path d="M193 381v-91c0-13 11-24 24-24h78c13 0 24 11 24 24v91" fill="none" stroke="#F7FAFC" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
+    <path d="m315 328 25 25 57-65" fill="none" stroke="#F7FAFC" stroke-linecap="round" stroke-linejoin="round" stroke-width="22"/>
+    <circle cx="378" cy="195" r="20" fill="#F6D78C"/>
+  </g>
+  <g transform="translate(476 122)">
+    <text x="0" y="0" fill="#F6D78C" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="4">GESTÃO INTELIGENTE</text>
+    <text x="0" y="74" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="58" font-weight="800">CONTROLE</text>
+    <text x="0" y="132" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="58" font-weight="800">DE OBRA</text>
+    <rect x="0" y="162" width="76" height="5" rx="2.5" fill="#F0B94F"/>
+    <text x="0" y="210" fill="#DDE9F4" font-family="Arial, sans-serif" font-size="22">Obras, equipe e financeiro</text>
+    <text x="0" y="242" fill="#DDE9F4" font-family="Arial, sans-serif" font-size="22">organizados em um só lugar.</text>
+  </g>
+</svg>

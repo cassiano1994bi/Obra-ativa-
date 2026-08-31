@@ -1,0 +1,51 @@
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Configuracoes locais e segredos (nunca versionar)
+.env
+.env.*
+!.env.example
+*.local
+*.log
+*.pem
+*.p12
+*.jks
+*.keystore
+
+# Estado local de ferramentas e deploy
+.netlify/
+.openai/
+.codex/
+
+# Historico de trabalho, previas e artefatos de teste
+backups/
+deploy-*/
+release-*/
+tests/
+tmp/
+index.before-*.html
+.last-approved-release-path.txt
+
+# Binarios e pacotes gerados
+*.apk
+*.aab
+*.idsig
+*.zip
+*.7z
+
+# Android: manter o codigo-fonte e ignorar caches, builds e dados da maquina
+android-twa/.gradle/
+android-twa/build/
+android-twa/app/build/
+android-twa/local.properties
+android-twa/android.keystore
+
+# Dependencias instaladas localmente
+node_modules/
+bower_components/
+

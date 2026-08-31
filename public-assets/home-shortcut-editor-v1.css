@@ -1,0 +1,79 @@
+#app:not(.public-app) .obraativa-quick-section .home-section-head{align-items:center;gap:12px}
+#app:not(.public-app) .obraativa-quick-section .home-section-head>div{min-width:0}
+#app:not(.public-app) .obraativa-home .home-operational-head{position:relative}
+#app:not(.public-app) .obraativa-home .obraativa-home-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:auto;flex:none}
+#app:not(.public-app) .obraativa-shortcut-editor-button{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:32px;padding:6px 10px;border:1px solid #bcd8c9;border-radius:9px;background:#fff;color:#1d7655;font-size:11px;font-weight:850;cursor:pointer;transition:background .16s ease,border-color .16s ease,box-shadow .16s ease}
+#app:not(.public-app) .obraativa-shortcut-editor-button:hover{border-color:#4da780;background:#f3fbf6;box-shadow:0 5px 13px #1c6e4615}
+#app:not(.public-app) .obraativa-shortcut-editor-button:focus-visible{outline:3px solid #8acbad;outline-offset:2px}
+#app:not(.public-app) .obraativa-shortcut-editor-button>span:first-child{font-size:16px;line-height:1}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-size-compact .home-shortcut{min-height:94px;padding:11px;gap:8px}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-size-comfortable .home-shortcut{min-height:112px;padding:14px;gap:10px}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-size-spacious .home-shortcut{min-height:132px;padding:17px;gap:12px}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-1{grid-template-columns:minmax(0,1fr)!important}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-5{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+/* O atalho de Financeiro permanece disponível na navegação lateral, mas
+   quando não está selecionado para a página inicial não pode ocupar espaço
+   nem aparecer por causa dos estilos de grid do cartão. */
+#app:not(.public-app) .obraativa-home .home-shortcuts>.home-shortcut[hidden],
+#app:not(.public-app) .obraativa-home .home-shortcuts>.home-shortcut[aria-hidden="true"]{display:none!important}
+@media(min-width:901px){
+  #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-auto{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+.obraativa-shortcut-editor-backdrop{position:fixed;z-index:1100;inset:0;display:grid;place-items:center;padding:18px;background:#0614259e;backdrop-filter:blur(4px)}
+.obraativa-shortcut-editor-backdrop[hidden]{display:none}
+.obraativa-shortcut-editor{display:flex;flex-direction:column;width:min(700px,100%);max-height:min(760px,calc(100dvh - 36px));overflow:hidden;border:1px solid #d5e2ec;border-radius:18px;background:#fff;box-shadow:0 24px 70px #06142555;color:#142033}
+.obraativa-shortcut-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 22px 16px;border-bottom:1px solid #e7edf2;background:linear-gradient(135deg,#f5fbf7,#fff)}
+.obraativa-shortcut-editor-head small{color:#287756;font-size:10px;font-weight:900;letter-spacing:.12em}
+.obraativa-shortcut-editor-head h2{margin:5px 0 4px;color:#173f55;font-size:21px;letter-spacing:-.025em}
+.obraativa-shortcut-editor-head p{max-width:500px;margin:0;color:#667b89;font-size:12px;line-height:1.45}
+.obraativa-shortcut-editor-close{display:grid;place-items:center;flex:none;width:32px;height:32px;padding:0;border:1px solid #d6e3eb;border-radius:50%;background:#fff;color:#31516b;font-size:22px;line-height:1;cursor:pointer}
+.obraativa-shortcut-editor-close:hover{border-color:#90b9a4;background:#f1faf5}
+.obraativa-shortcut-editor-body{display:grid;gap:18px;overflow:auto;padding:18px 22px;overscroll-behavior:contain}
+.obraativa-shortcut-editor-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:9px}
+.obraativa-shortcut-editor-section-head h3{margin:0;color:#173f55;font-size:15px}
+.obraativa-shortcut-editor-section-head p{margin:4px 0 0;color:#71858f;font-size:11px}
+.obraativa-shortcut-editor-hint{color:#71858f;font-size:10px;white-space:nowrap}
+.obraativa-shortcut-editor-list{display:grid;gap:7px}
+.obraativa-shortcut-editor-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid #dfe9e5;border-radius:10px;background:#fbfdfc}
+.obraativa-shortcut-editor-row:focus-within{border-color:#81c0a0;box-shadow:0 0 0 3px #81c0a033}
+.obraativa-shortcut-toggle{display:flex;align-items:center;min-width:0;gap:10px;cursor:pointer}
+.obraativa-shortcut-toggle input{flex:none;width:18px;height:18px;accent-color:#1d7655}
+.obraativa-shortcut-toggle span{min-width:0}
+.obraativa-shortcut-toggle b{display:block;overflow:hidden;color:#234b5d;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-toggle small{display:block;margin-top:2px;overflow:hidden;color:#7a8c94;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-editor-order{display:flex;flex:none;gap:5px}
+.obraativa-shortcut-editor-order button{width:29px;height:28px;padding:0;border:1px solid #d2e1dc;border-radius:7px;background:#fff;color:#267255;font-size:16px;line-height:1;cursor:pointer}
+.obraativa-shortcut-editor-order button:hover:not(:disabled){border-color:#62aa88;background:#f0faf4}
+.obraativa-shortcut-editor-order button:disabled{cursor:not-allowed;opacity:.35}
+.obraativa-shortcut-editor-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:2px}
+.obraativa-shortcut-editor-options label{display:grid;gap:6px;color:#526d6a;font-size:11px;font-weight:800}
+.obraativa-shortcut-editor-options select{width:100%;min-height:39px;padding:8px 10px;border:1px solid #d2e2e0;border-radius:9px;background:#fff;color:#173f55;font-size:12px}
+.obraativa-shortcut-editor-options select:focus{outline:3px solid #8acbad66;outline-offset:1px}
+.obraativa-shortcut-editor-foot{display:flex;align-items:center;gap:8px;padding:13px 22px;border-top:1px solid #e7edf2;background:#fbfdfc}
+.obraativa-shortcut-editor-foot>span{flex:1}
+.obraativa-shortcut-editor-foot .btn{min-height:38px;font-size:12px}
+@media(max-width:680px){
+  #app:not(.public-app) .obraativa-quick-section .home-section-head{align-items:flex-start;flex-direction:column}
+  #app:not(.public-app) .obraativa-home .obraativa-home-head-actions{width:100%;justify-content:flex-start;margin-left:0}
+  #app:not(.public-app) .obraativa-home .obraativa-home-head-actions .obraativa-shortcut-editor-button{min-height:34px}
+  #app:not(.public-app) .obraativa-shortcut-editor-button{width:100%;justify-content:center}
+  #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-3,
+  #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-4,
+  #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-5{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .obraativa-shortcut-editor-backdrop{align-items:end;padding:8px}
+  .obraativa-shortcut-editor{max-height:calc(100dvh - 16px);border-radius:16px}
+  .obraativa-shortcut-editor-head{padding:17px 15px 13px}
+  .obraativa-shortcut-editor-body{padding:15px}
+  .obraativa-shortcut-editor-foot{padding:11px 15px;flex-wrap:wrap}
+  .obraativa-shortcut-editor-foot>span{display:none}
+  .obraativa-shortcut-editor-foot .btn{flex:1 1 130px}
+}
+@media(max-width:420px){
+  .obraativa-shortcut-editor-options{grid-template-columns:1fr}
+  .obraativa-shortcut-editor-section-head{align-items:flex-start;flex-direction:column;gap:4px}
+  .obraativa-shortcut-editor-hint{white-space:normal}
+  .obraativa-shortcut-editor-foot .btn{flex-basis:100%}
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Solicitar exclusão da conta | Controle de Obra</title>
+  <meta name="description" content="Solicite a exclusão da sua conta e dos dados associados no Controle de Obra.">
+  <link rel="icon" href="public-assets/controle-de-obra-icon.png">
+  <link rel="stylesheet" href="public-assets/legal-pages-v1.css">
+</head>
+<body>
+  <header class="legal-top"><img src="public-assets/controle-de-obra-icon.png" alt=""><div><b>Controle de Obra</b><br><span>Escritório da Minha Obra</span></div><a href="/?app=1">Abrir aplicativo</a></header>
+  <main class="legal-shell">
+    <p class="legal-kicker">Controle da sua conta</p>
+    <h1>Solicitar exclusão da conta</h1>
+    <p>Use este formulário mesmo que já tenha desinstalado o aplicativo. A solicitação inicia uma análise segura e não apaga dados automaticamente.</p>
+    <div class="legal-notice"><b>Como funciona:</b> confirmaremos sua identidade pelo e-mail informado, verificaremos vínculos com empresas e avisaremos sobre dados que precisem ser preservados por obrigação legal, fiscal ou de segurança.</div>
+    <form id="accountDeletionPublicForm" class="legal-form">
+      <div class="legal-field"><label for="deletionName">Nome</label><input id="deletionName" name="name" autocomplete="name" required maxlength="120"></div>
+      <div class="legal-field"><label for="deletionEmail">E-mail da conta</label><input id="deletionEmail" name="email" type="email" autocomplete="email" required maxlength="180"></div>
+      <div class="legal-field wide"><label for="deletionReason">Observação opcional</label><textarea id="deletionReason" name="reason" maxlength="800" placeholder="Se desejar, explique o motivo ou informe a empresa vinculada."></textarea></div>
+      <div class="legal-honeypot" aria-hidden="true"><label>Não preencha<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="legal-check wide"><input name="confirm" type="checkbox" required><span>Entendo que esta solicitação poderá encerrar meu acesso e excluir dados associados à conta após a confirmação da minha identidade.</span></label>
+      <div class="legal-actions wide"><button class="legal-button" type="submit">Enviar solicitação</button><a class="legal-button alt" href="/privacidade.html">Ver política de privacidade</a></div>
+    </form>
+    <div id="accountDeletionPublicStatus" class="legal-status" role="status" aria-live="polite"></div>
+    <h2>O que poderá ser excluído</h2>
+    <p>Cadastro, autenticação e dados associados à conta, observadas as permissões, a propriedade da empresa e as obrigações legais aplicáveis. A exclusão de uma conta não autoriza apagar dados pertencentes a outras pessoas ou empresas.</p>
+  </main>
+  <footer class="legal-footer">Dúvidas: <a href="mailto:escritoriodaminhaobra@gmail.com">escritoriodaminhaobra@gmail.com</a></footer>
+  <script src="public-assets/account-deletion-public-v1.js" defer></script>
+</body>
+</html>

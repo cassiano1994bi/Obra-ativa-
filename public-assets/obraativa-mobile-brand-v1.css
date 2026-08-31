@@ -1,0 +1,15 @@
+#app:not(.public-app) .top{position:relative}
+#app:not(.public-app) .top .obraativa-mobile-top-logo{display:block;position:absolute;z-index:1;top:12px;left:18px;width:48px;height:48px;padding:2px;border:1px solid #d8e5ec;border-radius:12px;background:#fff url("obraativa-app-icon-v2-192.png") center/cover no-repeat;box-shadow:0 5px 14px #122f4818;object-fit:contain}
+#app:not(.public-app) .top .top-brand{padding-left:60px}
+@media(max-width:1024px){
+  #app:not(.public-app) .top .obraativa-mobile-top-logo{top:8px;left:12px;width:44px;height:44px;border-radius:11px}
+  #app:not(.public-app) .top .top-brand{padding-left:55px}
+}
+@media(max-width:600px){
+  #app:not(.public-app) .top .obraativa-mobile-top-logo{top:7px;left:10px;width:42px;height:42px;border-radius:11px}
+  #app:not(.public-app) .top .top-brand{padding-left:52px}
+}
+@media(orientation:landscape) and (max-height:600px) and (max-width:1024px){
+  #app:not(.public-app) .top .obraativa-mobile-top-logo{top:7px;left:12px;width:42px;height:42px}
+  #app:not(.public-app) .top .top-brand{padding-left:53px}
+}

@@ -1,0 +1,49 @@
+#app:not(.public-app) .obraativa-account-session-footer{flex:0 0 auto;padding:8px 0 0;border-top:1px solid #ffffff1f;background:transparent}
+#app:not(.public-app) .obraativa-account-session-footer button{display:flex;align-items:center;justify-content:flex-start;gap:9px;width:100%;min-height:44px;padding:11px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#dceaff;font-size:14px;line-height:1.2;font-weight:600;cursor:pointer;transition:background .16s ease,border-color .16s ease}
+#app:not(.public-app) .obraativa-account-session-footer button:hover{border-color:transparent;background:#194983}
+#app:not(.public-app) .obraativa-account-session-footer button:focus-visible{outline:3px solid #8fc7ff;outline-offset:2px}
+#app:not(.public-app) .obraativa-account-session-footer button span:first-child{display:grid;place-items:center;width:auto;height:auto;border-radius:0;background:transparent;color:inherit;font-size:17px;line-height:1}
+#app:not(.public-app) .obraativa-account-session-footer button span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:normal}
+#app:not(.public-app) .obraativa-mobile-account-action{color:#a72d39!important;border-top:1px solid #edf0f3!important}
+#app:not(.public-app) .obraativa-mobile-account-action .mobile-nav-icon{color:#c24751}
+@media(min-width:761px){
+  #app:not(.public-app) .obraativa-mobile-account-action{display:none!important}
+}
+@media (min-width:761px) and (max-width:1024px), (orientation:landscape) and (max-height:600px) and (max-width:1024px){
+  #app:not(.public-app) .obraativa-account-session-footer{width:100%;padding:4px 0 0;border-top:0}
+  #app:not(.public-app) .obraativa-account-session-footer button{flex-direction:column;justify-content:center;gap:2px;width:100%;height:44px;min-height:44px;max-height:48px;padding:5px 3px;border-radius:10px;font-size:9px;line-height:1.05;text-align:center;white-space:normal;overflow:hidden}
+  #app:not(.public-app) .obraativa-account-session-footer button span:first-child{font-size:17px}
+  #app:not(.public-app) .obraativa-account-session-footer button span:last-child{display:block;max-width:100%;text-align:center}
+}
+.obraativa-account-dialog{position:fixed;z-index:2200;inset:0;display:grid;place-items:center;padding:18px;background:#061425a8;backdrop-filter:blur(4px)}
+.obraativa-account-dialog[hidden]{display:none}
+.obraativa-account-dialog-card{position:relative;width:min(470px,100%);padding:23px;border:1px solid #d7e6e5;border-radius:18px;background:#fff;color:#142033;box-shadow:0 24px 70px #06142566}
+.obraativa-account-dialog-close{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid #d6e3eb;border-radius:50%;background:#f6fafc;color:#31516b;font-size:22px;line-height:1;cursor:pointer}
+.obraativa-account-dialog-kicker{display:block;color:#1d7655;font-size:10px;font-weight:900;letter-spacing:.12em}
+.obraativa-account-dialog-card h2{margin:6px 0 5px;color:#173f55;font-size:22px}
+.obraativa-account-dialog-card>p{margin:0;color:#637589;font-size:13px;line-height:1.5}
+.obraativa-account-remember{display:flex;align-items:flex-start;gap:10px;margin-top:18px;padding:12px;border:1px solid #dbe9e3;border-radius:11px;background:#f6fbf8;cursor:pointer}
+.obraativa-account-remember input{flex:none;width:19px;height:19px;margin-top:1px;accent-color:#1d7655}
+.obraativa-account-remember span{display:grid;gap:4px}
+.obraativa-account-remember b{color:#225744;font-size:13px}
+.obraativa-account-remember small{color:#6a7f79;font-size:11px;line-height:1.45}
+.obraativa-account-dialog-card footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.obraativa-account-dialog-card footer .btn{min-height:39px;font-size:12px}
+.obraativa-remembered-account{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:14px 0 2px;padding:13px;border:1px solid #cde5d7;border-radius:12px;background:#f2fbf6}
+.obraativa-remembered-account>div{display:grid;gap:3px;min-width:0}
+.obraativa-remembered-account small{color:#287756;font-size:9px;font-weight:900;letter-spacing:.08em}
+.obraativa-remembered-account b{overflow:hidden;color:#1c4b3b;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-remembered-account span{color:#6b7f78;font-size:10px;line-height:1.4}
+.obraativa-remembered-account>[data-resume-account]{grid-column:2;grid-row:1 / span 2;min-height:39px;padding:7px 10px;font-size:11px;white-space:nowrap}
+.obraativa-remembered-account>[data-forget-account]{grid-column:1 / -1;justify-self:start;margin:0;padding:2px 0;color:#3473b8;font-size:11px}
+@media(max-width:760px){
+  #app:not(.public-app) .obraativa-account-session-footer{display:none}
+  .obraativa-account-dialog{align-items:end;padding:9px}
+  .obraativa-account-dialog-card{padding:19px 16px;border-radius:16px}
+  .obraativa-account-dialog-card footer{display:grid;grid-template-columns:1fr 1fr}
+  .obraativa-account-dialog-card footer .btn{width:100%}
+}
+@media(max-width:440px){
+  .obraativa-remembered-account{grid-template-columns:1fr}
+  .obraativa-remembered-account>[data-resume-account]{grid-column:1;grid-row:auto;width:100%}
+}
