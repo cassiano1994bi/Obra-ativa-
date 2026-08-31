@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T15:24:39.196Z",
-  "codeHash": "5b2c1145ac87430229b708ac86ba94b3b37ace6a2e6527cfa9af07f78189d612",
+  "generatedAt": "2026-08-31T16:11:31.635Z",
+  "codeHash": "8d1077ad932fcf4a8c8129dfedfec14e56897fa40ac715fb82cfdb9656aad78d",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 118,
-    "totalBytes": 4961014,
-    "totalLines": 21219,
+    "fileCount": 120,
+    "totalBytes": 4993064,
+    "totalLines": 21380,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1165597,
-      "lines": 3073,
-      "sha256": "970db9b898ae0240c6da357940ef44e382431cc72ab3df0ed371106d021fd616",
+      "bytes": 1165789,
+      "lines": 3075,
+      "sha256": "a9ae42dbf5a7c23b6d25c4cb987a9853fa5617f994ebcbec376af2fce5ea6a6e",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -976,6 +976,28 @@ export default Object.freeze({
       "inlineHandlers": 0
     },
     {
+      "path": "public-assets/obraativa-product-site-v2.css",
+      "scope": "application",
+      "bytes": 17307,
+      "lines": 21,
+      "sha256": "f02416b88417d69c3a7dabf7b3129439a4fef6cbe0dfa5ea8d7bf605ce3843e9",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/obraativa-product-site-v2.js",
+      "scope": "application",
+      "bytes": 14402,
+      "lines": 135,
+      "sha256": "b8d9a33abca1c29323c3e26684bd0d6789d894cb1d9fb2c1500a988d4aba49e5",
+      "functions": 12,
+      "fetches": 0,
+      "domWrites": 1,
+      "inlineHandlers": 0
+    },
+    {
       "path": "public-assets/obraativa-reception-config-v1.js",
       "scope": "application",
       "bytes": 610,
@@ -1264,9 +1286,9 @@ export default Object.freeze({
     {
       "path": "service-worker.js",
       "scope": "application",
-      "bytes": 6577,
-      "lines": 164,
-      "sha256": "31e15428a211853b4cf3939b49b779009da48f30f7327aed8706708f8c93b19c",
+      "bytes": 6726,
+      "lines": 167,
+      "sha256": "3fba8bf873a2872a9161d5d29b354bcab8f21ffef997e6294aebcda8d4a0cccd",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -1359,7 +1381,7 @@ export default Object.freeze({
       "validationPlan": "Testar entradas com caracteres especiais e executar revisão visual em todos os tamanhos suportados."
     },
     {
-      "id": "QF-C1BE5AD05A71",
+      "id": "QF-F21989BB84B8",
       "recurrenceKey": "ac0e6c051110aef1669afd57",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -1369,7 +1391,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "index.html",
-      "line": 423,
+      "line": 424,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -1377,7 +1399,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-17B6B0039A95",
+      "id": "QF-555CC2A51480",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1387,7 +1409,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 463,
+      "line": 464,
       "evidence": "catch(e){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1395,7 +1417,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-0BA18A6EDB6E",
+      "id": "QF-4D34FE91BEAE",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1405,7 +1427,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 1142,
+      "line": 1143,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1413,7 +1435,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-87B16E851777",
+      "id": "QF-E6A90450C6D6",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1423,7 +1445,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2432,
+      "line": 2433,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1431,7 +1453,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-0D49E10A6C2C",
+      "id": "QF-855BF791111A",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1441,7 +1463,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2435,
+      "line": 2436,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2151,7 +2173,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-07F2149EB118",
+      "id": "QF-9DF866E967A9",
       "recurrenceKey": "496b7ff2a2ee0db04b643bbc",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -2161,7 +2183,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "service-worker.js",
-      "line": 117,
+      "line": 120,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -2180,7 +2202,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1165597 bytes e 3073 linhas",
+      "evidence": "1165789 bytes e 3075 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",

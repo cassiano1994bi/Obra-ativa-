@@ -16,7 +16,7 @@ Nesta fase nenhuma extração de código foi executada.
 - Bloco JavaScript principal: aproximadamente 948 KB e 748 funções nomeadas.
 - Eventos HTML como `onclick`, `onsubmit` e semelhantes: 802 ocorrências.
 - Encadeamentos que guardam/substituem uma função anterior: aproximadamente 204.
-- Scripts externos existentes no final da página: 40 após a camada visual móvel isolada da Fase 8, a padronização da marca, o retorno visual de salvamento/exclusão e a recepção premium com autenticação social preparada.
+- Scripts externos existentes no final da página: 41 após a camada visual móvel isolada da Fase 8, a padronização da marca, o retorno visual de salvamento/exclusão, a recepção premium com autenticação social preparada e a landing pública modular.
 
 Esses números tornam arriscada uma conversão direta para módulos ES, bundler ou
 novos componentes. A primeira passagem deve ser uma movimentação mecânica, com
