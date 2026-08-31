@@ -31,6 +31,7 @@
       .home-weather-idle b{display:block;color:#234f43;font-size:13px}.home-weather-idle small{display:block;margin-top:3px;color:#667f76;font-size:10px;line-height:1.35}
       .home-weather-button{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:168px;min-height:42px;padding:9px 14px;border:1px solid #86bca8;border-radius:10px;background:#fff;color:#176646;font-size:11px;font-weight:850;cursor:pointer;touch-action:manipulation;box-shadow:0 4px 10px #173f5510}
       .home-weather-button:hover{border-color:#4d9f80;background:#f7fffb}.home-weather-button:disabled{cursor:wait;opacity:.7}
+      .home-weather-button[aria-busy="true"]:before{width:12px;height:12px;margin-right:7px;border:2px solid #b9d9cc;border-top-color:#176646;border-radius:50%;content:"";animation:home-weather-spin .7s linear infinite}
       .home-weather-credit{position:absolute;right:9px;bottom:3px;z-index:1;color:#758a83;font-size:7px;opacity:.78;pointer-events:none}
       body.responsive-landscape-density .${CARD_CLASS}{grid-template-columns:minmax(180px,1.15fr) repeat(3,minmax(100px,.55fr));gap:7px;padding:8px}
       body.responsive-landscape-density .home-weather-icon{width:39px;height:39px;font-size:23px}
@@ -38,6 +39,7 @@
       body.responsive-landscape-density .home-weather-day{padding:6px 7px}
       @media(max-width:760px){.${CARD_CLASS}{grid-template-columns:minmax(155px,1fr) repeat(3,minmax(88px,.58fr));gap:6px}.home-weather-current{gap:6px;padding:3px}.home-weather-day{padding:6px}.home-weather-day>span{font-size:19px}}
       @media(max-width:600px) and (orientation:portrait){.${CARD_CLASS}{grid-template-columns:1fr 1fr}.home-weather-current{grid-column:1/-1}.home-weather-idle{align-items:stretch;flex-direction:column}.home-weather-button{width:100%}}
+      @keyframes home-weather-spin{to{transform:rotate(360deg)}}
       @media(prefers-reduced-motion:no-preference){.${CARD_CLASS}{animation:home-weather-arrive .28s ease-out}@keyframes home-weather-arrive{from{opacity:.3;transform:translateY(4px)}}}
     </style>`);
   }
@@ -62,8 +64,9 @@
   }
 
   function idleMarkup() {
-    const text = status === 'loading' ? 'Carregando a previsão…' : status === 'error' ? message : 'Veja temperatura, chuva e próximos dias sem sair da tela inicial.';
-    return `<div class="home-weather-idle"><div class="home-weather-idle-main"><span>${status === 'error' ? '⚠️' : '🌦️'}</span><div><b>Previsão do tempo</b><small>${escapeHtml(text)} A localização aproximada não é salva.</small></div></div><button class="home-weather-button" data-home-weather-location type="button" ${loading ? 'disabled' : ''}>${status === 'error' ? 'Ativar localização' : 'Usar minha localização'}</button></div>`;
+    const text = status === 'loading' ? message || 'Localizando o aparelho…' : status === 'error' ? message : 'Veja temperatura, chuva e próximos dias sem sair da tela inicial.';
+    const buttonLabel = status === 'loading' ? 'Localizando…' : status === 'error' ? 'Tentar novamente' : 'Usar minha localização';
+    return `<div class="home-weather-idle"><div class="home-weather-idle-main"><span>${status === 'error' ? '⚠️' : '🌦️'}</span><div><b>Previsão do tempo</b><small aria-live="polite">${escapeHtml(text)} A localização aproximada não é salva.</small></div></div><button class="home-weather-button" data-home-weather-location type="button" ${loading ? 'disabled aria-busy="true"' : ''}>${buttonLabel}</button></div>`;
   }
 
   function forecastMarkup() {
@@ -156,7 +159,7 @@
     }
     loading = true;
     status = 'loading';
-    message = '';
+    message = 'Solicitando permissão de localização…';
     queueRefresh();
     const attempt = ++locationAttempt;
     try {
@@ -178,22 +181,12 @@
     }
   }
 
-  async function useGrantedLocation() {
-    try {
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      if (!navigator.permissions?.query || !navigator.geolocation) return;
-      const permission = await navigator.permissions.query({ name: 'geolocation' });
-      if (permission.state === 'granted') requestLocation();
-    } catch (error) {}
-  }
-
   function install() {
     installStyle();
     const view = document.getElementById('view');
     if (!view) { setTimeout(install, 120); return; }
     new MutationObserver(queueRefresh).observe(view, { childList: true, subtree: true });
     queueRefresh();
-    useGrantedLocation();
   }
 
   document.addEventListener('click', (event) => {
@@ -201,6 +194,9 @@
     if (!button) return;
     event.preventDefault();
     event.stopPropagation();
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Localizando…';
     requestLocation();
   }, true);
 

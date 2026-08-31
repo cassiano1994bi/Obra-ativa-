@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T11:40:44.776Z",
-  "codeHash": "9c0c7bdefff4f372781e5482a13401e36cbad261c627622c969f0317e2c8aaff",
+  "generatedAt": "2026-08-31T11:46:54.808Z",
+  "codeHash": "ade483bc3ee186f69687f9111df634a9b2d8816a77f47ddb0cb918d8f8b49ecd",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,13 +28,13 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4904169,
-    "totalLines": 20486,
-    "findingCount": 187,
+    "totalBytes": 4904335,
+    "totalLines": 20482,
+    "findingCount": 186,
     "severityCounts": {
       "critical": 0,
       "high": 0,
-      "medium": 46,
+      "medium": 45,
       "low": 10,
       "info": 131
     }
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163673,
+      "bytes": 1163668,
       "lines": 3071,
-      "sha256": "9dba2c37acbe30a1a9fa0c93c3b981909a75a2028483d81bccc046068795b2c7",
+      "sha256": "c74522ff6986176962de2a100b78f1d00a0260afa949c3f08ebe8242cd9d8657",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -846,10 +846,10 @@ export default Object.freeze({
     {
       "path": "public-assets/home-weather-v1.js",
       "scope": "application",
-      "bytes": 12660,
-      "lines": 211,
-      "sha256": "00410bb52f8351672b0e5d78f8985d419751de3934f5f89a1cc7485b2ff8afcc",
-      "functions": 15,
+      "bytes": 12831,
+      "lines": 207,
+      "sha256": "55868a3b009e9d9a97620e5bdc9f9d90a01706a9b691f1395a55647b1d9af0a7",
+      "functions": 14,
       "fetches": 1,
       "domWrites": 2,
       "inlineHandlers": 0
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "33feb58de31dd054d6f76d95014dafbb18bc83d9ceb727d14d25d0d2e7e869e9",
+      "sha256": "f1820233b2333d815f42c3d003ff3a4e0f2f8ffdc20e4fb46f60b23de0fb86ac",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -1622,24 +1622,6 @@ export default Object.freeze({
       "file": "public-assets/assistant-obras-phase4-v1.js",
       "line": 101,
       "evidence": "catch {}",
-      "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
-      "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
-      "recommendation": "Explicar o erro ao usuário ou registrar diagnóstico sem expor dados sensíveis.",
-      "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
-    },
-    {
-      "id": "QF-818A9B2D91AC",
-      "recurrenceKey": "5ef3a59d783b681bd256fe63",
-      "ruleId": "reliability.empty-catch",
-      "severity": "medium",
-      "status": "probable",
-      "confidence": "medium",
-      "category": "reliability",
-      "scope": "application",
-      "title": "Erro possivelmente ignorado sem registro",
-      "file": "public-assets/home-weather-v1.js",
-      "line": 187,
-      "evidence": "catch (error) {}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
       "recommendation": "Explicar o erro ao usuário ou registrar diagnóstico sem expor dados sensíveis.",
@@ -2125,7 +2107,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163673 bytes e 3071 linhas",
+      "evidence": "1163668 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -2996,7 +2978,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-E3A60D9016BF",
+      "id": "QF-17B212EE075E",
       "recurrenceKey": "81d784c9f81654cff8f1f173",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -3006,7 +2988,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/home-weather-v1.js",
-      "line": 99,
+      "line": 102,
       "evidence": "queueRefresh aparece em 5 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
