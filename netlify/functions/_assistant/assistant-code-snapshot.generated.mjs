@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T10:46:59.801Z",
-  "codeHash": "2e20a4cac58c5d4e71466aa366d55d217b696f46c9c5c3c159ca75c0c55ef3a0",
+  "generatedAt": "2026-08-31T11:20:46.405Z",
+  "codeHash": "1dffb4201b891498fa3abda9b90c6f2585697c25bc0ea701a85921919f0dca35",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,13 +28,13 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4901196,
-    "totalLines": 20415,
-    "findingCount": 188,
+    "totalBytes": 4902468,
+    "totalLines": 20444,
+    "findingCount": 187,
     "severityCounts": {
       "critical": 0,
       "high": 0,
-      "medium": 47,
+      "medium": 46,
       "low": 10,
       "info": 131
     }
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163646,
+      "bytes": 1163659,
       "lines": 3071,
-      "sha256": "90c87af906a57e8ab76c68d88b168797160bf9ca1e5bcfd5648735072e1d9b8a",
+      "sha256": "ac94ae2465987f8b78ff3faf74ca9d87524a75cb91be6e847b1a2e1ae3ddd46d",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -846,10 +846,10 @@ export default Object.freeze({
     {
       "path": "public-assets/home-weather-v1.js",
       "scope": "application",
-      "bytes": 11401,
-      "lines": 182,
-      "sha256": "2ff71c38a6e9fc03a46db08a378abd5b8a01ef2605af1ec297617d6f30dad086",
-      "functions": 12,
+      "bytes": 12660,
+      "lines": 211,
+      "sha256": "00410bb52f8351672b0e5d78f8985d419751de3934f5f89a1cc7485b2ff8afcc",
+      "functions": 15,
       "fetches": 1,
       "domWrites": 2,
       "inlineHandlers": 0
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "968a285575acbc042b0bfb451d8fbca80e24804583c3f0620c332437f2fb1f8d",
+      "sha256": "dd67a8c9c4eb8b335713fdab9ed728c9a7879c92c6fac6cd18bb8c2dd5cac08f",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -1628,25 +1628,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-C43B81FC5408",
-      "recurrenceKey": "ad6981f238c37126a69d8933",
-      "ruleId": "reliability.fetch-without-abort",
-      "severity": "medium",
-      "status": "probable",
-      "confidence": "medium",
-      "category": "reliability",
-      "scope": "application",
-      "title": "Requisições sem cancelamento explícito no mesmo módulo",
-      "file": "public-assets/home-weather-v1.js",
-      "line": 113,
-      "evidence": "1 chamada(s) fetch; AbortController não localizado",
-      "probableCause": "A função depende apenas do término natural da rede.",
-      "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
-      "recommendation": "Revisar timeouts e cancelamento antes de considerar alteração.",
-      "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
-    },
-    {
-      "id": "QF-E21AE5674676",
+      "id": "QF-818A9B2D91AC",
       "recurrenceKey": "5ef3a59d783b681bd256fe63",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1656,7 +1638,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "public-assets/home-weather-v1.js",
-      "line": 158,
+      "line": 187,
       "evidence": "catch (error) {}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2143,7 +2125,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163646 bytes e 3071 linhas",
+      "evidence": "1163659 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -3014,7 +2996,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-F2405E0C5334",
+      "id": "QF-E3A60D9016BF",
       "recurrenceKey": "81d784c9f81654cff8f1f173",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -3024,7 +3006,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/home-weather-v1.js",
-      "line": 98,
+      "line": 99,
       "evidence": "queueRefresh aparece em 5 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",

@@ -8,6 +8,7 @@
   let forecast = null;
   let status = 'idle';
   let message = '';
+  let locationAttempt = 0;
   const renderedCards = new WeakMap();
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -110,21 +111,42 @@
       const lat = Math.round(Number(latitude) * 100) / 100;
       const lon = Math.round(Number(longitude) * 100) / 100;
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Sao_Paulo';
-      const response = await fetch(`/.netlify/functions/weather-forecast?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&tz=${encodeURIComponent(timezone)}`);
+      const controller = typeof AbortController === 'function' ? new AbortController() : null;
+      const timer = controller ? setTimeout(() => controller.abort(), 18000) : null;
+      const response = await fetch(`/.netlify/functions/weather-forecast?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&tz=${encodeURIComponent(timezone)}`, controller ? { signal: controller.signal } : undefined)
+        .finally(() => { if (timer) clearTimeout(timer); });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || 'Não foi possível carregar a previsão agora.');
       forecast = body;
       status = 'ready';
     } catch (error) {
       status = 'error';
-      message = error.message || 'A previsão está temporariamente indisponível.';
+      message = error?.name === 'AbortError'
+        ? 'A previsão demorou para responder. Toque novamente para tentar.'
+        : error?.message || 'A previsão está temporariamente indisponível.';
     } finally {
       loading = false;
       queueRefresh();
     }
   }
 
-  function requestLocation() {
+  function positionOptions(retry = false) {
+    return retry
+      ? { enableHighAccuracy: true, timeout: 18000, maximumAge: 0 }
+      : { enableHighAccuracy: false, timeout: 12000, maximumAge: 30 * 60 * 1000 };
+  }
+
+  function locate(options) {
+    return new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, options));
+  }
+
+  function locationErrorMessage(error) {
+    if (error?.code === 1) return 'Localização bloqueada. Permita a localização nas configurações do navegador ou do aplicativo e toque novamente.';
+    if (error?.code === 3) return 'A localização demorou para responder. Confira se ela está ativada no aparelho e tente novamente.';
+    return 'Não foi possível encontrar sua localização. Ative a localização do aparelho e tente novamente.';
+  }
+
+  async function requestLocation() {
     if (loading) return;
     if (!navigator.geolocation) {
       status = 'error';
@@ -134,19 +156,26 @@
     }
     loading = true;
     status = 'loading';
+    message = '';
     queueRefresh();
-    navigator.geolocation.getCurrentPosition(
-      (position) => loadForCoordinates(position.coords.latitude, position.coords.longitude),
-      (error) => {
-        loading = false;
-        status = 'error';
-        message = error?.code === 1
-          ? 'Localização bloqueada. Ative a permissão de localização nas configurações do navegador ou do aplicativo e toque novamente.'
-          : 'Não foi possível obter sua localização agora. Confira se a localização do aparelho está ativada.';
-        queueRefresh();
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 30 * 60 * 1000 }
-    );
+    const attempt = ++locationAttempt;
+    try {
+      let position;
+      try {
+        position = await locate(positionOptions(false));
+      } catch (firstError) {
+        if (firstError?.code === 1) throw firstError;
+        position = await locate(positionOptions(true));
+      }
+      if (attempt !== locationAttempt) return;
+      await loadForCoordinates(position.coords.latitude, position.coords.longitude);
+    } catch (error) {
+      if (attempt !== locationAttempt) return;
+      loading = false;
+      status = 'error';
+      message = locationErrorMessage(error);
+      queueRefresh();
+    }
   }
 
   async function useGrantedLocation() {
