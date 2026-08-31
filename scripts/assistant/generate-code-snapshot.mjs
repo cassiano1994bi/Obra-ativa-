@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(scriptsDirectory, '..');
+const projectRoot = path.resolve(scriptsDirectory, '..', '..');
 const outputFile = path.join(projectRoot, 'netlify', 'functions', '_assistant', 'assistant-code-snapshot.generated.mjs');
 const allowedExtensions = new Set(['.js', '.mjs', '.cjs', '.html', '.css', '.toml', '.json', '.webmanifest', '.sql', '.xml', '.java', '.kt', '.gradle', '.properties', '.ps1']);
 const rootFiles = ['index.html', 'service-worker.js', 'netlify.toml', 'manifest.webmanifest', 'privacidade.html', 'exclusao-de-conta.html'];
@@ -91,7 +91,7 @@ for (const file of candidates) {
   const inlineHandlerCount = (source.match(/\bon(?:click|change|submit|input)=/g) || []).length;
   const emptyCatchMatches = [...source.matchAll(/catch\s*(?:\([^)]*\))?\s*\{\s*\}/g)];
   const dynamicCodeMatches = [...source.matchAll(/\beval\s*\(|\bnew\s+Function\s*\(/g)];
-  const containsSecretDetectionRules = file.endsWith('scripts/generate-assistant-code-snapshot.mjs') || file.endsWith('netlify/functions/_assistant/assistant-quality-auditor.mjs');
+  const containsSecretDetectionRules = file.endsWith('scripts/assistant/generate-code-snapshot.mjs') || file.endsWith('netlify/functions/_assistant/assistant-quality-auditor.mjs');
   const literalSecretMatches = containsSecretDetectionRules ? [] : [...source.matchAll(/(?:sk-|sb_secret_)[A-Za-z0-9_.-]{12,}|-----BEGIN[\s\S]*?PRIVATE KEY-----/gi)];
   files.push({ path: file, scope: isThirdParty(file) ? 'third-party' : 'application', bytes: Buffer.byteLength(source), lines: lines.length, sha256: hash(source), functions: functionMatches.length, fetches: fetchCount, domWrites: domWriteCount, inlineHandlers: inlineHandlerCount });
 
@@ -135,6 +135,6 @@ const snapshot = {
   files,
   findings
 };
-const output = `// Arquivo gerado mecanicamente por scripts/generate-assistant-code-snapshot.mjs.\n// Não contém dados de empresa nem segredos; apenas métricas e evidências sanitizadas do código.\nexport default Object.freeze(${JSON.stringify(snapshot, null, 2)});\n`;
+const output = `// Arquivo gerado mecanicamente por scripts/assistant/generate-code-snapshot.mjs.\n// Não contém dados de empresa nem segredos; apenas métricas e evidências sanitizadas do código.\nexport default Object.freeze(${JSON.stringify(snapshot, null, 2)});\n`;
 fs.writeFileSync(outputFile, output, 'utf8');
 console.log(`ASSISTANT_CODE_SNAPSHOT_OK: ${files.length} arquivos, ${snapshot.summary.totalLines} linhas, ${findings.length} sinais, hash ${aggregateHash.slice(0, 12)}`);

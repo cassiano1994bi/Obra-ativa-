@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const historyFile = path.join(projectRoot, 'netlify', 'functions', '_assistant', 'assistant-quality-history.generated.mjs');
 const args = process.argv.slice(2);
 const value = (name) => {

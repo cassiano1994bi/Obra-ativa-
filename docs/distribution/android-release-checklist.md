@@ -32,5 +32,5 @@
 - APK: `android-twa/app-release-signed.apk`
 - AAB: `android-twa/app-release-bundle.aab`
 - Chave: `android-twa/android.keystore`
-- Ficha da loja: `docs/play-store-listing-pt-BR.md`
-- Segurança dos dados: `docs/play-data-safety-draft.md`
+- Ficha da loja: `docs/distribution/play-store/listing-pt-BR.md`
+- Segurança dos dados: `docs/distribution/play-store/data-safety-draft.md`

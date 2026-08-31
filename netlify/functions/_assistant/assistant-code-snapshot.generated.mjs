@@ -1,10 +1,10 @@
-// Arquivo gerado mecanicamente por scripts/generate-assistant-code-snapshot.mjs.
+// Arquivo gerado mecanicamente por scripts/assistant/generate-code-snapshot.mjs.
 // Não contém dados de empresa nem segredos; apenas métricas e evidências sanitizadas do código.
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T03:55:52.764Z",
-  "codeHash": "250517646d3efdd8db5a15a67ea2a0ccb5f3f686a7663c69286d717d0b3ba360",
+  "generatedAt": "2026-08-31T04:26:20.553Z",
+  "codeHash": "987ec3a8b392d0010218b4abaa605a47e26ec0986251aac9150604c85c923047",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,7 +28,7 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 104,
-    "totalBytes": 4768609,
+    "totalBytes": 4768627,
     "totalLines": 18688,
     "findingCount": 194,
     "severityCounts": {
@@ -1075,33 +1075,33 @@ export default Object.freeze({
       "inlineHandlers": 0
     },
     {
-      "path": "scripts/generate-assistant-code-snapshot.mjs",
+      "path": "scripts/assistant/generate-code-snapshot.mjs",
       "scope": "application",
-      "bytes": 15986,
+      "bytes": 15992,
       "lines": 141,
-      "sha256": "9d98f7fa18b9e47c68bdfb4c6e3c21e6ded274e0acaa17e3ed7baf23e0be6e6e",
+      "sha256": "46ca8ee15a44da9ffd222b5b624f513cb48da2f1eedabe9434a8b175671c6bc8",
       "functions": 8,
       "fetches": 1,
       "domWrites": 0,
       "inlineHandlers": 0
     },
     {
-      "path": "scripts/record-assistant-quality-outcome.mjs",
+      "path": "scripts/assistant/record-quality-outcome.mjs",
       "scope": "application",
-      "bytes": 4004,
+      "bytes": 4010,
       "lines": 59,
-      "sha256": "3604aaf60b50aa9d852b85930331fd9d35b7c411e55521af747cd42d0f27e075",
+      "sha256": "2636c0322a207c954c5bc3ec4d5a56c6cf06fac64aa0735f7665cd5cb7e44c3e",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
       "inlineHandlers": 0
     },
     {
-      "path": "scripts/run-assistant-quality-gate.mjs",
+      "path": "scripts/assistant/run-quality-gate.mjs",
       "scope": "application",
-      "bytes": 1289,
+      "bytes": 1295,
       "lines": 30,
-      "sha256": "faddacef57a45ce317acc3dc876d237afd64d8e7ba7b86de2ee6a7b41b4c9c09",
+      "sha256": "a7a4ec5f6168c71a3a1f3f3fcf204a9ddccd3427b268662493bf79b998979c0b",
       "functions": 1,
       "fetches": 0,
       "domWrites": 0,

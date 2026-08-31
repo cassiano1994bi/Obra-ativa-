@@ -13,8 +13,11 @@ financeiro, orçamentos e rotinas operacionais.
   empresas.
 - `android-twa/` — código-fonte do pacote Android/TWA. Chaves, builds e
   binários assinados ficam fora do Git.
-- `docs/` — documentação de produto, segurança e publicação.
-- `scripts/` — verificações automatizadas de qualidade.
+- `docs/audits/` — auditorias e planos técnicos derivados de auditorias.
+- `docs/plans/` — planos seguros de evolução funcional.
+- `docs/distribution/` — documentação de Android e lojas.
+- `docs/design-sources/` — fontes visuais usadas como referência.
+- `scripts/assistant/` — verificações automatizadas da assistente e da qualidade.
 
 ## Regras de segurança
 
@@ -33,7 +36,7 @@ financeiro, orçamentos e rotinas operacionais.
 Antes de registrar uma melhoria, execute a auditoria completa:
 
 ```text
-node scripts/run-assistant-quality-gate.mjs
+node scripts/assistant/run-quality-gate.mjs
 ```
 
 Para uma prévia estática local, sirva a pasta com qualquer servidor HTTP local
