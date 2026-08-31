@@ -1,0 +1,24 @@
+#app:not(.public-app) .work-phase-folder-grid{align-items:stretch}
+
+@media(min-width:1200px){
+  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}
+}
+
+@media(min-width:761px) and (max-width:1199px){
+  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+}
+
+@media(min-width:761px){
+  #app:not(.public-app) .work-phase-folder{align-content:start;gap:8px!important;min-width:0;padding:9px!important;border-radius:11px!important}
+  #app:not(.public-app) .work-phase-folder-top{align-items:center!important;gap:7px!important}
+  #app:not(.public-app) .work-phase-folder-icon{width:30px!important;height:28px!important;border-radius:8px!important;font-size:15px!important}
+  #app:not(.public-app) .work-phase-folder h3{margin:0 0 2px!important;font-size:13px!important;line-height:1.2!important;overflow-wrap:anywhere}
+  #app:not(.public-app) .work-phase-folder small{font-size:9.5px!important;line-height:1.25!important}
+  #app:not(.public-app) .work-phase-folder-preview,
+  #app:not(.public-app) .work-phase-folder-empty{min-height:82px!important;border-radius:8px!important}
+  #app:not(.public-app) .work-phase-folder-empty{gap:2px!important;padding:8px!important}
+  #app:not(.public-app) .work-phase-folder-empty>span{font-size:18px!important}
+  #app:not(.public-app) .work-phase-folder-empty b{font-size:10.5px!important;line-height:1.2!important}
+  #app:not(.public-app) .work-phase-folder-preview span{margin:5px!important;padding:5px 6px!important;font-size:9.5px!important}
+  #app:not(.public-app) .simple-phase-add-photo{min-height:34px!important;padding:6px 7px!important;font-size:10px!important}
+}
