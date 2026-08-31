@@ -11,7 +11,7 @@ Nesta fase nenhuma extração de código foi executada.
 - Tamanho do `index.html`: aproximadamente 1,15 MB.
 - Linhas físicas: 3.058; diversas linhas concentram milhares de caracteres.
 - CSS escrito diretamente no cabeçalho: 20 blocos.
-- CSS adicional criado em tempo de execução: 75 blocos.
+- CSS adicional criado em tempo de execução: 76 blocos.
 - JavaScript embutido: 15 blocos funcionais e um bloco de abertura.
 - Bloco JavaScript principal: aproximadamente 948 KB e 748 funções nomeadas.
 - Eventos HTML como `onclick`, `onsubmit` e semelhantes: 799 ocorrências.

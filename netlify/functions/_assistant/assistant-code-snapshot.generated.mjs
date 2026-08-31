@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T09:34:14.047Z",
-  "codeHash": "69a2568cf13a0e14b3d8309c51f5265ddc85849eb9a4e72c55418482ef57c22e",
+  "generatedAt": "2026-08-31T09:39:10.434Z",
+  "codeHash": "8c165de1307ebea8bde7a267473e71e150b3e9064f703efa10ed7a2d3ac2ea65",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4879404,
-    "totalLines": 20291,
+    "totalBytes": 4881400,
+    "totalLines": 20293,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,12 +230,12 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1154901,
-      "lines": 3062,
-      "sha256": "e00497441488f945669abf613f8aacf15c86984ac2fe01654a3f9d7ca0adadbf",
-      "functions": 821,
+      "bytes": 1156897,
+      "lines": 3064,
+      "sha256": "2a54ea72beb61e5c2423f75a0521ac4b29598e2197a6b11bc1ff7d0fa5d00f37",
+      "functions": 823,
       "fetches": 2,
-      "domWrites": 252,
+      "domWrites": 253,
       "inlineHandlers": 811
     },
     {
@@ -1297,7 +1297,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "index.html",
       "line": 1,
-      "evidence": "252 escrita(s) dinâmica(s) de HTML",
+      "evidence": "253 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -1358,7 +1358,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-3DBAAD0918CE",
+      "id": "QF-16C46B8F8D38",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1368,7 +1368,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2423,
+      "line": 2425,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1376,7 +1376,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-8FC4E1037D9A",
+      "id": "QF-48BBF285BFE4",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1386,7 +1386,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2426,
+      "line": 2428,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2143,7 +2143,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1154901 bytes e 3062 linhas",
+      "evidence": "1156897 bytes e 3064 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
