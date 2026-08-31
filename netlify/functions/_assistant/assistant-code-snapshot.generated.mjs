@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T12:00:45.251Z",
-  "codeHash": "d807e32c7ded97d56fb95fef06355fd8e3d6787709a23c5ccec4530a4b6b987b",
+  "generatedAt": "2026-08-31T12:41:50.168Z",
+  "codeHash": "b842a63cb77424452df4be25a2c5bfa9ca339ba019d8b6ecd21b9fbc104ea39e",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,7 +28,7 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4906432,
+    "totalBytes": 4906476,
     "totalLines": 20503,
     "findingCount": 186,
     "severityCounts": {
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163683,
+      "bytes": 1163685,
       "lines": 3071,
-      "sha256": "b49a28df7fa5c8c9beb3566a495638231d4e9dd720f1bbe7aafb99b2093e3ac6",
+      "sha256": "052934bd720bd9bdad27c1dd0f592cf9ce2f1ae6196d3e852be7a805af8c2e64",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -1121,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-phase-density-v1.css",
       "scope": "application",
-      "bytes": 5057,
+      "bytes": 5099,
       "lines": 80,
-      "sha256": "859a28a2f0fa2eacb3f7d055b4030a26a72212b1d26dec5e28bfb143a8991dbb",
+      "sha256": "38d6f3652dd494ddb65465ac1f8b885a2bcf366cfeb83cd3464de7288ea3167e",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "fd45f34e35316ed8154dbcbedeefcc221d37ffb598db278fdf31c52613662750",
+      "sha256": "c737a78026ed9e25ddc04ca0e00424985473e6b08cfc24e3579e6baa2bd7622e",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2107,7 +2107,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163683 bytes e 3071 linhas",
+      "evidence": "1163685 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
