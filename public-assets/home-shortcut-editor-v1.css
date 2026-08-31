@@ -22,58 +22,109 @@
 @media(min-width:901px){
   #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-auto{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-.obraativa-shortcut-editor-backdrop{position:fixed;z-index:1100;inset:0;display:grid;place-items:center;padding:18px;background:#0614259e;backdrop-filter:blur(4px)}
+body.obraativa-editor-open{overflow:hidden}
+.obraativa-shortcut-editor-backdrop{position:fixed;z-index:1100;inset:0;display:grid;place-items:center;padding:12px;background:#061425b8;backdrop-filter:blur(5px)}
 .obraativa-shortcut-editor-backdrop[hidden]{display:none}
-.obraativa-shortcut-editor{display:flex;flex-direction:column;width:min(700px,100%);max-height:min(760px,calc(100dvh - 36px));overflow:hidden;border:1px solid #d5e2ec;border-radius:18px;background:#fff;box-shadow:0 24px 70px #06142555;color:#142033}
-.obraativa-shortcut-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 22px 16px;border-bottom:1px solid #e7edf2;background:linear-gradient(135deg,#f5fbf7,#fff)}
-.obraativa-shortcut-editor-head small{color:#287756;font-size:10px;font-weight:900;letter-spacing:.12em}
-.obraativa-shortcut-editor-head h2{margin:5px 0 4px;color:#173f55;font-size:21px;letter-spacing:-.025em}
-.obraativa-shortcut-editor-head p{max-width:500px;margin:0;color:#667b89;font-size:12px;line-height:1.45}
-.obraativa-shortcut-editor-close{display:grid;place-items:center;flex:none;width:32px;height:32px;padding:0;border:1px solid #d6e3eb;border-radius:50%;background:#fff;color:#31516b;font-size:22px;line-height:1;cursor:pointer}
-.obraativa-shortcut-editor-close:hover{border-color:#90b9a4;background:#f1faf5}
-.obraativa-shortcut-editor-body{display:grid;gap:18px;overflow:auto;padding:18px 22px;overscroll-behavior:contain}
-.obraativa-shortcut-editor-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:9px}
-.obraativa-shortcut-editor-section-head h3{margin:0;color:#173f55;font-size:15px}
-.obraativa-shortcut-editor-section-head p{margin:4px 0 0;color:#71858f;font-size:11px}
-.obraativa-shortcut-editor-hint{color:#71858f;font-size:10px;white-space:nowrap}
-.obraativa-shortcut-editor-list{display:grid;gap:7px}
-.obraativa-shortcut-editor-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid #dfe9e5;border-radius:10px;background:#fbfdfc}
-.obraativa-shortcut-editor-row:focus-within{border-color:#81c0a0;box-shadow:0 0 0 3px #81c0a033}
-.obraativa-shortcut-toggle{display:flex;align-items:center;min-width:0;gap:10px;cursor:pointer}
-.obraativa-shortcut-toggle input{flex:none;width:18px;height:18px;accent-color:#1d7655}
-.obraativa-shortcut-toggle span{min-width:0}
-.obraativa-shortcut-toggle b{display:block;overflow:hidden;color:#234b5d;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
-.obraativa-shortcut-toggle small{display:block;margin-top:2px;overflow:hidden;color:#7a8c94;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
-.obraativa-shortcut-editor-order{display:flex;flex:none;gap:5px}
-.obraativa-shortcut-editor-order button{width:29px;height:28px;padding:0;border:1px solid #d2e1dc;border-radius:7px;background:#fff;color:#267255;font-size:16px;line-height:1;cursor:pointer}
+.obraativa-shortcut-editor{display:flex;flex-direction:column;width:min(1180px,100%);height:min(780px,calc(100dvh - 24px));overflow:hidden;border:1px solid #cddde8;border-radius:20px;background:#fff;box-shadow:0 28px 90px #06142566;color:#142033}
+.obraativa-shortcut-editor-head{display:flex;align-items:center;justify-content:space-between;gap:20px;flex:none;padding:17px 20px;border-bottom:1px solid #dfe8ef;background:linear-gradient(130deg,#f2fbf6 0,#fff 58%,#eef5ff 100%)}
+.obraativa-shortcut-editor-head>div:first-child{min-width:0}
+.obraativa-shortcut-editor-head small,.obraativa-shortcut-editor-preview-pane header small,.obraativa-shortcut-editor-canvas-head small{color:#277554;font-size:9px;font-weight:950;letter-spacing:.13em}
+.obraativa-shortcut-editor-head h2{margin:3px 0;color:#143a52;font-size:21px;line-height:1.15;letter-spacing:-.025em}
+.obraativa-shortcut-editor-head p{margin:0;color:#667c8a;font-size:11px;line-height:1.4}
+.obraativa-shortcut-editor-head-actions{display:flex;align-items:center;gap:10px;flex:none}
+.obraativa-shortcut-editor-status{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:850;white-space:nowrap}
+.obraativa-shortcut-editor-status:before{content:'●';font-size:9px}
+.obraativa-shortcut-editor-status.is-saved{background:#eef4f7;color:#637987}
+.obraativa-shortcut-editor-status.is-dirty{background:#fff3cc;color:#7a5a00}
+.obraativa-shortcut-editor-status.is-warning{background:#fff0eb;color:#a34020}
+.obraativa-shortcut-editor-close{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border:1px solid #cad9e3;border-radius:50%;background:#fff;color:#31516b;font-size:22px;line-height:1;cursor:pointer}
+.obraativa-shortcut-editor-close:hover{border-color:#69aa8a;background:#f1faf5}
+.obraativa-shortcut-editor-workspace{display:grid;grid-template-columns:minmax(380px,430px) minmax(0,1fr);flex:1;min-height:0;overflow:hidden}
+.obraativa-shortcut-editor-panel{overflow:auto;border-right:1px solid #dfe8ef;background:#fbfdfe;overscroll-behavior:contain}
+.obraativa-shortcut-editor-panel-section{padding:16px 18px;border-bottom:1px solid #e4ebf0}
+.obraativa-shortcut-editor-step{display:flex;align-items:flex-start;gap:9px}
+.obraativa-shortcut-editor-step>span{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:8px;background:#167452;color:#fff;font-size:12px;font-weight:900}
+.obraativa-shortcut-editor-step h3{margin:1px 0 0;color:#173f55;font-size:14px}
+.obraativa-shortcut-editor-step p,.obraativa-shortcut-editor-help{margin:3px 0 0;color:#71858f;font-size:10px;line-height:1.35}
+.obraativa-shortcut-editor-help{margin:8px 0 10px;padding-left:34px}
+.obraativa-shortcut-editor-list{display:grid;gap:6px}
+.obraativa-shortcut-editor-row{display:grid;grid-template-columns:12px 25px minmax(0,1fr) auto;align-items:center;gap:7px;padding:7px 8px;border:1px solid #dce7e3;border-radius:11px;background:#fff;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease}
+.obraativa-shortcut-editor-row.is-hidden{background:#f6f8fa;opacity:.78}
+.obraativa-shortcut-editor-row:focus-within{border-color:#6db28e;box-shadow:0 0 0 3px #6db28e25}
+.obraativa-shortcut-editor-grip{color:#9aabb5;font-size:12px;letter-spacing:-3px}
+.obraativa-shortcut-editor-position{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#eaf5ef;color:#216b4e;font-size:10px;font-weight:900}
+.obraativa-shortcut-toggle{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:8px;cursor:pointer}
+.obraativa-shortcut-copy{min-width:0}
+.obraativa-shortcut-copy>span{display:flex;align-items:center;gap:6px;min-width:0}
+.obraativa-shortcut-copy b{overflow:hidden;color:#234b5d;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-copy em{padding:2px 5px;border-radius:999px;background:#e6f5ed;color:#217451;font-size:8px;font-style:normal;font-weight:900;text-transform:uppercase}
+.is-hidden .obraativa-shortcut-copy em{background:#e8edf1;color:#6f808a}
+.obraativa-shortcut-copy small{display:block;margin-top:1px;overflow:hidden;color:#7a8c94;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-switch{position:relative;display:block;flex:none;width:34px;height:20px}
+.obraativa-shortcut-switch input{position:absolute;width:1px;height:1px;opacity:0}
+.obraativa-shortcut-switch i{position:absolute;inset:0;border-radius:999px;background:#c7d2d9;box-shadow:inset 0 0 0 1px #b4c2cb;transition:.16s ease}
+.obraativa-shortcut-switch i:after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #14203338;transition:.16s ease}
+.obraativa-shortcut-switch input:checked+i{background:#1d805a;box-shadow:inset 0 0 0 1px #176c4c}
+.obraativa-shortcut-switch input:checked+i:after{transform:translateX(14px)}
+.obraativa-shortcut-switch input:focus-visible+i{outline:3px solid #78c39f66;outline-offset:2px}
+.obraativa-shortcut-editor-order{display:flex;flex:none;gap:4px}
+.obraativa-shortcut-editor-order button{width:28px;height:28px;padding:0;border:1px solid #d2e1dc;border-radius:7px;background:#fff;color:#267255;font-size:14px;line-height:1;cursor:pointer}
 .obraativa-shortcut-editor-order button:hover:not(:disabled){border-color:#62aa88;background:#f0faf4}
-.obraativa-shortcut-editor-order button:disabled{cursor:not-allowed;opacity:.35}
-.obraativa-shortcut-editor-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:2px}
-.obraativa-shortcut-editor-options label{display:grid;gap:6px;color:#526d6a;font-size:11px;font-weight:800}
-.obraativa-shortcut-editor-options select{width:100%;min-height:39px;padding:8px 10px;border:1px solid #d2e2e0;border-radius:9px;background:#fff;color:#173f55;font-size:12px}
+.obraativa-shortcut-editor-order button:disabled{cursor:not-allowed;opacity:.3}
+.obraativa-shortcut-editor-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:11px}
+.obraativa-shortcut-editor-options label{display:grid;gap:5px;color:#526d6a;font-size:9px;font-weight:850}
+.obraativa-shortcut-editor-options select{width:100%;min-height:35px;padding:6px 7px;border:1px solid #cbdcdb;border-radius:8px;background:#fff;color:#173f55;font-size:10px;font-weight:700}
 .obraativa-shortcut-editor-options select:focus{outline:3px solid #8acbad66;outline-offset:1px}
-.obraativa-shortcut-editor-foot{display:flex;align-items:center;gap:8px;padding:13px 22px;border-top:1px solid #e7edf2;background:#fbfdfc}
-.obraativa-shortcut-editor-foot>span{flex:1}
-.obraativa-shortcut-editor-foot .btn{min-height:38px;font-size:12px}
-@media(max-width:680px){
+.obraativa-shortcut-editor-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px 18px}
+.obraativa-shortcut-editor-tools button{display:flex;align-items:center;gap:8px;min-width:0;padding:9px;border:1px solid #d9e4ea;border-radius:10px;background:#fff;color:#234b5d;text-align:left;cursor:pointer}
+.obraativa-shortcut-editor-tools button:hover{border-color:#82bca0;background:#f4faf7}
+.obraativa-shortcut-editor-tools button>span:first-child{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:8px;background:#edf5ff;color:#176fd7;font-size:14px}
+.obraativa-shortcut-editor-tools b,.obraativa-shortcut-editor-tools small{display:block}
+.obraativa-shortcut-editor-tools b{font-size:9px}.obraativa-shortcut-editor-tools small{margin-top:2px;color:#7a8c94;font-size:8px;line-height:1.25}
+.obraativa-shortcut-editor-preview-pane{display:flex;flex-direction:column;min-width:0;overflow:auto;padding:18px 20px;background:#eef3f7}
+.obraativa-shortcut-editor-preview-pane>header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.obraativa-shortcut-editor-preview-pane header h3{margin:3px 0 0;color:#153b53;font-size:15px}
+.obraativa-shortcut-editor-preview-pane header>span{padding:5px 8px;border:1px solid #c8d9e4;border-radius:999px;background:#fff;color:#557082;font-size:9px;font-weight:850;white-space:nowrap}
+.obraativa-shortcut-editor-canvas{min-height:300px;padding:16px;border:1px solid #d5e1e9;border-radius:16px;background:#fff;box-shadow:0 12px 30px #173e6214}
+.obraativa-shortcut-editor-canvas-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid #e7edf2}
+.obraativa-shortcut-editor-canvas-head b{display:block;margin-top:2px;color:#163f59;font-size:15px}
+.obraativa-shortcut-editor-canvas-head>span{display:grid;place-items:center;width:30px;height:30px;border:1px solid #d8e4eb;border-radius:9px;color:#267255}
+.obraativa-shortcut-editor-preview-grid{display:grid;grid-template-columns:repeat(var(--editor-preview-columns,4),minmax(0,1fr));gap:9px}
+.obraativa-shortcut-editor-preview-card{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-areas:'icon title' 'icon description';align-items:center;column-gap:10px;row-gap:3px;min-width:0;min-height:96px;padding:12px;border:1px solid #d8e4ec;border-radius:13px;background:#fff;color:#153c60;text-align:left;box-shadow:0 5px 14px #173e620d;opacity:1!important;cursor:default}
+.obraativa-shortcut-editor-preview-card .home-shortcut-icon{grid-area:icon;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#e7f1ff;overflow:hidden}
+.obraativa-shortcut-editor-preview-card .home-shortcut-icon img{width:100%;height:100%;object-fit:contain}
+.obraativa-shortcut-editor-preview-card b{grid-area:title;overflow:hidden;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-editor-preview-card small{grid-area:description;overflow:hidden;color:#6d7f90;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.obraativa-shortcut-editor-preview-card.finance{background:#176b4b;color:#fff}.obraativa-shortcut-editor-preview-card.finance small{color:#d9f5e8}
+.obraativa-shortcut-editor-preview-grid.is-compact .obraativa-shortcut-editor-preview-card{min-height:78px;padding:9px}.obraativa-shortcut-editor-preview-grid.is-compact .home-shortcut-icon{width:36px;height:36px}
+.obraativa-shortcut-editor-preview-grid.is-spacious .obraativa-shortcut-editor-preview-card{min-height:116px;padding:15px}.obraativa-shortcut-editor-preview-grid.is-spacious .home-shortcut-icon{width:52px;height:52px}
+.obraativa-shortcut-editor-empty{display:grid;place-items:center;min-height:130px;border:1px dashed #cbd9e2;border-radius:12px;color:#6f818e;font-size:11px;text-align:center}
+.obraativa-shortcut-editor-empty[hidden]{display:none}
+.obraativa-shortcut-editor-preview-note{display:flex;align-items:center;gap:6px;margin:11px 0 0;color:#6d7f8c;font-size:10px}.obraativa-shortcut-editor-preview-note span{color:#1d805a}
+.obraativa-shortcut-editor-foot{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex:none;padding:12px 20px;border-top:1px solid #dfe8ef;background:#fff}
+.obraativa-shortcut-editor-foot .btn{min-height:39px;padding-inline:16px;font-size:11px}
+.obraativa-shortcut-editor-foot .btn:disabled{cursor:not-allowed;opacity:.45}
+@media(max-width:1050px){
+  .obraativa-shortcut-editor-workspace{grid-template-columns:minmax(350px,390px) minmax(0,1fr)}
+  .obraativa-shortcut-editor-preview-card{grid-template-columns:1fr;grid-template-areas:'icon' 'title' 'description';justify-items:center;text-align:center}.obraativa-shortcut-editor-preview-card small,.obraativa-shortcut-editor-preview-card b{max-width:100%}
+}
+@media(max-width:760px){
   #app:not(.public-app) .obraativa-quick-section .home-section-head{align-items:flex-start;flex-direction:column}
   #app:not(.public-app) .obraativa-home .obraativa-home-head-actions{width:100%;justify-content:flex-start;margin-left:0}
-  #app:not(.public-app) .obraativa-home .obraativa-home-head-actions .obraativa-shortcut-editor-button{min-height:34px}
   #app:not(.public-app) .obraativa-shortcut-editor-button{width:100%;justify-content:center}
   #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-3,
   #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-4,
   #app:not(.public-app) .obraativa-home .home-shortcuts.obraativa-shortcuts-columns-5{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .obraativa-shortcut-editor-backdrop{align-items:end;padding:8px}
-  .obraativa-shortcut-editor{max-height:calc(100dvh - 16px);border-radius:16px}
-  .obraativa-shortcut-editor-head{padding:17px 15px 13px}
-  .obraativa-shortcut-editor-body{padding:15px}
-  .obraativa-shortcut-editor-foot{padding:11px 15px;flex-wrap:wrap}
-  .obraativa-shortcut-editor-foot>span{display:none}
-  .obraativa-shortcut-editor-foot .btn{flex:1 1 130px}
+  .obraativa-shortcut-editor-backdrop{padding:4px}
+  .obraativa-shortcut-editor{height:calc(100dvh - 8px);border-radius:14px}
+  .obraativa-shortcut-editor-head{align-items:flex-start;padding:12px 13px}.obraativa-shortcut-editor-head p{display:none}.obraativa-shortcut-editor-status{display:none}
+  .obraativa-shortcut-editor-workspace{display:block;overflow:auto}.obraativa-shortcut-editor-panel{overflow:visible;border-right:0}.obraativa-shortcut-editor-preview-pane{overflow:visible;border-top:1px solid #dfe8ef}
+  .obraativa-shortcut-editor-foot{padding:9px 12px}.obraativa-shortcut-editor-foot .btn{flex:1}
 }
-@media(max-width:420px){
-  .obraativa-shortcut-editor-options{grid-template-columns:1fr}
-  .obraativa-shortcut-editor-section-head{align-items:flex-start;flex-direction:column;gap:4px}
-  .obraativa-shortcut-editor-hint{white-space:normal}
-  .obraativa-shortcut-editor-foot .btn{flex-basis:100%}
+@media(max-height:560px) and (orientation:landscape) and (min-width:761px){
+  .obraativa-shortcut-editor{height:calc(100dvh - 8px);border-radius:14px}.obraativa-shortcut-editor-backdrop{padding:4px}
+  .obraativa-shortcut-editor-head{padding:9px 14px}.obraativa-shortcut-editor-head h2{font-size:17px}.obraativa-shortcut-editor-head p{display:none}
+  .obraativa-shortcut-editor-panel-section{padding:10px 12px}.obraativa-shortcut-editor-help{margin:5px 0 7px}.obraativa-shortcut-editor-tools{padding:9px 12px}
+  .obraativa-shortcut-editor-preview-pane{padding:11px 13px}.obraativa-shortcut-editor-preview-pane>header{margin-bottom:8px}.obraativa-shortcut-editor-canvas{min-height:230px;padding:11px}
+  .obraativa-shortcut-editor-foot{padding:7px 13px}.obraativa-shortcut-editor-foot .btn{min-height:34px}
 }

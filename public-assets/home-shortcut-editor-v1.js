@@ -203,9 +203,9 @@
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'obraativa-shortcut-editor-button';
-    button.title = 'Personalizar atalhos da página inicial';
-    button.setAttribute('aria-label', 'Personalizar atalhos da página inicial');
-    button.innerHTML = '<span aria-hidden="true">✎</span><span>Editar atalhos</span>';
+    button.title = 'Editar a página inicial';
+    button.setAttribute('aria-label', 'Editar a página inicial');
+    button.innerHTML = '<span aria-hidden="true">✎</span><span>Editar início</span>';
     button.addEventListener('click', openEditor);
     if (operationalHead) {
       let actions = operationalHead.querySelector('.obraativa-home-head-actions');
@@ -257,16 +257,70 @@
     const checked = preferences.visible.includes(item.key);
     const meta = LABELS[item.key] || item;
     const row = document.createElement('div');
-    row.className = 'obraativa-shortcut-editor-row';
+    row.className = `obraativa-shortcut-editor-row ${checked ? 'is-visible' : 'is-hidden'}`;
     row.dataset.key = item.key;
-    row.innerHTML = `<label class="obraativa-shortcut-toggle"><input type="checkbox" data-shortcut-visible="${escapeHtml(item.key)}" ${checked ? 'checked' : ''}><span><b>${escapeHtml(meta.label || item.label)}</b><small>${escapeHtml(meta.description || item.description)}</small></span></label><span class="obraativa-shortcut-editor-order"><button type="button" data-move="up" aria-label="Mover ${escapeHtml(meta.label || item.label)} para cima" title="Mover para cima" ${index === 0 ? 'disabled' : ''}>↑</button><button type="button" data-move="down" aria-label="Mover ${escapeHtml(meta.label || item.label)} para baixo" title="Mover para baixo" ${index === total - 1 ? 'disabled' : ''}>↓</button></span>`;
+    row.innerHTML = `<span class="obraativa-shortcut-editor-grip" aria-hidden="true">⋮⋮</span><span class="obraativa-shortcut-editor-position" aria-label="Posição ${index + 1}">${index + 1}</span><label class="obraativa-shortcut-toggle"><span class="obraativa-shortcut-copy"><span><b>${escapeHtml(meta.label || item.label)}</b><em>${checked ? 'Visível' : 'Oculto'}</em></span><small>${escapeHtml(meta.description || item.description)}</small></span><span class="obraativa-shortcut-switch"><input type="checkbox" data-shortcut-visible="${escapeHtml(item.key)}" aria-label="${checked ? 'Ocultar' : 'Mostrar'} atalho ${escapeHtml(meta.label || item.label)}" ${checked ? 'checked' : ''}><i aria-hidden="true"></i></span></label><span class="obraativa-shortcut-editor-order"><button type="button" data-move="up" aria-label="Mover ${escapeHtml(meta.label || item.label)} para cima" title="Mover para cima" ${index === 0 ? 'disabled' : ''}>↑</button><button type="button" data-move="down" aria-label="Mover ${escapeHtml(meta.label || item.label)} para baixo" title="Mover para baixo" ${index === total - 1 ? 'disabled' : ''}>↓</button></span>`;
     return row;
+  }
+
+  function preferencesSignature(preferences) {
+    if (!preferences) return '';
+    return JSON.stringify({ order: preferences.order, visible: preferences.visible, size: preferences.size, count: preferences.count, columns: preferences.columns, manual: preferences.manual !== false });
+  }
+
+  function previewItems(items, preferences) {
+    const byKey = new Map(items.map((item) => [item.key, item]));
+    return preferences.order
+      .filter((key) => preferences.visible.includes(key))
+      .slice(0, preferences.count)
+      .map((key) => byKey.get(key))
+      .filter(Boolean);
+  }
+
+  function previewCard(item) {
+    const card = item.button.cloneNode(true);
+    card.classList.add('obraativa-shortcut-editor-preview-card');
+    card.removeAttribute('onclick');
+    card.removeAttribute('hidden');
+    card.setAttribute('aria-hidden', 'false');
+    card.setAttribute('tabindex', '-1');
+    card.disabled = true;
+    card.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+    return card;
+  }
+
+  function renderPreview(items) {
+    if (!editorRoot || !draft) return;
+    const preview = $('[data-editor-preview]', editorRoot);
+    if (!preview) return;
+    const visibleItems = previewItems(items, draft);
+    const desiredColumns = draft.columns === 'auto' ? Math.min(4, Math.max(1, visibleItems.length)) : Math.min(Number(draft.columns) || 1, Math.max(1, visibleItems.length));
+    preview.className = `obraativa-shortcut-editor-preview-grid is-${draft.size}`;
+    preview.style.setProperty('--editor-preview-columns', String(desiredColumns));
+    preview.replaceChildren(...visibleItems.map(previewCard));
+    const empty = $('[data-editor-preview-empty]', editorRoot);
+    if (empty) empty.hidden = visibleItems.length > 0;
+    const badge = $('[data-editor-preview-count]', editorRoot);
+    if (badge) badge.textContent = `${visibleItems.length} ${visibleItems.length === 1 ? 'atalho visível' : 'atalhos visíveis'}`;
+  }
+
+  function renderSaveState() {
+    if (!editorRoot || !draft) return;
+    const changed = preferencesSignature(draft) !== preferencesSignature(committed);
+    const status = $('[data-editor-status]', editorRoot);
+    if (status) {
+      status.className = `obraativa-shortcut-editor-status ${changed ? 'is-dirty' : 'is-saved'}`;
+      status.textContent = changed ? 'Alterações prontas para salvar' : 'Nenhuma alteração pendente';
+    }
+    const apply = $('[data-editor-apply]', editorRoot);
+    if (apply) apply.disabled = !changed;
   }
 
   function renderEditor() {
     if (!editorRoot || !draft) return;
     const home = appHome();
     const items = home ? editableShortcutItems(shortcutItems(home)) : [];
+    draft.count = Math.max(1, Math.min(draft.visible.length || 1, Number(draft.count) || 1));
     const byKey = new Map(items.map((item) => [item.key, item]));
     const orderedItems = draft.order.map((key) => byKey.get(key)).filter(Boolean);
     const list = $('.obraativa-shortcut-editor-list', editorRoot);
@@ -275,14 +329,16 @@
     }
     const count = $('[data-editor-count]', editorRoot);
     if (count) {
-      count.innerHTML = Array.from({ length: Math.max(1, items.length) }, (_, index) => `<option value="${index + 1}" ${draft.count === index + 1 ? 'selected' : ''}>${index + 1} ${index ? 'cartões' : 'cartão'}</option>`).join('');
+      count.innerHTML = Array.from({ length: Math.max(1, draft.visible.length) }, (_, index) => `<option value="${index + 1}" ${draft.count === index + 1 ? 'selected' : ''}>${index + 1} ${index ? 'atalhos' : 'atalho'}</option>`).join('');
     }
     const size = $('[data-editor-size]', editorRoot);
     if (size) size.value = draft.size;
     const columns = $('[data-editor-columns]', editorRoot);
     if (columns) columns.value = draft.columns;
     const summary = $('.obraativa-shortcut-editor-summary', editorRoot);
-    if (summary) summary.textContent = `${draft.visible.length} de ${items.length} atalhos selecionados · ${draft.manual ? 'organização manual' : 'organização automática'}`;
+    if (summary) summary.textContent = `${Math.min(draft.count, draft.visible.length)} serão exibidos · ${draft.visible.length} selecionados · ${draft.manual ? 'ordem manual' : 'ordem automática'}`;
+    renderPreview(items);
+    renderSaveState();
   }
 
   function ensureEditorRoot() {
@@ -290,24 +346,31 @@
     editorRoot = document.createElement('div');
     editorRoot.className = 'obraativa-shortcut-editor-backdrop';
     editorRoot.hidden = true;
-    editorRoot.innerHTML = '<section class="obraativa-shortcut-editor" role="dialog" aria-modal="true" aria-labelledby="obraativaShortcutEditorTitle"><header class="obraativa-shortcut-editor-head"><div><small>PERSONALIZAR INÍCIO</small><h2 id="obraativaShortcutEditorTitle">Atalhos da página inicial</h2><p>Edite os quatro atalhos principais, ajuste o tamanho e organize a ordem dos cartões.</p></div><button type="button" class="obraativa-shortcut-editor-close" data-editor-close aria-label="Fechar edição">×</button></header><div class="obraativa-shortcut-editor-body"><section><div class="obraativa-shortcut-editor-section-head"><div><h3>Atalhos principais</h3><p class="obraativa-shortcut-editor-summary"></p></div><span class="obraativa-shortcut-editor-hint">Use ↑ e ↓ para ordenar</span></div><div class="obraativa-shortcut-editor-list"></div></section><section class="obraativa-shortcut-editor-options"><label><span>Tamanho dos cartões</span><select data-editor-size><option value="compact">Compacto</option><option value="comfortable">Confortável</option><option value="spacious">Amplo</option></select></label><label><span>Quantidade exibida</span><select data-editor-count></select></label><label><span>Cartões por linha</span><select data-editor-columns><option value="auto">Automático</option><option value="1">1 cartão</option><option value="2">2 cartões</option><option value="3">3 cartões</option><option value="4">4 cartões</option><option value="5">5 cartões</option></select></label></section></div><footer class="obraativa-shortcut-editor-foot"><button type="button" class="btn alt" data-editor-reset>Restaurar padrão</button><span></span><button type="button" class="btn alt" data-editor-close>Cancelar</button><button type="button" class="btn" data-editor-apply>Aplicar</button></footer></section>';
+    editorRoot.innerHTML = `<section class="obraativa-shortcut-editor" role="dialog" aria-modal="true" aria-labelledby="obraativaShortcutEditorTitle">
+      <header class="obraativa-shortcut-editor-head">
+        <div><small>EDITOR DA PÁGINA INICIAL</small><h2 id="obraativaShortcutEditorTitle">Personalizar acesso rápido</h2><p>Monte a página visualmente. Nada muda para os outros usuários até você salvar.</p></div>
+        <div class="obraativa-shortcut-editor-head-actions"><span class="obraativa-shortcut-editor-status is-saved" data-editor-status>Nenhuma alteração pendente</span><button type="button" class="obraativa-shortcut-editor-close" data-editor-close aria-label="Fechar edição">×</button></div>
+      </header>
+      <div class="obraativa-shortcut-editor-workspace">
+        <aside class="obraativa-shortcut-editor-panel">
+          <section class="obraativa-shortcut-editor-panel-section"><div class="obraativa-shortcut-editor-step"><span>1</span><div><h3>Escolha e organize</h3><p class="obraativa-shortcut-editor-summary"></p></div></div><p class="obraativa-shortcut-editor-help">Ligue ou desligue os atalhos e use as setas para mudar a ordem.</p><div class="obraativa-shortcut-editor-list"></div></section>
+          <section class="obraativa-shortcut-editor-panel-section"><div class="obraativa-shortcut-editor-step"><span>2</span><div><h3>Ajuste o visual</h3><p>Defina a proporção dos cartões.</p></div></div><div class="obraativa-shortcut-editor-options"><label><span>Tamanho</span><select data-editor-size><option value="compact">Compacto</option><option value="comfortable">Confortável</option><option value="spacious">Amplo</option></select></label><label><span>Quantidade na tela</span><select data-editor-count></select></label><label><span>Cartões por linha</span><select data-editor-columns><option value="auto">Automático</option><option value="1">1 por linha</option><option value="2">2 por linha</option><option value="3">3 por linha</option><option value="4">4 por linha</option><option value="5">5 por linha</option></select></label></div></section>
+          <section class="obraativa-shortcut-editor-tools" aria-label="Opções rápidas"><button type="button" data-editor-auto><span aria-hidden="true">✦</span><span><b>Organizar automaticamente</b><small>Prioriza os atalhos mais usados.</small></span></button><button type="button" data-editor-reset><span aria-hidden="true">↺</span><span><b>Restaurar padrão</b><small>Volta à configuração inicial.</small></span></button></section>
+        </aside>
+        <section class="obraativa-shortcut-editor-preview-pane" aria-label="Prévia da página inicial">
+          <header><div><small>PRÉVIA AO VIVO</small><h3>Como ficará na página inicial</h3></div><span data-editor-preview-count>0 atalhos visíveis</span></header>
+          <div class="obraativa-shortcut-editor-canvas"><div class="obraativa-shortcut-editor-canvas-head"><div><small>PÁGINA INICIAL</small><b>Acesso rápido</b></div><span aria-hidden="true">✎</span></div><div class="obraativa-shortcut-editor-preview-grid" data-editor-preview></div><div class="obraativa-shortcut-editor-empty" data-editor-preview-empty hidden>Selecione pelo menos um atalho para visualizar.</div></div>
+          <p class="obraativa-shortcut-editor-preview-note"><span aria-hidden="true">●</span> Esta é somente uma prévia. Use “Salvar página inicial” para confirmar.</p>
+        </section>
+      </div>
+      <footer class="obraativa-shortcut-editor-foot"><button type="button" class="btn alt" data-editor-close>Descartar alterações</button><button type="button" class="btn" data-editor-apply disabled>Salvar página inicial</button></footer>
+    </section>`;
     document.body.appendChild(editorRoot);
-    const intro = editorRoot.querySelector('.obraativa-shortcut-editor-head p');
-    if (intro) intro.textContent = 'Escolha os atalhos principais, ajuste o tamanho e organize a ordem dos cartões.';
     editorRoot.addEventListener('click', handleEditorClick);
     editorRoot.addEventListener('change', handleEditorChange);
     editorRoot.addEventListener('click', (event) => {
       if (event.target === editorRoot) closeEditor();
     });
-    const resetButton = editorRoot.querySelector('[data-editor-reset]');
-    if (resetButton && !editorRoot.querySelector('[data-editor-auto]')) {
-      const autoButton = document.createElement('button');
-      autoButton.type = 'button';
-      autoButton.className = 'btn alt';
-      autoButton.dataset.editorAuto = '1';
-      autoButton.textContent = 'Usar atalhos automáticos';
-      resetButton.parentNode.insertBefore(autoButton, resetButton.nextSibling);
-    }
     return editorRoot;
   }
 
@@ -321,7 +384,7 @@
     renderEditor();
     editorRoot.hidden = false;
     document.body.classList.add('obraativa-editor-open');
-    window.setTimeout(() => $('.obraativa-shortcut-editor-close', editorRoot)?.focus(), 0);
+    window.setTimeout(() => $('.obraativa-shortcut-editor-list input', editorRoot)?.focus(), 0);
   }
 
   function closeEditor(revert = true) {
@@ -390,14 +453,17 @@
     const checkbox = event.target.closest('[data-shortcut-visible]');
     if (checkbox) {
       const key = checkbox.dataset.shortcutVisible;
+      const previousVisibleCount = draft.visible.length;
       if (!checkbox.checked && draft.visible.length <= 1) {
         checkbox.checked = true;
+        const status = $('[data-editor-status]', editorRoot);
+        if (status) { status.className = 'obraativa-shortcut-editor-status is-warning'; status.textContent = 'Mantenha pelo menos um atalho visível'; }
         return;
       }
       draft.visible = checkbox.checked ? [...new Set([...draft.visible, key])] : draft.visible.filter((item) => item !== key);
+      if (checkbox.checked && draft.count >= previousVisibleCount) draft.count = draft.visible.length;
+      if (!checkbox.checked) draft.count = Math.min(draft.count, draft.visible.length);
       draft.manual = true;
-      const home = appHome();
-      if (home) applyPreferences(home, draft);
       renderEditor();
       return;
     }
@@ -407,10 +473,7 @@
     if (count) draft.count = Math.max(1, Number(count.value) || 1);
     const columns = event.target.closest('[data-editor-columns]');
     if (columns) draft.columns = COLUMN_VALUES.has(columns.value) ? columns.value : 'auto';
-    if (size || count || columns) {
-      const home = appHome();
-      if (home) applyPreferences(home, draft);
-    }
+    if (size || count || columns) renderEditor();
   }
 
   function homeSignature(home, preferences) {
@@ -455,6 +518,9 @@
     }
     window.addEventListener('storage', (event) => {
       if (event.key === preferenceKey()) { lastHomeSignature = ''; scheduleRefresh(); }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && editorRoot && !editorRoot.hidden) closeEditor();
     });
     scheduleRefresh();
   }
