@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T14:02:10.994Z",
-  "codeHash": "5367b2aec2f4b82b6f5cb7893d4f8aa03c5a3c882712de8ebb833fe6cc53276f",
+  "generatedAt": "2026-08-31T15:24:39.196Z",
+  "codeHash": "5b2c1145ac87430229b708ac86ba94b3b37ace6a2e6527cfa9af07f78189d612",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,16 +27,16 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 114,
-    "totalBytes": 4915454,
-    "totalLines": 20673,
-    "findingCount": 186,
+    "fileCount": 118,
+    "totalBytes": 4961014,
+    "totalLines": 21219,
+    "findingCount": 188,
     "severityCounts": {
       "critical": 0,
       "high": 0,
-      "medium": 45,
+      "medium": 46,
       "low": 10,
-      "info": 131
+      "info": 132
     }
   },
   "files": [
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1165176,
-      "lines": 3072,
-      "sha256": "aad669c9b223885a1a2ba46b628bd40fb53df0b71afc7eb23d3cd42ef84d7c4b",
+      "bytes": 1165597,
+      "lines": 3073,
+      "sha256": "970db9b898ae0240c6da357940ef44e382431cc72ab3df0ed371106d021fd616",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -615,12 +615,12 @@ export default Object.freeze({
     {
       "path": "public-assets/account-session-controls-v1.js",
       "scope": "application",
-      "bytes": 21333,
-      "lines": 451,
-      "sha256": "727f1e3754e370d4ac2cc31e720a756c24382667413623355b3f681d7afe5614",
-      "functions": 27,
+      "bytes": 22007,
+      "lines": 461,
+      "sha256": "8ca62878f95b23b3331c72148c401d1f1cc2c5af919e3deacde375eeeae65484",
+      "functions": 28,
       "fetches": 0,
-      "domWrites": 9,
+      "domWrites": 11,
       "inlineHandlers": 1
     },
     {
@@ -976,6 +976,50 @@ export default Object.freeze({
       "inlineHandlers": 0
     },
     {
+      "path": "public-assets/obraativa-reception-config-v1.js",
+      "scope": "application",
+      "bytes": 610,
+      "lines": 19,
+      "sha256": "59373c3a185d26f2a43c2739647be396f65618db657b930be982a9f3743064da",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/obraativa-reception-v1.css",
+      "scope": "application",
+      "bytes": 21662,
+      "lines": 61,
+      "sha256": "6835a64bd4018c482d9740bc81ab8744e3e1204961a9e60a6e69a7d3b8e70246",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/obraativa-reception-v1.js",
+      "scope": "application",
+      "bytes": 12332,
+      "lines": 228,
+      "sha256": "c9a35fb240197b8e71093b47c7fa1143900b728129688a6edaecacdf38233469",
+      "functions": 22,
+      "fetches": 0,
+      "domWrites": 8,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/obraativa-social-auth-v1.js",
+      "scope": "application",
+      "bytes": 9570,
+      "lines": 221,
+      "sha256": "f5cd251d5eaf3357bb9688677b2734e2f275db7c2b49ce82ea0d5c87c08259c0",
+      "functions": 18,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
       "path": "public-assets/obraativa-visual-v1.css",
       "scope": "application",
       "bytes": 26616,
@@ -1220,9 +1264,9 @@ export default Object.freeze({
     {
       "path": "service-worker.js",
       "scope": "application",
-      "bytes": 6286,
-      "lines": 158,
-      "sha256": "5277cf8ef4ed8749f305756201cd43ff18b65994532ad4d6296bb04764a80168",
+      "bytes": 6577,
+      "lines": 164,
+      "sha256": "31e15428a211853b4cf3939b49b779009da48f30f7327aed8706708f8c93b19c",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -1315,7 +1359,7 @@ export default Object.freeze({
       "validationPlan": "Testar entradas com caracteres especiais e executar revisão visual em todos os tamanhos suportados."
     },
     {
-      "id": "QF-003BD1AFB0C1",
+      "id": "QF-C1BE5AD05A71",
       "recurrenceKey": "ac0e6c051110aef1669afd57",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -1325,7 +1369,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "index.html",
-      "line": 422,
+      "line": 423,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -1333,7 +1377,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-44812251A022",
+      "id": "QF-17B6B0039A95",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1343,7 +1387,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 462,
+      "line": 463,
       "evidence": "catch(e){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1351,7 +1395,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-3F68EDF3CD61",
+      "id": "QF-0BA18A6EDB6E",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1361,7 +1405,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 1141,
+      "line": 1142,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1369,7 +1413,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-B5ADFA8CF5B4",
+      "id": "QF-87B16E851777",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1379,7 +1423,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2431,
+      "line": 2432,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1387,7 +1431,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-8D7937253D5D",
+      "id": "QF-0D49E10A6C2C",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1397,7 +1441,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2434,
+      "line": 2435,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1511,6 +1555,24 @@ export default Object.freeze({
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
       "recommendation": "Revisar timeouts e cancelamento antes de considerar alteração.",
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
+    },
+    {
+      "id": "QF-5F221987D2AC",
+      "recurrenceKey": "3f0f3df1b38a76db1a1a603a",
+      "ruleId": "security-ux.dynamic-html-volume",
+      "severity": "medium",
+      "status": "probable",
+      "confidence": "medium",
+      "category": "security-ux",
+      "scope": "application",
+      "title": "Uso intenso de geração dinâmica de HTML",
+      "file": "public-assets/account-session-controls-v1.js",
+      "line": 1,
+      "evidence": "11 escrita(s) dinâmica(s) de HTML",
+      "probableCause": "A tela é construída por templates de string e inserções no DOM.",
+      "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
+      "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
+      "validationPlan": "Testar entradas com caracteres especiais e executar revisão visual em todos os tamanhos suportados."
     },
     {
       "id": "QF-847CD99191FD",
@@ -2089,7 +2151,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-56071FE2DF01",
+      "id": "QF-07F2149EB118",
       "recurrenceKey": "496b7ff2a2ee0db04b643bbc",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -2099,7 +2161,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "service-worker.js",
-      "line": 111,
+      "line": 117,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -2118,7 +2180,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1165176 bytes e 3072 linhas",
+      "evidence": "1165597 bytes e 3073 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -2845,7 +2907,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-66C0A8B26174",
+      "id": "QF-D3D6306A39CB",
       "recurrenceKey": "714ab1137f29272b58d9c62d",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -2855,15 +2917,15 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/account-session-controls-v1.js",
-      "line": 343,
-      "evidence": "refresh aparece em 8 arquivos",
+      "line": 352,
+      "evidence": "refresh aparece em 9 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
       "recommendation": "Comparar responsabilidades; nomes iguais não significam necessariamente código duplicado.",
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-90CC19E6D0F4",
+      "id": "QF-4367E374E590",
       "recurrenceKey": "714ab1137f29272b58d9c62d",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -2873,8 +2935,26 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/account-session-controls-v1.js",
-      "line": 359,
-      "evidence": "install aparece em 20 arquivos",
+      "line": 361,
+      "evidence": "schedule aparece em 4 arquivos",
+      "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
+      "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
+      "recommendation": "Comparar responsabilidades; nomes iguais não significam necessariamente código duplicado.",
+      "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
+    },
+    {
+      "id": "QF-010D461E1360",
+      "recurrenceKey": "714ab1137f29272b58d9c62d",
+      "ruleId": "duplication.cross-module-name",
+      "severity": "info",
+      "status": "opportunity",
+      "confidence": "medium",
+      "category": "duplication",
+      "scope": "application",
+      "title": "Função com o mesmo nome em vários módulos",
+      "file": "public-assets/account-session-controls-v1.js",
+      "line": 368,
+      "evidence": "install aparece em 22 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
       "recommendation": "Comparar responsabilidades; nomes iguais não significam necessariamente código duplicado.",

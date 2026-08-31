@@ -31,6 +31,12 @@
     return text;
   }
 
+  function passwordToggleMarkup(visible) {
+    return visible
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.3 0 9 5 9 5s-1.2 1.6-3.1 3M6.6 6.6C4.4 8 3 10 3 10s3.7 5 9 5c1.1 0 2.1-.2 3-.5"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.7-5 9-5 9 5 9 5-3.7 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
+  }
+
   function authMode(card) {
     const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
     if (title.includes('criar acesso')) return 'signup';
@@ -76,7 +82,8 @@
     toggle.dataset.passwordToggle = '1';
     toggle.setAttribute('aria-label', 'Mostrar senha');
     toggle.setAttribute('aria-pressed', 'false');
-    toggle.textContent = 'Mostrar';
+    toggle.title = 'Mostrar senha';
+    toggle.innerHTML = passwordToggleMarkup(false);
     shell.appendChild(toggle);
     if (!showStrength) return;
     const strength = document.createElement('div');
@@ -147,6 +154,7 @@
   function clearActiveSession() {
     SESSION_KEYS.forEach((key) => {
       try { localStorage.removeItem(key); } catch (error) { /* limpeza local opcional */ }
+      try { sessionStorage.removeItem(key); } catch (error) { /* limpeza local opcional */ }
     });
   }
 
@@ -201,6 +209,7 @@
       }
     } else {
       forgetRemembered();
+      clearActiveSession();
     }
     if (typeof originalSignOut === 'function') await originalSignOut.call(window.CloudSync);
   }
@@ -415,8 +424,9 @@
         if (!input) return;
         const visible = input.type === 'password';
         input.type = visible ? 'text' : 'password';
-        toggle.textContent = visible ? 'Ocultar' : 'Mostrar';
+        toggle.innerHTML = passwordToggleMarkup(visible);
         toggle.setAttribute('aria-label', visible ? 'Ocultar senha' : 'Mostrar senha');
+        toggle.title = visible ? 'Ocultar senha' : 'Mostrar senha';
         toggle.setAttribute('aria-pressed', String(visible));
         input.focus();
       }

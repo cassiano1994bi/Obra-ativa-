@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v39';
+const CACHE_VERSION = 'v41';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -36,10 +36,16 @@ const OPTIONAL_ASSETS = [
   '/public-assets/app-brand-lock-v1.js',
   '/public-assets/obraativa-auth-brand-v1.css',
   '/public-assets/obraativa-auth-brand-v1.js',
+  '/public-assets/obraativa-reception-v1.css',
+  '/public-assets/obraativa-reception-v1.js',
+  '/public-assets/obraativa-reception-config-v1.js',
+  '/public-assets/obraativa-social-auth-v1.js',
+  '/public-assets/obraativa-reception-site-v1.webp',
   '/public-assets/obraativa-launch-screen-v1.png',
   '/public-assets/account-session-controls-v1.css',
   '/public-assets/account-session-controls-v1.js',
   '/public-assets/admin-navigation-v1.js',
+  '/public-assets/assistant-avatar-v1.png',
   '/public-assets/assistant-actions-core-v1.js',
   '/public-assets/assistant-capability-registry-v1.js',
   '/public-assets/assistant-command-bus-v1.js',
