@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T11:33:11.783Z",
-  "codeHash": "09c2fa4d95080618894e00e77df5214c3bf30ade2b3c0405729531a4d42dc2f1",
+  "generatedAt": "2026-08-31T11:40:44.776Z",
+  "codeHash": "9c0c7bdefff4f372781e5482a13401e36cbad261c627622c969f0317e2c8aaff",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4902473,
-    "totalLines": 20444,
+    "totalBytes": 4904169,
+    "totalLines": 20486,
     "findingCount": 187,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163663,
+      "bytes": 1163673,
       "lines": 3071,
-      "sha256": "20e248d95e648f6365474d50e1675e131959b5797318bb6944a66b3e6675883a",
+      "sha256": "9dba2c37acbe30a1a9fa0c93c3b981909a75a2028483d81bccc046068795b2c7",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -1121,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-phase-density-v1.css",
       "scope": "application",
-      "bytes": 1743,
-      "lines": 25,
-      "sha256": "b486dffa17780b58e41c38cbae5e696e323bccc6735f8c7c52cc5cd7cab124fc",
+      "bytes": 3429,
+      "lines": 67,
+      "sha256": "59f947d6e3c4d144d3293a7dcb3ff469c0b4186da2cdf26da7e9513a4c11a240",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "c0205914cfbb401810eb97dfce0a49a26b753c8b539291ace30c13df5bce114d",
+      "sha256": "33feb58de31dd054d6f76d95014dafbb18bc83d9ceb727d14d25d0d2e7e869e9",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -2125,7 +2125,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163663 bytes e 3071 linhas",
+      "evidence": "1163673 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -2150,7 +2150,7 @@ export default Object.freeze({
       "validationPlan": "Confirmar todos os cliques, teclado e navegação após qualquer refatoração."
     },
     {
-      "id": "QF-5D6B3AE796D7",
+      "id": "QF-477891FE0F71",
       "recurrenceKey": "bf91ef353d8a1126c2ecf2ac",
       "ruleId": "maintainability.long-line",
       "severity": "low",
@@ -2160,7 +2160,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Linha excessivamente extensa",
       "file": "index.html",
-      "line": 293,
+      "line": 292,
       "evidence": "5548 caracteres na mesma linha",
       "probableCause": "Template, configuração ou biblioteca foi mantido em uma única linha.",
       "impact": "Revisão, depuração e comparação de alterações ficam mais difíceis.",

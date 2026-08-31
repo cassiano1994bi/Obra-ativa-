@@ -1,5 +1,26 @@
 #app:not(.public-app) .work-phase-folder-grid{align-items:stretch}
 
+#app:not(.public-app) .internal-work-delete-action{
+  min-height:34px!important;
+  padding:5px 8px!important;
+  border:1px solid #ead9dc!important;
+  background:#fff!important;
+  color:#955c62!important;
+  box-shadow:none!important;
+  font-size:10px!important;
+  font-weight:700!important;
+}
+
+#app:not(.public-app) .internal-work-delete-action:hover,
+#app:not(.public-app) .internal-work-delete-action:focus-visible{
+  border-color:#d7aeb5!important;
+  background:#fff7f8!important;
+  color:#813f49!important;
+  outline:2px solid #f3dfe2!important;
+  outline-offset:1px!important;
+  transform:none!important;
+}
+
 @media(min-width:1200px){
   #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}
 }
@@ -8,12 +29,33 @@
   #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
 }
 
+@media(orientation:landscape) and (max-width:1199px) and (max-height:720px){
+  #app:not(.public-app) .work-phase-folder-grid{
+    display:grid!important;
+    grid-template-columns:none!important;
+    grid-template-rows:1fr!important;
+    grid-auto-flow:column!important;
+    grid-auto-columns:max(150px,calc((100% - 24px)/4))!important;
+    gap:8px!important;
+    padding:1px 1px 7px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-inline:contain!important;
+    scroll-snap-type:inline proximity!important;
+    scrollbar-width:none!important;
+    touch-action:pan-x pan-y!important;
+  }
+  #app:not(.public-app) .work-phase-folder-grid::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+  #app:not(.public-app) .work-phase-folder{scroll-snap-align:start!important}
+}
+
 @media(min-width:761px){
   #app:not(.public-app) .work-phase-folder{align-content:start;gap:8px!important;min-width:0;padding:9px!important;border-radius:11px!important}
   #app:not(.public-app) .work-phase-folder-top{align-items:center!important;gap:7px!important}
+  #app:not(.public-app) .work-phase-folder-top>div{min-width:0!important}
   #app:not(.public-app) .work-phase-folder-icon{width:30px!important;height:28px!important;border-radius:8px!important;font-size:15px!important}
-  #app:not(.public-app) .work-phase-folder h3{margin:0 0 2px!important;font-size:13px!important;line-height:1.2!important;overflow-wrap:anywhere}
-  #app:not(.public-app) .work-phase-folder small{font-size:9.5px!important;line-height:1.25!important}
+  #app:not(.public-app) .work-phase-folder h3{overflow:hidden!important;margin:0 0 2px!important;font-size:13px!important;line-height:1.2!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  #app:not(.public-app) .work-phase-folder small{overflow:hidden!important;font-size:9.5px!important;line-height:1.25!important;text-overflow:ellipsis!important;white-space:nowrap!important}
   #app:not(.public-app) .work-phase-folder-preview,
   #app:not(.public-app) .work-phase-folder-empty{min-height:82px!important;border-radius:8px!important}
   #app:not(.public-app) .work-phase-folder-empty{gap:2px!important;padding:8px!important}
