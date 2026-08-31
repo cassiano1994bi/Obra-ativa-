@@ -35,7 +35,7 @@
     grid-template-columns:none!important;
     grid-template-rows:1fr!important;
     grid-auto-flow:column!important;
-    grid-auto-columns:max(150px,calc((100% - 24px)/4))!important;
+    grid-auto-columns:max(132px,calc((100% - 24px)/4))!important;
     gap:8px!important;
     padding:1px 1px 7px!important;
     overflow-x:auto!important;
@@ -46,7 +46,20 @@
     touch-action:pan-x pan-y!important;
   }
   #app:not(.public-app) .work-phase-folder-grid::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
-  #app:not(.public-app) .work-phase-folder{scroll-snap-align:start!important}
+  #app:not(.public-app) .work-phase-folder{align-content:start;gap:6px!important;min-width:0;padding:8px!important;border-radius:10px!important;scroll-snap-align:start!important}
+  #app:not(.public-app) .work-phase-folder-top{align-items:center!important;gap:6px!important}
+  #app:not(.public-app) .work-phase-folder-top>div{min-width:0!important}
+  #app:not(.public-app) .work-phase-folder-icon{width:27px!important;height:27px!important;border-radius:7px!important;font-size:14px!important}
+  #app:not(.public-app) .work-phase-folder h3{overflow:hidden!important;margin:0 0 1px!important;font-size:11.5px!important;line-height:1.18!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  #app:not(.public-app) .work-phase-folder small{overflow:hidden!important;font-size:8.5px!important;line-height:1.2!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  #app:not(.public-app) .work-phase-folder-preview,
+  #app:not(.public-app) .work-phase-folder-empty{min-height:58px!important;border-radius:7px!important}
+  #app:not(.public-app) .work-phase-folder-empty{gap:1px!important;padding:5px!important}
+  #app:not(.public-app) .work-phase-folder-empty>span{font-size:14px!important}
+  #app:not(.public-app) .work-phase-folder-empty b{font-size:9.5px!important;line-height:1.15!important}
+  #app:not(.public-app) .work-phase-folder-preview span{margin:4px!important;padding:4px 5px!important;font-size:8.5px!important}
+  #app:not(.public-app) .simple-phase-add-photo{min-height:30px!important;padding:5px 6px!important;font-size:9px!important}
+  #app:not(.public-app) .phase-folder-options summary{width:23px!important;height:23px!important;font-size:16px!important}
 }
 
 @media(min-width:761px){

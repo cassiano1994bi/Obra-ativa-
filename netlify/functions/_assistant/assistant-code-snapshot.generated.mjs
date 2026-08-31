@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T11:46:54.808Z",
-  "codeHash": "ade483bc3ee186f69687f9111df634a9b2d8816a77f47ddb0cb918d8f8b49ecd",
+  "generatedAt": "2026-08-31T12:00:45.251Z",
+  "codeHash": "d807e32c7ded97d56fb95fef06355fd8e3d6787709a23c5ccec4530a4b6b987b",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 113,
-    "totalBytes": 4904335,
-    "totalLines": 20482,
+    "totalBytes": 4906432,
+    "totalLines": 20503,
     "findingCount": 186,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1163668,
+      "bytes": 1163683,
       "lines": 3071,
-      "sha256": "c74522ff6986176962de2a100b78f1d00a0260afa949c3f08ebe8242cd9d8657",
+      "sha256": "b49a28df7fa5c8c9beb3566a495638231d4e9dd720f1bbe7aafb99b2093e3ac6",
       "functions": 829,
       "fetches": 2,
       "domWrites": 255,
@@ -934,12 +934,12 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-home-v1.js",
       "scope": "application",
-      "bytes": 25529,
-      "lines": 412,
-      "sha256": "77b1583e3ff0712ac4b0659cbf9b3126d4814ee5dc640ea618184092764c3f07",
+      "bytes": 25983,
+      "lines": 420,
+      "sha256": "b43fa6a4ed04f708e9d60bd6fd1803180682e404a2d51482e6bb05b473c8fca8",
       "functions": 28,
       "fetches": 0,
-      "domWrites": 12,
+      "domWrites": 11,
       "inlineHandlers": 4
     },
     {
@@ -1121,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-phase-density-v1.css",
       "scope": "application",
-      "bytes": 3429,
-      "lines": 67,
-      "sha256": "59f947d6e3c4d144d3293a7dcb3ff469c0b4186da2cdf26da7e9513a4c11a240",
+      "bytes": 5057,
+      "lines": 80,
+      "sha256": "859a28a2f0fa2eacb3f7d055b4030a26a72212b1d26dec5e28bfb143a8991dbb",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1211,7 +1211,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 6244,
       "lines": 157,
-      "sha256": "f1820233b2333d815f42c3d003ff3a4e0f2f8ffdc20e4fb46f60b23de0fb86ac",
+      "sha256": "fd45f34e35316ed8154dbcbedeefcc221d37ffb598db278fdf31c52613662750",
       "functions": 4,
       "fetches": 2,
       "domWrites": 0,
@@ -1657,7 +1657,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "public-assets/obraativa-home-v1.js",
       "line": 1,
-      "evidence": "12 escrita(s) dinâmica(s) de HTML",
+      "evidence": "11 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -2107,7 +2107,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1163668 bytes e 3071 linhas",
+      "evidence": "1163683 bytes e 3071 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",

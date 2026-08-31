@@ -35,6 +35,12 @@
   const iconArt = (key) => `<i class="obraativa-icon-art obraativa-icon-${escapeHtml(iconKey(key))}" aria-hidden="true"></i>`;
   const localMoney = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0));
   const safeCall = (callback, fallback) => { try { return callback(); } catch (error) { return fallback; } };
+  const updateText = (element, value) => {
+    if (element && element.textContent !== value) element.textContent = value;
+  };
+  const updateHtml = (element, value) => {
+    if (element && element.innerHTML !== value) element.innerHTML = value;
+  };
 
   function canOpen(module) {
     if (window.__OBRAATIVA_PREVIEW_DATA__) return true;
@@ -200,14 +206,14 @@
       const hour = new Date().getHours();
       const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
       eyebrow?.remove();
-      if (heading) heading.innerHTML = `<span class="obraativa-home-greeting">${escapeHtml(greeting)}</span>${responsible ? `<span class="obraativa-home-user-name">, ${escapeHtml(responsible)}</span>` : ''} <span aria-hidden="true">👋</span>`;
-      if (copy) copy.textContent = 'Aqui está o resumo da sua gestão hoje.';
+      updateHtml(heading, `<span class="obraativa-home-greeting">${escapeHtml(greeting)}</span>${responsible ? `<span class="obraativa-home-user-name">, ${escapeHtml(responsible)}</span>` : ''} <span aria-hidden="true">👋</span>`);
+      updateText(copy, 'Aqui está o resumo da sua gestão hoje.');
       let date = copyArea?.querySelector('.obraativa-home-date');
       if (!date && copyArea) {
         copyArea.insertAdjacentHTML('beforeend', `<time class="obraativa-home-date" datetime="${currentDateKey()}">${escapeHtml(currentDateLabel())}</time>`);
         date = copyArea.querySelector('.obraativa-home-date');
       }
-      if (date) date.textContent = currentDateLabel();
+      updateText(date, currentDateLabel());
     }
     const shortcuts = home.querySelector('.home-shortcuts');
     const quickSection = shortcuts?.closest('section');
@@ -221,7 +227,7 @@
       const label = title?.textContent || '';
       if (/últimas movimentações|atividades recentes/i.test(label)) {
         panel.classList.add('obraativa-activity-panel');
-        if (title) title.textContent = 'Atividades recentes';
+        updateText(title, 'Atividades recentes');
       }
       if (/precisam de atenção/i.test(label)) panel.classList.add('obraativa-attention-panel');
     });
@@ -284,9 +290,11 @@
     const insights = home.querySelector(':scope>.home-insights');
     const weather = home.querySelector(':scope>.home-weather-card');
     const assistant = home.querySelector(':scope>.assistant-home-shortcut');
-    [head, quickSection, metrics, weather, schedule, overview, insights, assistant]
-      .filter(Boolean)
-      .forEach((section) => home.appendChild(section));
+    const desiredOrder = [head, quickSection, metrics, weather, schedule, overview, insights, assistant].filter(Boolean);
+    const currentOrder = [...home.children].filter((section) => desiredOrder.includes(section));
+    if (currentOrder.length !== desiredOrder.length || currentOrder.some((section, index) => section !== desiredOrder[index])) {
+      desiredOrder.forEach((section) => home.appendChild(section));
+    }
   }
 
   function navKey(button) {
@@ -345,7 +353,7 @@
     const hasCompanyLogo = Boolean(data.settings?.companyLogo);
     brand.classList.toggle('obraativa-default-logo', !hasCompanyLogo);
     const text = brand.querySelector('.brand-text');
-    if (text) text.innerHTML = '<small>GESTÃO INTELIGENTE DE OBRAS</small><span>Obra<b>Ativa</b></span>';
+    updateHtml(text, '<small>GESTÃO INTELIGENTE DE OBRAS</small><span>Obra<b>Ativa</b></span>');
     const defaultImage = brand.querySelector('.brand-logo');
     if (defaultImage && !hasCompanyLogo) defaultImage.alt = 'ObraAtiva';
   }
