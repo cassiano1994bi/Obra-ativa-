@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-08-31T16:11:31.635Z",
-  "codeHash": "8d1077ad932fcf4a8c8129dfedfec14e56897fa40ac715fb82cfdb9656aad78d",
+  "generatedAt": "2026-08-31T17:08:00.541Z",
+  "codeHash": "4812b90f42b8f4ea0faa3dfa444232043fb5e59fbdcc5b19f53260d67c8f1f52",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 120,
-    "totalBytes": 4993064,
-    "totalLines": 21380,
+    "totalBytes": 4994655,
+    "totalLines": 21383,
     "findingCount": 188,
     "severityCounts": {
       "critical": 0,
@@ -230,12 +230,12 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1165789,
-      "lines": 3075,
-      "sha256": "a9ae42dbf5a7c23b6d25c4cb987a9853fa5617f994ebcbec376af2fce5ea6a6e",
+      "bytes": 1167380,
+      "lines": 3078,
+      "sha256": "76cdc1da82730e4d6ce3b4c42655485f44ddeb88cb200054d6713618d5f98800",
       "functions": 829,
       "fetches": 2,
-      "domWrites": 255,
+      "domWrites": 257,
       "inlineHandlers": 814
     },
     {
@@ -1374,7 +1374,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "index.html",
       "line": 1,
-      "evidence": "255 escrita(s) dinâmica(s) de HTML",
+      "evidence": "257 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -1417,7 +1417,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-4D34FE91BEAE",
+      "id": "QF-02CC7E3C0B8D",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1427,7 +1427,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 1143,
+      "line": 1146,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1435,25 +1435,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-E6A90450C6D6",
-      "recurrenceKey": "a099810c833740e60cb945ae",
-      "ruleId": "reliability.empty-catch",
-      "severity": "medium",
-      "status": "probable",
-      "confidence": "medium",
-      "category": "reliability",
-      "scope": "application",
-      "title": "Erro possivelmente ignorado sem registro",
-      "file": "index.html",
-      "line": 2433,
-      "evidence": "catch(error){}",
-      "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
-      "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
-      "recommendation": "Explicar o erro ao usuário ou registrar diagnóstico sem expor dados sensíveis.",
-      "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
-    },
-    {
-      "id": "QF-855BF791111A",
+      "id": "QF-A9BBB1DDF61C",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1464,6 +1446,24 @@ export default Object.freeze({
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
       "line": 2436,
+      "evidence": "catch(error){}",
+      "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
+      "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
+      "recommendation": "Explicar o erro ao usuário ou registrar diagnóstico sem expor dados sensíveis.",
+      "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
+    },
+    {
+      "id": "QF-69051A0F3265",
+      "recurrenceKey": "a099810c833740e60cb945ae",
+      "ruleId": "reliability.empty-catch",
+      "severity": "medium",
+      "status": "probable",
+      "confidence": "medium",
+      "category": "reliability",
+      "scope": "application",
+      "title": "Erro possivelmente ignorado sem registro",
+      "file": "index.html",
+      "line": 2439,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2202,7 +2202,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1165789 bytes e 3075 linhas",
+      "evidence": "1167380 bytes e 3078 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
