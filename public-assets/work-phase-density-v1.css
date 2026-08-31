@@ -1,4 +1,33 @@
-#app:not(.public-app) .work-phase-folder-grid{align-items:stretch}
+#app:not(.public-app) .work-phase-folder-grid{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  align-items:stretch;
+  box-sizing:border-box!important;
+}
+
+#app:not(.public-app) .work-phase-folder{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+#app:not(.public-app) .work-phase-folder-top,
+#app:not(.public-app) .work-phase-folder-preview,
+#app:not(.public-app) .work-phase-folder-empty,
+#app:not(.public-app) .simple-phase-add-photo{width:100%!important;max-width:100%!important;min-width:0!important}
+
+#app:not(.public-app) .simple-phase-add-photo{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  text-align:center!important;
+  text-decoration:none!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
 
 #app:not(.public-app) .internal-work-delete-action{
   min-height:34px!important;
@@ -22,11 +51,11 @@
 }
 
 @media(min-width:1200px){
-  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}
+  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))!important;gap:10px!important}
 }
 
 @media(min-width:761px) and (max-width:1199px){
-  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+  #app:not(.public-app) .work-phase-folder-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:8px!important}
 }
 
 @media(orientation:landscape) and (max-width:1199px) and (max-height:720px){
