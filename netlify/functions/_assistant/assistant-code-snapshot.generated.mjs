@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-05T18:59:51.633Z",
-  "codeHash": "51d92d79cb21724bb7012565ddb31e46a84872060b7119c52a58a865644ee571",
+  "generatedAt": "2026-09-05T19:22:24.466Z",
+  "codeHash": "274e03cb35fdfbfc2ce196d86d5118f1b3beaaba8eb93855d9e3c599f606a467",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 137,
-    "totalBytes": 5203133,
-    "totalLines": 23492,
+    "totalBytes": 5210169,
+    "totalLines": 23525,
     "findingCount": 191,
     "severityCounts": {
       "critical": 0,
@@ -1275,9 +1275,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-control-v1.css",
       "scope": "application",
-      "bytes": 8619,
-      "lines": 42,
-      "sha256": "b75f947107f9b9276d75464da6d6d3f7e084d1f66f0f79c3752bf9cd166a49ba",
+      "bytes": 10130,
+      "lines": 48,
+      "sha256": "f3a23451258230db35ee5aa3ef9c8020a9c4e310b3c97195d313a67788b16ee2",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1286,10 +1286,10 @@ export default Object.freeze({
     {
       "path": "public-assets/work-control-v1.js",
       "scope": "application",
-      "bytes": 44627,
-      "lines": 312,
-      "sha256": "ef398e50b34fcb7a3379fffc6179d38f91d2a1515ecd6675c39eb42b76b5386c",
-      "functions": 28,
+      "bytes": 50152,
+      "lines": 339,
+      "sha256": "f65da3a7fb6148311e57513d4d95a7903fbb957bf6a0c98424b67238a33eb94b",
+      "functions": 30,
       "fetches": 0,
       "domWrites": 4,
       "inlineHandlers": 0

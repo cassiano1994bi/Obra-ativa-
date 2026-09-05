@@ -54,10 +54,28 @@ try{
  page.once('dialog',dialog=>dialog.accept());await page.evaluate(id=>deleteWorkPhase('OBRA-TESTE',id),deleteId);
  assert.equal(await page.evaluate(()=>db.workPhases.length),6);assert.equal(await page.evaluate(()=>db.workMedia.length),oldPhotos);assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).kind),'Fase excluída');
  await page.evaluate(()=>go('works'));await page.locator('[data-collection=history]').click();assert.match(await page.locator('#view').textContent(),/Menor duração registrada/);await page.locator('[data-collection=radar]').click();assert.equal(await page.locator('.wc-radar .wc-card').count(),2);
+ await page.waitForFunction(()=>!document.querySelector('#obraativa-action-feedback.is-visible'));
  for(const [label,width,height] of [['desktop',1440,900],['tablet',1024,768],['phone',844,390],['small',667,375]]){
    await page.setViewportSize({width,height});await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));await page.locator('nav [data-section=phases]').click();
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: overflow no app completo`);
    await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}.png`),fullPage:true});
+   for(const form of ['create','progress']){
+     if(form==='create')await page.evaluate(()=>openInternalWorkModal());
+     else await page.locator('[data-wc-action=progress]').first().click();
+     const bounds=await page.evaluate(()=>{
+       const body=document.querySelector('.wc-form-body').getBoundingClientRect(),footer=document.querySelector('#wc-form footer').getBoundingClientRect();
+       return{bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,overflow:document.querySelector('#dialog').scrollWidth>document.querySelector('#dialog').clientWidth+1};
+     });
+     assert.equal(bounds.overflow,false,`${label}/${form}: sem corte horizontal no formulário real`);
+     assert.ok(bounds.bodyBottom<=bounds.footerTop+1&&bounds.footerBottom<=height,`${label}/${form}: salvar visível sem cobrir campos no app completo`);
+     const unobscured=await page.evaluate(()=>['.wc-dialog>h2','#wc-form input:not([type=checkbox]),#wc-form select','#wc-form [type=submit]'].every(selector=>{
+       const element=document.querySelector(selector),rect=element.getBoundingClientRect();
+       return rect.left>=0&&rect.top>=0&&rect.right<=innerWidth&&rect.bottom<=innerHeight&&element.contains(document.elementFromPoint(rect.left+5,rect.top+rect.height/2));
+     }));
+     assert.ok(unobscured,`${label}/${form}: título, campo e botão sem barra lateral por cima`);
+     await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}-${form}.png`)});
+     await page.locator('[data-wc-action=close]').click();
+   }
  }
  assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, fases/fotos/progresso/escala e quatro dispositivos; nenhuma conta ou rede real.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}
