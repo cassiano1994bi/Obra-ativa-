@@ -2,13 +2,9 @@
   'use strict';
   const C = window.ObraAtivaWorkCore;
   if (!C || typeof workTrackerPage !== 'function' || window.ObraAtivaWorkControl) return;
-  const local = { section: 'panel', collection: 'list', filter: 'all', historyFilter: 'all', historyLimit: 100, operation: '', saving: false };
-  const serverHistory = new Map();
+  const local = { saving: false };
   const h = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const cash = (v) => v == null ? 'Não informado' : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-  const dt = (v) => v ? String(v).slice(0, 10).split('-').reverse().join('/') : 'Não informado';
-  const pct = (v) => v == null ? 'Ainda não informado' : `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(v)}%`;
-  const planValue = (work, key) => Object.hasOwn(work.control?.plan || {}, key) ? work.control.plan[key] : work.control?.baseline?.[key];
   const b = (action, label, values = {}, primary = false) => `<button type="button" class="wc-button ${primary ? 'primary' : ''}" data-wc-action="${action}" ${Object.entries(values).map(([k, v]) => `data-${k}="${h(v)}"`).join(' ')}>${label}</button>`;
   function ctx() {
     const current = typeof CompanyWorkspace === 'undefined' ? {} : CompanyWorkspace.current || {};
@@ -66,11 +62,8 @@
     const required = /\brequired\b/.test(extra), hintId = `wc-hint-${name}`;
     return `<label class="wc-field"><span>${h(label)} <small class="wc-field-flag">${required ? 'Obrigatório' : 'Opcional'}</small></span><input name="${name}" type="${type}" value="${h(value ?? '')}" ${hint ? `aria-describedby="${h(hintId)}"` : ''} ${extra}>${hint ? `<small class="wc-field-hint" id="${h(hintId)}">${h(hint)}</small>` : ''}</label>`;
   }
-  const formHeading = (title, note = '') => `<div class="wc-form-heading wide"><h3>${h(title)}</h3>${note ? `<p>${h(note)}</p>` : ''}</div>`;
   function options(items, selected) { return items.map(([id, label]) => `<option value="${h(id)}" ${String(id) === String(selected) ? 'selected' : ''}>${h(label)}</option>`).join(''); }
   function choose(name, label, items, selected = '') { return `<label class="wc-field"><span>${h(label)}</span><select name="${name}">${options(items, selected)}</select></label>`; }
-  function memo(name, label, value = '') { return `<label class="wc-field wide"><span>${h(label)}</span><textarea name="${name}" maxlength="4000" rows="2">${h(value)}</textarea></label>`; }
-  function peopleField(selected = []) { return `<details class="wc-disclosure wide"><summary>Equipe prevista (opcional)</summary><p>Marcar aqui não lança presença nem custo. Para definir quem trabalha em cada dia, use a Escala diária.</p><div class="wc-people">${C.list(db.employees).map((e) => `<label><input type="checkbox" name="teamIds" value="${h(e.id)}" ${selected.includes(e.id) ? 'checked' : ''}> ${h(e.name)}</label>`).join('') || '<p>Nenhum funcionário cadastrado.</p>'}</div></details>`; }
   function dialog(title, contents, submit, label = 'Salvar') {
     $('#dialog').innerHTML = `<section class="wc-dialog"><h2>${h(title)}</h2><form id="wc-form" class="wc-form wc-modal-form"><div class="wc-form wc-form-body">${contents}<div id="wc-message" role="status"></div></div><footer class="wide">${b('close', 'Cancelar')}<button class="wc-button primary" type="submit">${h(label)}</button></footer></form></section>`;
     $('#modal').classList.remove('work-media-viewer'); $('#modal').classList.add('show');
@@ -86,151 +79,116 @@
   function editWork(id = '') {
     if (!editable()) return message('Seu perfil permite somente consultar esta obra.', true);
     const work = id ? workById(id) : null;
-    const baselineFields = `${formHeading('Como a obra está hoje', 'Essas informações separam o que já aconteceu dos próximos registros.')}
-      ${choose('entry', 'A obra já começou?', [['new', 'Está começando agora'], ['ongoing', 'Sim, está em andamento'], ['final', 'Sim, está quase pronta']], work ? 'ongoing' : 'new')}
-      ${input('asOfDate', 'Data de referência', today(), 'date', 'required', 'Já vem com a data de hoje. Os valores anteriores devem incluir tudo até esse dia.')}
-      ${work ? choose('currentPhaseId', 'Em qual fase está? (opcional)', [['', 'Ainda não sei'], ...workPhasesFor(work.id).map((p) => [p.id, p.name])]) : `${input('initialPhase', 'Em qual fase está?', '', 'text', 'placeholder="Ex.: Fundação"')}${input('initialPercent', 'Quanto dessa fase está pronto? (%)', 0, 'number', 'min="0" max="100" step="0.1"', '0% = não começou · 50% = metade · 100% = concluída.')}`}
-      ${work ? `<details class="wc-disclosure wide"><summary>Percentuais conhecidos de cada fase (opcional)</summary><div class="wc-form">${workPhasesFor(work.id).map((p) => input(`phasePercent:${p.id}`, p.name, C.unconfirmedLegacy(p) ? '' : p.percent, 'number', 'min="0" max="100" step="0.1"')).join('')}</div></details>` : ''}
-      ${formHeading('Datas da obra', 'Não sabe a data? Pode deixar em branco.')}
-      ${input('startedAt', 'Quando a obra começou?', '', 'date')}
-      ${input('plannedEnd', 'Quando pretende terminar?', '', 'date')}
-      <label class="wc-check wide"><input type="checkbox" name="approximateStart"> A data de início é aproximada</label>
-      ${ctx().modules.includes('financial') ? `${formHeading('Valores da obra', 'Preencha só o que souber. Em branco significa não informado; zero significa nenhum valor.')}${input('contractValue', 'Valor combinado com o cliente (R$)', '', 'number', 'min="0" step="0.01"')}${input('budgetValue', 'Quanto você planeja gastar (R$)', '', 'number', 'min="0" step="0.01"')}<div class="wc-prior wide" hidden>${input('priorReceived', 'Total já recebido (R$)', '', 'number', 'min="0" step="0.01"')}${input('priorCost', 'Total já gasto (R$)', '', 'number', 'min="0" step="0.01"')}<p class="wc-copy wide">Informe os totais até a data de referência, incluindo o que já está cadastrado. O aplicativo confere os registros para não contar duas vezes.</p></div>` : ''}
-      ${peopleField()}${memo('notes', 'Observações sobre o início do acompanhamento (opcional)')}<label class="wc-check wide"><input type="checkbox" name="photoAfter"> Adicionar foto da fase atual após salvar</label>`;
-    dialog(work ? 'Editar obra' : 'Cadastrar obra', `<p class="wc-form-intro wide">${work ? 'Altere o que for necessário. Os registros anteriores serão preservados.' : 'Para cadastrar, basta o nome. A data de hoje já vem preenchida. Confira abaixo os dados que você já sabe.'}</p><div class="wide">${input('name', 'Nome da obra', work?.name || '', 'text', 'required maxlength="160" placeholder="Ex.: Reforma da cozinha"')}</div>
-      ${work?.control?.baseline ? `${formHeading('Planejamento atual', 'As informações do início ficam preservadas. Estas alterações vão para o histórico.')}${ctx().modules.includes('financial') ? `${input('contractValue', 'Valor combinado com o cliente (R$)', planValue(work, 'contractValue'), 'number', 'min="0" step="0.01"')}${input('budgetValue', 'Quanto você planeja gastar (R$)', planValue(work, 'budgetValue'), 'number', 'min="0" step="0.01"')}` : ''}${input('plannedEnd', 'Quando pretende terminar?', planValue(work, 'plannedEnd'), 'date')}` : `${work ? '<label class="wc-check wide"><input name="registerBaseline" type="checkbox"> Quero informar como a obra está hoje</label>' : ''}<details class="wc-disclosure wide" ${work ? '' : 'open'}><summary>Informações para começar o acompanhamento</summary><div class="wc-form">${baselineFields}</div></details>`}`, (data) => {
-      const values = Object.fromEntries(data), initial = !work?.control?.baseline && (!work || data.has('registerBaseline'));
-      if (initial && data.has('photoAfter') && !values.currentPhaseId && !values.initialPhase?.trim()) throw new Error('Informe a fase atual para escolher a pasta da foto.');
-      const base = initial ? { ...values, teamIds: data.getAll('teamIds'), approximateStart: data.has('approximateStart') } : undefined;
-      const plan = work?.control?.baseline ? { plannedEnd: values.plannedEnd, ...(ctx().modules.includes('financial') ? { contractValue: values.contractValue, budgetValue: values.budgetValue } : {}) } : undefined;
-      const result = C.saveWork(db, { id, name: values.name, baseline: base, plan }, ctx());
-      let next = result.state;
-      if (initial && work) for (const p of workPhasesFor(work.id)) {
-        const value = values[`phasePercent:${p.id}`];
-        if (value === '' || value == null || (Number(value) === C.number(p.percent) && !C.unconfirmedLegacy(p))) continue;
-        const percent = Number(value), status = percent === 100 ? 'Concluída' : percent > 0 ? 'Em andamento' : 'Não iniciada';
-        next = C.savePhase(next, work.id, { ...p, percent, status, endDate: percent === 100 ? p.endDate : '' }, ctx()).state;
-      }
-      if (!id && values.initialPhase?.trim()) {
-        const percent = Number(values.initialPercent || 0), phase = C.savePhase(next, result.workId, { name: values.initialPhase, percent, status: percent === 100 ? 'Concluída' : percent > 0 ? 'Em andamento' : 'Não iniciada' }, ctx());
-        next = phase.state; next.works.find((w) => w.id === result.workId).control.baseline.currentPhaseId = phase.phaseId;
-      }
-      commit(next, id ? 'Obra atualizada' : 'Obra cadastrada', values.name); closeModal(); openWorkTracker(result.workId);
-      const phaseId = next.works.find((w) => w.id === result.workId)?.control?.baseline?.currentPhaseId;
-      if (initial && data.has('photoAfter') && phaseId) showWorkPhasePhotoDialog(result.workId, phaseId);
+    if (id && !work) return;
+    dialog(work ? 'Editar obra' : 'Nova obra', input('name', 'Nome da obra', work?.name || '', 'text', 'required maxlength="160"'), (data) => {
+      const result = C.saveWork(db, { id, name: data.get('name') }, ctx());
+      commit(result.state, id ? 'Obra atualizada' : 'Obra cadastrada', data.get('name'));
+      closeModal(); openWorkTracker(result.workId);
     }, 'Salvar obra');
-    const select = $('#wc-form [name=entry]');
-    select?.addEventListener('change', () => { const fields = $('#wc-form .wc-prior'); if (fields) fields.hidden = select.value === 'new'; });
-    if (select) select.dispatchEvent(new Event('change'));
-    $('#wc-form [name=registerBaseline]')?.addEventListener('change', (e) => { $('#wc-form .wc-form-body > details').open = e.target.checked; });
   }
-  function editPhase(workId, id = '') {
+  function phaseValues(phase, name, percent) {
+    if (percent === '' || percent == null) throw new Error('Informe o percentual entre 0 e 100.');
+    const value = Number(percent);
+    return { ...phase, name, percent: value,
+      status: value === 100 ? 'Concluída' : value > 0 ? (['Pausada', 'Atrasada'].includes(phase.status) ? phase.status : 'Em andamento') : 'Não iniciada',
+      endDate: value === 100 ? phase.endDate || '' : '' };
+  }
+  function editPhase(workId, id = '', progressOnly = false) {
     if (!editable()) return message('Seu perfil permite somente consultar as fases.', true);
     const p = id ? WorkTrackingService.phase(id) : {};
     if (id && (!p || p.workId !== workId)) return;
-    dialog(id ? 'Editar fase' : 'Nova fase', `<p class="wc-form-intro wide">Uma fase é uma etapa da obra, como Fundação ou Pintura. Comece pelo nome, situação e quanto já está pronto.</p>${input('name', 'Nome da fase', p.name, 'text', 'required maxlength="160" placeholder="Ex.: Pintura"')}
-      ${choose('status', 'Situação da fase', C.statuses.map((s) => [s, s]), p.status || 'Não iniciada')}${input('percent', 'Quanto está pronto? (%)', p.percent ?? 0, 'number', 'required min="0" max="100" step="0.1"', '0% = não começou · 50% = metade · 100% = concluída. Escolha uma situação compatível.')}
-      ${formHeading('Datas da fase', 'Preencha as datas que souber. As demais podem ficar em branco.')}
-      ${input('plannedStart', 'Início previsto', p.plannedStart, 'date')}${input('plannedEnd', 'Término previsto', p.plannedEnd, 'date')}
-      ${input('startDate', 'Início real', p.startDate, 'date')}${input('endDate', 'Término real', p.endDate, 'date')}
-      <details class="wc-disclosure wide"><summary>Planejamento detalhado, equipe e observações (opcional)</summary><div class="wc-form">${input('weight', 'Importância da fase no andamento total', p.weight ?? 1, 'number', 'min="0.1" max="1000" step="0.1"', 'Deixe 1 para todas terem a mesma importância. Um número maior dá mais peso a esta fase.')}
-      ${ctx().modules.includes('financial') ? input('budgetCost', 'Custo previsto da fase (R$)', p.budgetCost, 'number', 'min="0" step="0.01"') : ''}
-      ${input('plannedPersonDays', 'Trabalho previsto (pessoas × dias)', p.plannedPersonDays, 'number', 'min="0" step="0.5"', 'Ex.: 3 pessoas por 2 dias = 6. É uma previsão, não um registro de presença.')}
-      ${peopleField(p.teamIds || [])}${memo('internalNote', 'Observações (opcional)', p.internalNote)}</div></details>`, (data) => {
-      const values = Object.fromEntries(data); if (!ctx().modules.includes('financial')) values.budgetCost = p.budgetCost;
-      const result = C.savePhase(db, workId, { ...p, ...values, id, teamIds: data.getAll('teamIds') }, ctx());
-      commit(result.state, 'Fase atualizada', values.name); closeModal(); render();
-    }, 'Salvar fase');
+    dialog(progressOnly ? p.name : id ? 'Editar fase' : 'Nova fase',
+      (progressOnly ? '' : input('name', 'Nome da fase', p.name, 'text', 'required maxlength="160"')) +
+      input('percent', 'Quanto está pronto? (%)', p.percent ?? 0, 'number', 'required min="0" max="100" step="0.1"', '0% = não começou · 50% = metade · 100% = concluída.'),
+      (data) => {
+        const result = C.savePhase(db, workId, phaseValues(p, progressOnly ? p.name : data.get('name'), data.get('percent')), ctx());
+        commit(result.state, 'Fase atualizada', result.state.workPhases.find(item => item.id === result.phaseId).name);
+        closeModal(); render();
+      }, 'Salvar fase');
   }
-  function progressDialog(workId, selected = '') {
-    const phases = workPhasesFor(workId); if (!phases.length) return editPhase(workId);
-    local.operation = uid();
-    dialog('Atualizar andamento', `<p class="wc-form-intro wide">Escolha a fase, informe quanto está pronto e salve. Não precisa preencher tudo de novo.</p>${choose('phaseId', 'Qual fase você quer atualizar?', phases.map((p) => [p.id, p.name]), selected || phases[0].id)}
-      ${input('percent', 'Quanto está pronto agora? (%)', (phases.find((p) => p.id === selected) || phases[0]).percent ?? 0, 'number', 'required min="0" max="100" step="0.1"', '0% = não começou · 50% = metade pronta · 100% = concluída.')}
-      ${memo('note', 'O que mudou? (opcional; obrigatório ao reduzir o percentual)')}<label class="wc-check wide"><input type="checkbox" name="correction"> O percentual anterior estava errado; quero corrigir</label>
-      <label class="wc-check wide"><input type="checkbox" name="photoAfter"> Adicionar uma foto após salvar</label><p class="wc-copy wide">Data, horário e responsável serão registrados automaticamente.</p>`, (data) => {
-      const values = Object.fromEntries(data), next = C.updateProgress(db, workId, values.phaseId, { ...values, correction: data.has('correction'), operationId: local.operation }, ctx());
-      commit(next, 'Andamento atualizado', workById(workId)?.name || 'Obra'); closeModal(); render();
-      if (data.has('photoAfter')) showWorkPhasePhotoDialog(workId, values.phaseId);
-    }, 'Salvar andamento');
-    $('#wc-form [name=phaseId]').addEventListener('change', (e) => { $('#wc-form [name=percent]').value = phases.find((p) => p.id === e.target.value)?.percent ?? 0; });
+  function suggestPhases(workId) {
+    if (!editable()) return message('Seu perfil permite somente consultar as fases.', true);
+    const key = name => String(name).trim().toLocaleLowerCase('pt-BR');
+    const existing = new Set(workPhasesFor(workId).map(p => key(p.name)));
+    const choices = new Map();
+    function list(type) {
+      return C.templates[type].map(name => {
+        const added = existing.has(key(name)), selected = choices.get(name);
+        return '<div class="wc-suggestion"><label class="wc-check"><input type="checkbox" data-wc-suggestion="' + h(name) + '" ' + (added ? 'disabled' : selected != null ? 'checked' : '') + '><span>' + h(name) + (added ? ' <small>Já adicionada</small>' : '') + '</span></label><label class="wc-suggest-percent"><span class="wc-sr-only">Percentual de ' + h(name) + '</span><input type="number" min="0" max="100" step="0.1" required data-wc-suggestion-percent="' + h(name) + '" value="' + h(selected ?? 0) + '" ' + (added || selected == null ? 'disabled' : '') + '><span>%</span></label></div>';
+      }).join('');
+    }
+    dialog('Sugerir fases', choose('template', 'Tipo de obra', [['construction', 'Construção'], ['renovation', 'Reforma']], 'construction') +
+      '<p class="wc-suggest-help">Marque só as fases que você quer e informe quanto já está pronto.</p><div class="wc-suggestions wide">' + list('construction') + '</div>',
+      () => {
+        const available = new Set(Object.values(C.templates).flat());
+        const current = new Set(workPhasesFor(workId).map(p => key(p.name)));
+        let next = db, count = 0;
+        for (const [name, percent] of choices) {
+          if (!available.has(name) || current.has(key(name))) continue;
+          next = C.savePhase(next, workId, phaseValues({}, name, percent), ctx()).state;
+          current.add(key(name)); count++;
+        }
+        if (!count) throw new Error('Marque pelo menos uma fase que ainda não foi adicionada.');
+        commit(next, 'Fases sugeridas adicionadas', workById(workId)?.name);
+        closeModal(); render();
+      }, 'Adicionar fases');
+    const form = $('#wc-form');
+    form.addEventListener('change', e => {
+      if (e.target.name === 'template') { form.querySelector('.wc-suggestions').innerHTML = list(e.target.value); return; }
+      const check = e.target.closest('[data-wc-suggestion]');
+      if (check) {
+        const field = check.closest('.wc-suggestion').querySelector('input[type=number]');
+        field.disabled = !check.checked;
+        if (check.checked) choices.set(check.dataset.wcSuggestion, field.value);
+        else choices.delete(check.dataset.wcSuggestion);
+      }
+    });
+    form.addEventListener('input', e => {
+      if (e.target.matches('[data-wc-suggestion-percent]')) choices.set(e.target.dataset.wcSuggestionPercent, e.target.value);
+    });
   }
-  function metric(label, value, note = '') { return `<article class="wc-metric"><small>${h(label)}</small><strong>${h(value)}</strong>${note ? `<span>${h(note)}</span>` : ''}</article>`; }
-  function healthCard(key, label, value) { return `<button class="wc-health" type="button" data-wc-action="explain" data-indicator="${key}" data-status="${h(value.status)}"><span>${h(label)}</span><strong>${h(value.status)}</strong><small>${value.value == null ? 'Ainda sem nota' : `Nota ${value.value} de 100`} · Entender a nota</small></button>`; }
-  function nextStep(m) {
-    if (m.work.archived || m.work.status === 'Finalizada') return 'Consulte as fases, os custos e o histórico desta obra.';
-    if (!m.phases.length) return editable() ? 'Comece adicionando a primeira fase da obra.' : 'Esta obra ainda não tem fases. O responsável pode cadastrá-las.';
-    return editable() ? 'Use Atualizar andamento para informar quanto de uma fase já está pronto.' : 'Veja o andamento abaixo. Use as abas para consultar os detalhes.';
-  }
-  function plainText(value) {
-    const messages = {
-      'O início e o marco não podem estar no futuro nem em ordem invertida.': 'Confira as datas: o início não pode ser depois da data de referência, e nenhuma das duas pode ser futura.',
-      'Marco inicial ainda não informado. O histórico anterior pode estar incompleto.': 'Falta informar como a obra estava no início do acompanhamento. Pode haver registros anteriores faltando.',
-      'Há fases sem medição confirmada; o percentual total ainda não está disponível. Pastas antigas precisam de conferência.': 'Informe quanto está pronto em cada fase para ver o andamento total. Confira também as fases antigas.',
-      'Há fases sem datas previstas; o cronograma ainda não pode ser avaliado por completo.': 'Faltam datas previstas em algumas fases. Preencha essas datas para acompanhar os prazos.',
-      'Custos anteriores ao marco não informados; o total é parcial.': 'Falta informar o que já havia sido gasto antes do acompanhamento. O custo mostrado ainda é parcial.',
-      'Recebimentos anteriores ao marco não informados; confira o histórico antes de calcular o saldo a receber.': 'Falta informar o que já havia sido recebido. Confira esses valores antes de calcular quanto falta receber.',
-      'O custo conhecido ultrapassou o custo orçado.': 'O custo registrado passou do valor que você planejava gastar.',
-      'O total informado no marco é menor que os lançamentos antigos. O painel preserva o maior total e pede conferência.': 'Os registros antigos somam mais que o total informado no início. Confira os valores: o painel está usando o maior total, sem somá-los duas vezes.',
-      'São necessárias pelo menos três datas de medição em uma janela de sete dias, após a última correção.': 'Atualize o andamento em pelo menos 3 dias diferentes, com 7 dias entre o primeiro e o último. Após uma correção, essa contagem recomeça.',
-      'Média simples das fases; cada fase tem o mesmo peso. Percentual aproximado.': 'Média do andamento das fases. Todas têm a mesma importância; o resultado é aproximado.',
-      'Média ponderada pelos pesos informados das fases.': 'Média do andamento considerando a importância definida para cada fase.'
-    };
-    return messages[value] || value;
-  }
-  function panel(m) {
-    const f = m.finance, p = m.prediction, current = m.active.map((x) => x.name).join(' · ') || m.phases.find((x) => x.id === m.work.control?.baseline?.currentPhaseId)?.name || 'Não definida';
-    return `<div class="wc-metrics">${metric('Quanto está pronto', pct(m.physical.value), `${m.finished} de ${m.phases.length} fases concluídas`)}${metric('Fase atual', current)}${metric('Equipe hoje', new Set(m.team.map((t) => t.employeeId)).size, `Pessoas escaladas · ${dt(today())}`)}${metric('Término estimado', p.endDate ? dt(p.endDate) : 'Ainda sem previsão', `Confiança ${p.confidence.toLowerCase()}`)}</div>
-      <div class="wc-two"><section class="wc-card"><h2>O que precisa de atenção</h2>${m.alerts.length ? `<ul>${m.alerts.map((a) => `<li>${h(plainText(a))}</li>`).join('')}</ul>` : '<p>Nenhum alerta nas informações disponíveis.</p>'}${!m.work.control?.baseline && editable() ? b('edit-work', 'Informar como a obra está hoje', { work: m.work.id }) : ''}</section>
-      <section class="wc-card"><h2>Acompanhe no dia a dia</h2><div class="wc-actions">${b('section', 'Ver fases', { section: 'phases' })}${ctx().modules.includes('planning') ? b('go', 'Escala diária', { page: 'planning' }) : ''}${ctx().modules.includes('reports') ? b('print', 'Imprimir') : ''}</div><p><b>Previsão de término:</b> ${h(plainText(p.reason))}</p><small><b>Como calculamos o andamento:</b> ${h(plainText(m.physical.method))} Parte do andamento com dados confirmados: ${pct(m.physical.coverage)}.</small></section></div>
-      ${f ? `<section class="wc-card"><div class="wc-heading"><h2>Dinheiro da obra</h2>${b('section', 'Ver financeiro', { section: 'finance' })}</div><div class="wc-metrics">${metric('Custo até agora', cash(f.costs.total), 'Presença + despesas + valores anteriores conferidos')}${metric('Já recebido', cash(f.received.total))}${metric('Falta receber', cash(f.outstanding), 'Valor combinado menos o recebido')}${metric('Saldo até agora', cash(f.cash), 'Recebido menos o custo conhecido; não é lucro final')}</div></section>` : ''}
-      <section class="wc-card wc-assessment"><h2>Como a obra está</h2><p>Notas de 0 a 100 com base nos registros disponíveis. Toque em uma avaliação para entender.</p><div class="wc-health-grid">${healthCard('general', 'Visão geral', m.health.general)}${f ? healthCard('finance', 'Situação financeira', m.health.finance) : ''}${healthCard('schedule', 'Prazos', m.health.schedule)}${healthCard('efficiency', 'Ritmo de trabalho', m.health.efficiency)}</div></section>`;
-  }
-  function phaseCards(m) {
-    return `<div class="wc-heading"><div><h2>Fases da obra</h2><p>Planeje a etapa, atualize a execução e acompanhe as fotos.</p></div><div class="wc-actions">${editable() ? `${b('template', 'Fases sugeridas', { work: m.work.id })}${b('phase', '+ Nova fase', { work: m.work.id }, true)}` : ''}</div></div>
-      <div class="wc-phase-grid">${m.phases.map((p, i) => { const cost = m.finance?.phaseCosts.find((c) => c.phaseId === p.id), photos = workMediaFor(m.work.id, p.id); return `<article class="wc-phase-card"><div class="wc-heading"><h3>${i + 1}. ${h(p.name)}</h3><span class="wc-tag">${h(p.status || 'Não iniciada')}</span></div><div class="wc-progress" role="progressbar" aria-label="Andamento de ${h(p.name)}" aria-valuenow="${C.number(p.percent) ?? 0}" aria-valuemin="0" aria-valuemax="100"><span style="width:${Math.max(0, Math.min(100, C.number(p.percent) ?? 0))}%"></span></div><strong>${pct(C.number(p.percent))}</strong><small>Prazo: ${dt(p.plannedEnd)} · ${photos.length} foto(s)</small>${cost ? `<small>Mão de obra: ${cash(cost.labor)} · ${cost.people} pessoa(s) / ${cost.days} dia(s)</small>` : ''}<div class="wc-actions">${editable() ? b('progress', 'Atualizar', { work: m.work.id, phase: p.id }, true) : ''}${b('photos', 'Fotos', { work: m.work.id, phase: p.id })}${editable() ? b('phase', 'Editar', { work: m.work.id, phase: p.id }) : ''}</div><details class="wc-disclosure"><summary>Detalhes da fase</summary><p>${h(p.internalNote || 'Nenhuma observação.')}</p><small>Início previsto: ${dt(p.plannedStart)}<br>Início real: ${dt(p.startDate)}<br>Término real: ${dt(p.endDate)}<br>Peso: ${p.weight ?? 1}</small>${cost ? `<small>Custo conhecido: ${cash(cost.total)} · Pessoas-dia: ${cost.personDays}</small>` : ''}${editable() ? `<div class="wc-actions">${b('move', '↑', { work: m.work.id, phase: p.id, direction: '-1' })}${b('move', '↓', { work: m.work.id, phase: p.id, direction: '1' })}${b('delete-phase', 'Excluir fase', { work: m.work.id, phase: p.id })}</div>` : ''}</details></article>`; }).join('') || '<p class="wc-card">Nenhuma fase cadastrada. Crie a primeira ou escolha um modelo.</p>'}</div>`;
-  }
-  function finances(m) {
-    const f = m.finance; if (!f) return '<p class="wc-card">O seu perfil não tem acesso ao Financeiro.</p>';
-    const categories = { material: 'Materiais registrados', service: 'Serviços registrados', equipment: 'Equipamentos e veículos', other: 'Outros custos registrados' };
-    return `<section class="wc-card"><h2>Valores e origem dos dados</h2><div class="wc-metrics">${metric('Valor contratado', cash(f.contract))}${metric('Custo orçado', cash(f.budget))}${metric('Recebido', cash(f.received.total))}${metric('Ainda a receber', cash(f.outstanding))}${f.recordedOutstanding != null ? metric('A receber já lançado no Financeiro', cash(f.recordedOutstanding), 'Reutiliza os fechamentos e recebíveis existentes') : ''}${metric('Custo conhecido', cash(f.costs.total))}${metric('Mão de obra registrada', cash(f.labor))}${f.categories.map((x) => metric(categories[x.kind], cash(x.total))).join('')}${metric('Saldo conhecido', cash(f.cash))}${metric('Margem sobre custo conhecido', f.knownMargin == null ? 'Não calculada' : `${f.knownMargin}%`, 'Não é margem final')}${metric('Custo projetado total', cash(m.prediction.projectedCost), 'Estimativa pelo ritmo observado')}${metric('Lucro projetado', cash(f.contract != null && m.prediction.projectedCost != null ? C.round(f.contract - m.prediction.projectedCost) : null), 'Depende da estimativa e de custos completos')}</div>
-      <details class="wc-disclosure"><summary>Como os valores anteriores foram conciliados</summary><p>Custos anteriores informados: ${cash(f.costs.initial)}. Já detalhados até o marco: ${cash(f.costs.recordedBefore)}. Histórico sem detalhamento: ${cash(f.costs.unitemized)}. Novos custos: ${cash(f.costs.recordedAfter)}.</p><p>O maior total anterior é usado uma única vez. Valores não informados permanecem desconhecidos. Pagamentos e vales não repetem a despesa da presença.</p></details></section>
-      <section class="wc-card"><h2>Leitura financeira</h2><p><b>O que está bom:</b> ${f.budget != null && f.costs.total <= f.budget ? 'O custo conhecido ainda está dentro do orçamento informado.' : 'Consulte os recebimentos e lançamentos confirmados; faltam dados para afirmar se o resultado é bom.'}</p><p><b>O que preocupa:</b> ${h(m.alerts.filter((a) => /custo|recebido|total/i.test(a)).join(' ') || 'Não há alerta financeiro nos dados conhecidos.')}</p><p><b>O que pode melhorar:</b> confira custos sem fase, valores anteriores e orçamento. ${cash(f.unassigned)} de custos registrados ainda estão sem fase válida.</p><div class="wc-actions">${editable('financial') ? b('expense-link', 'Vincular despesa existente à fase', { work: m.work.id }) : ''}${b('go', 'Abrir Financeiro', { page: 'financial' })}</div></section>`;
-  }
-  function history(m) {
-    const remote = serverHistory.get(`${ctx().companyId}:${m.work.id}`), updates = new Map(C.list(db.workUpdates).map((e) => [e.id, e]));
-    for (const e of remote?.rows || []) updates.set(e.id, { ...e, responsible: `${e.responsible || 'Usuário'} · registro do servidor (${String(e.actorId || '').slice(0, 8)})` });
-    const rows = C.timeline({ ...db, workUpdates: [...updates.values()] }, m.work.id, ledger(), ctx(), local.historyFilter);
-    return `<section class="wc-card"><div class="wc-heading"><h2>Linha do tempo</h2>${choose('historyFilter', 'Tipo de evento', [['all', 'Todos'], ['Cadastro', 'Cadastro'], ['Andamento', 'Andamento'], ['Equipe', 'Equipe'], ['Fotos', 'Fotos'], ['Prazos', 'Prazos'], ...(m.finance ? [['Financeiro', 'Financeiro']] : [])], local.historyFilter)}</div><p role="status">${h(remote?.loading ? 'Conferindo histórico protegido…' : remote?.error || (remote ? 'Histórico local combinado com os registros protegidos do servidor.' : 'Mostrando os registros disponíveis neste aparelho.'))}</p><ol class="wc-timeline">${rows.slice(0, local.historyLimit).map((e) => `<li><time>${dt(e.at)}${e.at.includes('T') ? ` · ${new Date(e.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : ''}</time><div><b>${h(e.title)}</b><p>${h(e.detail)}${e.value != null ? ` · ${cash(e.value)}` : ''}</p>${e.actor ? `<small>Por ${h(e.actor)}</small>` : ''}</div></li>`).join('') || '<li>Nenhum evento neste filtro.</li>'}</ol>${rows.length > local.historyLimit ? b('history-more', 'Mostrar mais eventos') : ''}${remote?.hasMore ? b('history-server', 'Buscar registros antigos', { work: m.work.id }) : ''}${remote?.error ? b('history-server', 'Tentar novamente', { work: m.work.id }) : ''}</section>`;
-  }
-  async function loadHistory(workId) {
-    const companyId = ctx().companyId, key = `${companyId}:${workId}`;
-    if (!companyId || !window.ObraAtivaWorkSync?.ready(companyId)) return;
-    const item = serverHistory.get(key) || { rows: [], hasMore: true, loading: false };
-    if (item.loading || !item.hasMore) return;
-    item.loading = true; item.error = ''; serverHistory.set(key, item);
-    try {
-      const rows = await CloudSync.request('/rest/v1/rpc/read_work_control_history', { method: 'POST', body: JSON.stringify({ p_company_id: companyId, p_work_id: workId, p_offset: item.rows.length }) }, CloudSync.session?.access_token);
-      if (!Array.isArray(rows)) throw new Error('Resposta inválida');
-      item.rows.push(...rows.filter((e) => e.workId === workId)); item.hasMore = rows.length === 200;
-    } catch { item.error = 'Não foi possível conferir o histórico protegido agora. Os registros locais continuam visíveis.'; }
-    finally { item.loading = false; if (ctx().companyId === companyId && activeWorkTrackerId === workId && local.section === 'history') render(); }
-  }
-  function operational(m) {
-    return `<section class="wc-card"><h2>Operação e previsão</h2><div class="wc-metrics">${metric('Prazo global informado', dt(m.targetEnd))}${metric('Fases em execução', m.active.length)}${metric('Fases atrasadas', m.late.length)}${metric('Dias com mão de obra registrada', new Set(C.ledgerFor(ledger(), m.work.id).rows.filter((r) => r.kind === 'labor' && r.units > 0).map((r) => r.date)).size)}${metric('Ritmo observado', m.prediction.dailyProgress == null ? 'Dados insuficientes' : `${m.prediction.dailyProgress} pontos/dia`)}</div><p>${h(m.prediction.reason)}</p><p><b>Previsão:</b> ${dt(m.prediction.endDate)} · Confiança ${h(m.prediction.confidence.toLowerCase())} · ${m.prediction.sample || 0} datas de medição.</p><h3>Distribuição de hoje</h3><div class="wc-rows">${m.team.map((d) => `<div><b>${h(emp(d.employeeId)?.name || 'Funcionário indisponível')}</b><span>${h(m.phases.find((p) => p.id === d.phaseId)?.name || 'Sem fase definida')}</span></div>`).join('') || '<p>Nenhuma pessoa escalada nesta obra para hoje.</p>'}</div><details class="wc-disclosure"><summary>Simulações futuras</summary><p>A projeção usa o ritmo observado no histórico, sem simular novas contratações. Cenários para aumentar ou reduzir equipe ficam para uma evolução futura: mais pessoas não garantem ganho proporcional.</p></details></section>`;
-  }
-  const previousTracker = workTrackerPage, previousWorks = worksGlobal, previousPhaseList = workTrackerPhaseList;
-  workTrackerPhaseList = function (work) { return enabled() ? phaseCards(model(work.id)) : previousPhaseList(work); };
-  workTrackerPage = function () {
-    const work = workById(activeWorkTrackerId); if (!work || !enabled()) return previousTracker();
-    if (activeWorkTrackerTab === 'media') return `<div class="wc-root">${nav('photos')}${previousTracker()}</div>`;
-    const m = model(work.id), content = { panel, phases: phaseCards, finance: finances, operation: operational, history }[local.section] || panel;
-    return `<main class="wc-root"><header class="wc-heading wc-work-heading"><div><div class="wc-title-line">${b('go', '← Obras', { page: 'works' })}<h1>${h(work.name)}</h1><span class="wc-tag">${h(m.priority)}</span></div><p class="wc-start-hint">${h(nextStep(m))}</p></div><div class="wc-actions">${editable() && !work.archived ? `${b('edit-work', 'Editar obra', { work: work.id })}${b('progress', m.phases.length ? 'Atualizar andamento' : '+ Adicionar primeira fase', { work: work.id }, true)}` : ''}</div></header>${nav(local.section)}${content(m)}</main>`;
+  // Keep the original folders, photo actions and work navigation. Only augment
+  // each phase with its percentage and confirmed labor cost.
+  const previousPhaseList = workTrackerPhaseList;
+  workTrackerPhaseList = function(work) {
+    const html = previousPhaseList(work);
+    if (!enabled()) return html;
+    const container = document.createElement('div'); container.innerHTML = html;
+    const phases = workPhasesFor(work.id), canEdit = editable() && !work.archived && work.status !== 'Finalizada';
+    const canSeeCosts = ctx().modules.includes('financial');
+    const costs = new Map(), phaseIds = new Set(phases.map(p => p.id));
+    let unassigned = 0;
+    if (canSeeCosts) for (const row of C.ledgerFor(ledger(), work.id).rows) {
+      if (row.kind !== 'labor' || !(row.units > 0)) continue;
+      if (phaseIds.has(row.phaseId)) costs.set(row.phaseId, (costs.get(row.phaseId) || 0) + row.value);
+      else unassigned += row.value;
+    }
+    const heading = container.querySelector('.simple-phase-head');
+    if (heading && canEdit) {
+      const actions = document.createElement('div'); actions.className = 'wc-actions';
+      actions.innerHTML = b('template', 'Sugerir fases', {work:work.id});
+      const add = heading.querySelector('[data-work-phase-action="new-phase"]');
+      if (add) actions.append(add);
+      heading.append(actions);
+    }
+    container.querySelectorAll('.simple-phase-folder').forEach((card,index) => {
+      const phase = phases[index]; if (!phase) return;
+      card.dataset.wcPhase = phase.id;
+      const percent = Math.max(0, Math.min(100, Number(phase.percent) || 0));
+      const label = new Intl.NumberFormat('pt-BR', {maximumFractionDigits:2}).format(percent) + '% pronto';
+      const info = document.createElement('div'); info.className = 'wc-phase-info';
+      info.innerHTML = (canEdit ? b('progress', h(label) + ' <span aria-hidden="true">✎</span>', {work:work.id,phase:phase.id}) : '<strong>' + h(label) + '</strong>') +
+        (canSeeCosts ? '<div class="wc-phase-labor"><span>Mão de obra</span><b>' + cash(costs.get(phase.id) || 0) + '</b></div>' : '');
+      const button = info.querySelector('button');
+      if (button) button.setAttribute('aria-label', 'Atualizar percentual de ' + phase.name);
+      card.querySelector('.work-phase-folder-top')?.after(info);
+    });
+    return '<section class="wc-simple">' + container.innerHTML +
+      (canSeeCosts ? '<p class="wc-cost-note">Mão de obra: presença confirmada × diária cadastrada.' +
+        (unassigned > 0 ? ' <b>Sem fase definida: ' + cash(unassigned) + '</b>' : '') + '</p>' : '') + '</section>';
   };
-  function nav(current) { return `<nav class="wc-tabs" aria-label="Áreas da obra">${[['panel', 'Resumo'], ['phases', 'Fases e fotos'], ['operation', 'Equipe e prazos'], ...(ctx().modules.includes('financial') ? [['finance', 'Financeiro']] : []), ['history', 'Histórico']].map(([key, label]) => b('section', label, { section: key, selected: current === key ? 'true' : 'false' })).join('')}</nav>`; }
-  const previousOpen = openWorkTracker, previousWorkModal = openInternalWorkModal, previousOfficeModal = openOfficeWorkModal,
+  const previousWorkModal = openInternalWorkModal, previousOfficeModal = openOfficeWorkModal,
     previousInternalPhaseModal = openInternalWorkPhaseModal, previousPhaseModal = openWorkPhaseModal, previousPhaseDialog = window.showWorkPhaseDialog;
-  openWorkTracker = function (id) { if (!enabled()) return previousOpen(id); if (!workById(id)) return; activeWorkTrackerId = id; activeWorkTrackerTab = 'panel'; workMediaPhaseFilter = ''; local.section = 'panel'; page = 'worktracker'; renderTop(); render(); };
   openInternalWorkModal = (...args) => enabled() ? editWork(...args) : previousWorkModal(...args);
   openOfficeWorkModal = (...args) => enabled() ? editWork(...args) : previousOfficeModal(...args);
   openInternalWorkPhaseModal = (...args) => enabled() ? editPhase(...args) : previousInternalPhaseModal(...args);
@@ -262,18 +220,6 @@
     if (phase && phase.order !== order) { C.event(db, workId, 'Fase reorganizada', { phaseId, previousOrder: order, order: phase.order }, ctx()); WorkTrackingService.persist('Ordem da fase registrada', phase.name); }
     return result;
   };
-  function collection() {
-    const models = C.radar(db, ledger(), ctx(), local.filter);
-    return `<div class="wc-heading"><h1>Radar da empresa</h1>${choose('radarFilter', 'Mostrar obras', [['all', 'Todas, inclusive arquivadas'], ['active', 'Em andamento'], ['critical', 'Críticas'], ['attention', 'Precisam de atenção'], ['late', 'Atrasadas'], ['near', 'Próximas da conclusão'], ...(ctx().modules.includes('financial') ? [['financial', 'Saúde financeira']] : [])], local.filter)}</div><div class="wc-radar">${models.map((m) => `<article class="wc-card"><div class="wc-heading"><h2>${h(m.work.name)}</h2><span class="wc-tag">${h(m.priority)}</span></div><p>${m.work.archived ? 'Arquivada · ' : ''}${pct(m.physical.value)} · ${h(m.active.map((p) => p.name).join(', ') || 'Fase não definida')}</p><div class="wc-rows"><div><span>Saúde geral</span><b>${m.health.general.value ?? '—'} · ${h(m.health.general.status)}</b></div>${m.finance ? `<div><span>Saúde financeira</span><b>${m.health.finance.value ?? '—'} · ${h(m.health.finance.status)}</b></div>` : ''}<div><span>Prazo</span><b>${m.deadlineOverdue ? 'Prazo global ultrapassado' : m.late.length ? `${m.late.length} fase(s) atrasada(s)` : 'Sem atraso identificado nos dados conhecidos'}</b></div><div><span>Equipe hoje</span><b>${new Set(m.team.map((d) => d.employeeId)).size}</b></div><div><span>Término estimado</span><b>${dt(m.prediction.endDate)}</b></div></div><p>${h(m.alerts[0] || 'Acompanhe os registros para manter a visão atualizada.')}</p>${b('open', 'Abrir obra', { work: m.work.id }, true)}</article>`).join('') || '<p class="wc-card">Nenhuma obra corresponde ao filtro escolhido.</p>'}</div>`;
-  }
-  function historyCompany() {
-    const stats = C.historical(db, ledger(), ctx()), models = C.radar(db, ledger(), ctx()), compare = C.benchmark(db, ledger(), ctx());
-    const comparable = models.filter((m) => m.physical.value === 100 && m.finance?.contract > 0 && m.work.control?.baseline && !m.finance.costs.missingHistory && m.finance.costs.total > 0);
-    const bestMargin = comparable.length >= 2 ? [...comparable].sort((a, b) => b.finance.knownMargin - a.finance.knownMargin)[0] : null;
-    const highlights = `<section class="wc-card"><h2>Padrões que ajudam a planejar</h2><p>São necessários pelo menos dois registros comparáveis. Resultado financeiro conhecido não equivale a lucro auditado; custos ausentes podem mudar a ordem.</p><div class="wc-metrics">${metric('Menor duração registrada', compare.fastest?.name || 'Dados insuficientes', compare.fastest ? `${compare.fastest.days} dias · datas reais` : '')}${ctx().modules.includes('financial') ? `${metric('Maior resultado conhecido', compare.profit?.name || 'Dados insuficientes', compare.profit ? cash(compare.profit.profit) : '')}${metric('Maior custo conhecido', compare.cost?.name || 'Dados insuficientes', compare.cost ? cash(compare.cost.cost) : '')}${metric('Fase com mais mão de obra', compare.laborPhase?.name || 'Dados insuficientes', compare.laborPhase ? cash(compare.laborPhase.meanLabor) + ' em média' : '')}` : ''}${metric('Fase mais demorada', compare.slowestPhase?.name || 'Dados insuficientes', compare.slowestPhase ? `${compare.slowestPhase.meanDays} dias em média` : '')}</div></section>`;
-    return highlights + `<section class="wc-card"><h1>Histórico e comparação da empresa</h1><p>Obras e fases com datas e custos registrados. Tipos, tamanhos e escopos diferentes limitam a comparação.</p><div class="wc-metrics">${metric('Obras consultadas', models.length)}${metric('Obras concluídas comparáveis', comparable.length)}${metric('Melhor margem conhecida', bestMargin?.work.name || 'Dados insuficientes', bestMargin ? `${bestMargin.finance.knownMargin}% · conferir custos completos` : '')}</div></section><section class="wc-card"><h2>Padrões por fase</h2><div class="wc-scroll"><table class="wc-table"><thead><tr><th>Fase</th><th>Obras distintas</th><th>Duração média</th><th>Equipe média</th><th>Ritmo médio</th>${ctx().modules.includes('financial') ? '<th>Custo médio</th><th>Mão de obra média</th>' : ''}<th>Variação de prazo</th><th>Confiança</th></tr></thead><tbody>${stats.map((s) => `<tr><td>${h(s.name)}</td><td>${s.distinctWorks}</td><td>${s.meanDays} dias</td><td>${s.meanPeople ?? '—'}</td><td>${s.meanPace} pontos/dia</td>${ctx().modules.includes('financial') ? `<td>${cash(s.meanCost)}</td><td>${cash(s.meanLabor)}</td>` : ''}<td>${s.meanDelay == null ? '—' : `${s.meanDelay > 0 ? '+' : ''}${s.meanDelay} dias`}</td><td>${h(s.confidence)}</td></tr>`).join('') || '<tr><td colspan="8">Registre início e término reais de fases concluídas para formar o histórico.</td></tr>'}</tbody></table></div><details class="wc-disclosure"><summary>Origem e confiança das médias</summary><p>Fases de mesmo nome, com acentos normalizados, são agrupadas dentro da empresa atual. Nenhum dado de outras empresas é usado. Custos sem vínculo ficam fora da média da fase.</p><p>Baixa: menos de 4 obras ou dados muito variáveis. Média: pelo menos 4 obras e variação relativa de duração até 60%. Alta: pelo menos 10 obras e variação até 25%. Mesmo com alta confiança histórica, o escopo da próxima obra pode ser diferente.</p></details></section>`;
-  }
-  worksGlobal = function () { if (!enabled()) return previousWorks(); const tabs = `<nav class="wc-tabs" aria-label="Visões das obras">${[['list', 'Obras'], ['radar', 'Radar da empresa'], ['history', 'Histórico e comparação']].map(([key, label]) => b('collection', label, { collection: key, selected: local.collection === key ? 'true' : 'false' })).join('')}</nav>`; return `<div class="wc-root">${tabs}${local.collection === 'radar' ? collection() : local.collection === 'history' ? historyCompany() : previousWorks()}</div>`; };
   const previousPlanning = planningDaily;
   planningDaily = function () {
     if (!enabled()) return previousPlanning();
@@ -296,43 +242,22 @@
       commit(next, 'Distribuição em lote salva', workById(planningWorkId)?.name || 'Obra', 'planning'); render();
     } catch (error) { message(error.message, true); }
   };
-  function expenseLink(id) {
-    const entries = ledger().filter((r) => r.workId === id && !['labor', 'receipt'].includes(r.kind));
-    dialog('Vincular uma despesa já registrada', `${choose('entry', 'Despesa existente', entries.map((r, i) => [i, `${dt(r.date)} · ${r.label} · ${cash(r.value)}`]))}${choose('phaseId', 'Fase da obra', [['', 'Sem fase'], ...workPhasesFor(id).map((p) => [p.id, p.name])])}<p class="wc-copy wide">Esta ação acrescenta somente o vínculo da fase. O valor não é lançado novamente.</p>`, (data) => {
-      const entry = entries[Number(data.get('entry'))]; if (!entry) throw new Error('Nenhuma despesa disponível.');
-      const next = JSON.parse(JSON.stringify(db)), record = C.list(next[entry.source]).find((r) => r.id === entry.id && r.workId === id);
-      if (!record) throw new Error('A despesa mudou. Abra o formulário novamente.');
-      const phaseId = String(data.get('phaseId') || ''); if (phaseId && !workPhasesFor(id).some((p) => p.id === phaseId)) throw new Error('Fase não encontrada na obra.');
-      record.phaseId = phaseId; commit(next, 'Despesa vinculada à fase', workById(id)?.name, 'financial'); closeModal(); render();
-    }, 'Salvar vínculo');
-  }
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', e => {
     const target = e.target.closest?.('[data-wc-action]'); if (!target) return;
-    e.preventDefault(); e.stopPropagation(); const d = target.dataset;
+    e.preventDefault(); e.stopPropagation();
     try {
-      switch (d.wcAction) {
-        case 'close': closeModal(); break;
-        case 'go': go(d.page); break;
-        case 'open': openWorkTracker(d.work); break;
-        case 'collection': local.collection = d.collection; render(); break;
-        case 'section': local.section = d.section; activeWorkTrackerTab = 'panel'; render(); if (d.section === 'history') void loadHistory(activeWorkTrackerId); break;
-        case 'history-more': local.historyLimit += 100; render(); break;
-        case 'history-server': void loadHistory(d.work); break;
-        case 'edit-work': editWork(d.work); break;
-        case 'phase': editPhase(d.work, d.phase); break;
-        case 'progress': progressDialog(d.work, d.phase); break;
-        case 'photos': openWorkPhaseFolder(d.work, d.phase); break;
-        case 'move': if (editable()) moveWorkPhase(d.work, d.phase, Number(d.direction)); break;
-        case 'delete-phase': if (editable()) deleteWorkPhase(d.work, d.phase); break;
-        case 'expense-link': expenseLink(d.work); break;
-        case 'print': window.print(); break;
-        case 'explain': { const m = model(activeWorkTrackerId), s = m.health[d.indicator]; dialog('Como a nota é calculada', `<p class="wide">${h(s.explanation)}</p>`, () => closeModal(), 'Entendi'); break; }
-        case 'template': dialog('Escolha as fases sugeridas', `${choose('template', 'Tipo de obra', [['construction', 'Construção'], ['renovation', 'Reforma']])}<p class="wide wc-copy">Acrescenta as fases que ainda não existem com esse nome. Você poderá editar nomes, pesos e datas.</p>`, (data) => { commit(C.addTemplate(db, d.work, data.get('template'), ctx()), 'Fases sugeridas adicionadas', workById(d.work)?.name); closeModal(); render(); }, 'Adicionar fases'); break;
-      }
+      const d = target.dataset;
+      if (d.wcAction === 'close') closeModal();
+      else if (d.wcAction === 'template') suggestPhases(d.work);
+      else if (d.wcAction === 'progress') editPhase(d.work, d.phase, true);
     } catch (error) { message(error.message, true); }
-  });
-  document.addEventListener('change', (e) => { if (e.target.name === 'radarFilter') { local.filter = e.target.value; render(); } if (e.target.name === 'historyFilter') { local.historyFilter = e.target.value; render(); } });
+  }, true);
+  // Do not let the legacy folder's Enter/Space handler open photos when
+  // activating a percentage button with the keyboard.
+  document.addEventListener('keydown', e => {
+    if (e.target.closest?.('[data-wc-action]') && ['Enter', ' '].includes(e.key)) e.stopPropagation();
+  }, true);
   document.addEventListener('obraativa:work-sync-conflict', () => message(window.ObraAtivaWorkSync.error(ctx().companyId), true));
   window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx });
-  Object.assign(window, { openWorkTracker, openInternalWorkModal, openOfficeWorkModal, openInternalWorkPhaseModal, openWorkPhaseModal, saveBulkDistribution });
+  Object.assign(window, { openInternalWorkModal, openOfficeWorkModal, openInternalWorkPhaseModal, openWorkPhaseModal, saveBulkDistribution });
 })();

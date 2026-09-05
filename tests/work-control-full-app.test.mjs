@@ -40,28 +40,48 @@ try{
  const loaded=await page.evaluate(()=>({html:document.getElementById('view').innerHTML.slice(0,250),ready:ObraAtivaWorkSync.ready('EMPRESA-TESTE')}));
  assert.equal(loaded.ready,true);
  await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
- assert.equal(await page.locator('.wc-root h1').textContent(),'OBRA FICTÍCIA — Centro de treinamento');
- await page.locator('nav [data-section=phases]').click();
- await page.locator('[data-wc-action=phase]').first().click();await page.locator('#wc-form [name=name]').fill('ETAPA FICTÍCIA INTEGRADA');await page.locator('#wc-form [type=submit]').click();
+ assert.match(await page.locator('.clean-work-head h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
+ assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
+ await page.locator('[data-work-phase-action=new-phase]').click();
+ assert.equal(await page.locator('#wc-form [name]').count(),2);
+ await page.locator('#wc-form [name=name]').fill('ETAPA FICTÍCIA INTEGRADA');await page.locator('#wc-form [type=submit]').click();
  assert.equal(await page.evaluate(()=>db.workPhases.length),7);
- await page.locator('[data-wc-action=photos]').first().click();assert.equal(await page.locator('.work-tracker-gallery').count(),1);
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));await page.locator('[data-wc-action=progress]').click();await page.locator('[name=phaseId]').selectOption('FASE-TESTE-1');await page.locator('[name=percent]').fill('51');await page.locator('[name=photoAfter]').check();await page.locator('#wc-form [type=submit]').click();assert.equal(await page.locator('#workPhasePhotoForm').count(),1);await page.locator('[data-phase-photo-cancel]').click();
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));await page.locator('[data-wc-action=progress]').click();await page.locator('[name=phaseId]').selectOption('FASE-TESTE-1');await page.locator('[name=percent]').fill('61');await page.locator('#wc-form [type=submit]').click();assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).percent),61);
+ await page.locator('.work-phase-folder-preview').first().click();assert.equal(await page.locator('.work-tracker-gallery').count(),1);
+ await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+ await page.locator('[data-work-phase-action=add-photo]').first().click();assert.equal(await page.locator('#workPhasePhotoForm').count(),1);await page.locator('[data-phase-photo-cancel]').click();
+ await page.locator('[data-wc-action=progress][data-phase="FASE-TESTE-1"]').click();
+ await page.locator('[name=percent]').fill('61');await page.locator('#wc-form [type=submit]').click();
+ assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).percent),61);
+ assert.equal(await page.locator('#workPhasePhotoForm').count(),0,'Salvar percentual não abre extras');
+ await page.locator('[data-wc-action=template]').click();
+ await page.locator('[data-wc-suggestion="Pintura"]').check();
+ await page.locator('[data-wc-suggestion-percent="Pintura"]').fill('12');
+ await page.locator('#wc-form [type=submit]').click();
+ assert.equal(await page.evaluate(()=>db.workPhases.length),8);
+ const suggestion=await page.evaluate(()=>db.workPhases.at(-1).id);
  await page.evaluate(()=>{planningDate='2031-01-15';planningWorkId='OBRA-TESTE';go('planning')});
  assert.ok(await page.locator('[data-wc-plan-person]').count()>0,'Fase disponível na escala real');
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));await page.locator('nav [data-section=phases]').click();
- const deleteId=await page.evaluate(()=>db.workPhases.at(-1).id);const oldPhotos=await page.evaluate(()=>db.workMedia.length);
+ await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"]').selectOption(suggestion);
+ await page.evaluate(()=>saveBulkDistribution());
+ assert.equal(await page.evaluate(()=>db.distributions.find(d=>d.employeeId==='PESSOA-TESTE-A').phaseId),suggestion);
+ await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+ assert.match(await page.locator('[data-wc-phase="'+suggestion+'"] .wc-phase-labor').textContent(),/11,50/);
+ const deleteId=await page.evaluate(()=>db.workPhases.find(p=>p.name==='ETAPA FICTÍCIA INTEGRADA').id);const oldPhotos=await page.evaluate(()=>db.workMedia.length);
  page.once('dialog',dialog=>dialog.accept());await page.evaluate(id=>deleteWorkPhase('OBRA-TESTE',id),deleteId);
- assert.equal(await page.evaluate(()=>db.workPhases.length),6);assert.equal(await page.evaluate(()=>db.workMedia.length),oldPhotos);assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).kind),'Fase excluída');
- await page.evaluate(()=>go('works'));await page.locator('[data-collection=history]').click();assert.match(await page.locator('#view').textContent(),/Menor duração registrada/);await page.locator('[data-collection=radar]').click();assert.equal(await page.locator('.wc-radar .wc-card').count(),2);
+ assert.equal(await page.evaluate(()=>db.workPhases.length),7);assert.equal(await page.evaluate(()=>db.workMedia.length),oldPhotos);assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).kind),'Fase excluída');
+ await page.evaluate(()=>go('works'));
+ assert.equal(await page.locator('.wc-tabs').count(),0);
+ assert.doesNotMatch(await page.locator('#view').textContent(),/Radar da empresa|Histórico e comparação/);
+ await fs.mkdir(path.join(root,'tmp/work-control-qa'),{recursive:true});
  await page.waitForFunction(()=>!document.querySelector('#obraativa-action-feedback.is-visible'));
- for(const [label,width,height] of [['desktop',1440,900],['tablet',1024,768],['phone',844,390],['small',667,375]]){
-   await page.setViewportSize({width,height});await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));await page.locator('nav [data-section=phases]').click();
+ for(const [label,width,height] of [['desktop',1440,900],['tablet',1024,768],['phone',844,390],['small',667,375],['portrait',390,844]]){
+   await page.setViewportSize({width,height});await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: overflow no app completo`);
    await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}.png`),fullPage:true});
-   for(const form of ['create','progress']){
+   for(const form of ['create','progress','suggestions']){
      if(form==='create')await page.evaluate(()=>openInternalWorkModal());
-     else await page.locator('[data-wc-action=progress]').first().click();
+     else if(form==='progress') await page.locator('[data-wc-action=progress]').first().click();
+     else await page.locator('[data-wc-action=template]').click();
      const bounds=await page.evaluate(()=>{
        const body=document.querySelector('.wc-form-body').getBoundingClientRect(),footer=document.querySelector('#wc-form footer').getBoundingClientRect();
        return{bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,overflow:document.querySelector('#dialog').scrollWidth>document.querySelector('#dialog').clientWidth+1};
@@ -77,5 +97,5 @@ try{
      await page.locator('[data-wc-action=close]').click();
    }
  }
- assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, fases/fotos/progresso/escala e quatro dispositivos; nenhuma conta ou rede real.');
+ assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, fases/fotos/progresso/escala e cinco dispositivos; nenhuma conta ou rede real.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}
