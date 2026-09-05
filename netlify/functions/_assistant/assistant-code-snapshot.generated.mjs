@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-05T16:20:20.641Z",
-  "codeHash": "08a6aa1ecaadc5876c14f607db00354d1e49c757637f0c8639578140d7f9a652",
+  "generatedAt": "2026-09-05T16:38:02.547Z",
+  "codeHash": "cf8277294523e875d2b0bd947600f4fe77b4cac4d5441a816cda4128285784c1",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 128,
-    "totalBytes": 5078056,
-    "totalLines": 22306,
+    "fileCount": 130,
+    "totalBytes": 5086059,
+    "totalLines": 22396,
     "findingCount": 191,
     "severityCounts": {
       "critical": 0,
@@ -1443,6 +1443,28 @@ export default Object.freeze({
       "bytes": 22889,
       "lines": 287,
       "sha256": "992ed43e47b4fed629159efea9b99d78ef79769f8fa8cda28b02e4a2e9ac1845",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "supabase/migrations/202609051340_owner_insights_legacy_invitation_compatibility.sql",
+      "scope": "application",
+      "bytes": 459,
+      "lines": 13,
+      "sha256": "cf9ced7b54d5e861cd65d87e24e6601f233c2dc820a3369c4488001cc91a76e0",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "supabase/migrations/202609051350_owner_insights_legacy_company_compatibility.sql",
+      "scope": "application",
+      "bytes": 7544,
+      "lines": 77,
+      "sha256": "3da6cde2e4fe7f4c28763c2f04e76ad01e1a46f9b17472df7890453e09d86413",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
