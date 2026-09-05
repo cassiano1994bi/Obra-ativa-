@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-05T16:38:02.547Z",
-  "codeHash": "cf8277294523e875d2b0bd947600f4fe77b4cac4d5441a816cda4128285784c1",
+  "generatedAt": "2026-09-05T17:08:35.286Z",
+  "codeHash": "ab901cdc5939897e3c6888c1b4c6c4ab634efca5cc6348d6fb1f0e960aad6c98",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 130,
-    "totalBytes": 5086059,
-    "totalLines": 22396,
+    "fileCount": 131,
+    "totalBytes": 5088293,
+    "totalLines": 22451,
     "findingCount": 191,
     "severityCounts": {
       "critical": 0,
@@ -1465,6 +1465,17 @@ export default Object.freeze({
       "bytes": 7544,
       "lines": 77,
       "sha256": "3da6cde2e4fe7f4c28763c2f04e76ad01e1a46f9b17472df7890453e09d86413",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "supabase/migrations/202609051410_admin_audit_legacy_compatibility.sql",
+      "scope": "application",
+      "bytes": 2234,
+      "lines": 55,
+      "sha256": "37f2a41da08ef2a67a6a5c726aad574d73eb63491abb01f01e5c256ccf943eff",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
