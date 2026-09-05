@@ -174,8 +174,8 @@
     const stored = temporarySession();
     if (!stored?.access_token || window.CloudSync.session) return false;
     window.CloudSync.showLoading('Retomando sua sessão segura...');
+    let session = stored;
     try {
-      let session = stored;
       const expiresAt = Number(session.expires_at || 0) * 1000;
       if (!expiresAt || expiresAt < Date.now() + 60000) session = await window.CloudSync.refreshSession(session);
       else window.CloudSync.saveSession(session);
@@ -184,9 +184,10 @@
     } catch (error) {
       if (window.CloudSync.isConfirmedAuthFailure?.(error)) {
         try { sessionStorage.removeItem(sessionKey()); } catch (storageError) { /* armazenamento opcional */ }
+        window.CloudSync.session = null;
         window.CloudSync.showAuth('signin', 'Sua sessão terminou. Entre novamente para continuar.', true);
       } else {
-        window.CloudSync.session = stored;
+        window.CloudSync.session = window.CloudSync.session || stored;
         if (typeof window.CloudSync.showSessionRetry === 'function') window.CloudSync.showSessionRetry();
         else window.CloudSync.showAuth('signin', 'Não foi possível acessar a nuvem agora. Sua sessão continua salva neste dispositivo.', true);
       }

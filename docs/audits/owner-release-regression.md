@@ -13,7 +13,7 @@ Data: 05/09/2026. Ambiente: cópia isolada `oa-owner-release-20260905`. Nenhum t
 
 Três arquivos fixavam literalmente `v42`: `action-feedback-v1.test.mjs`, `product-public-site-v2.test.mjs` e `audit-phase7-pwa-cache.test.mjs`. A versão autorizada usa `v43`. Agora a versão é lida do worker e validada como versão numérica explícita. As asserções de cache offline, exclusão de APIs privadas, ativos e navegação foram preservadas. Foi acrescido teste de instalação/ativação em VM: cache atual é mantido, cache obsoleto do aplicativo é removido e cache de outra origem lógica é preservado.
 
-O inventário de modularização esperava 802 eventos; a base pública conciliada tem 803 pelo critério `\son[a-z]+=`. Documento e teste foram alinhados: 97 blocos de estilo, 16 scripts inline, 42 scripts externos e 803 eventos. O novo OwnerCenter não acrescenta handler inline.
+O inventário de modularização esperava 802 eventos; a base pública conciliada tem 803 pelo critério `\son[a-z]+=`. Documento e teste foram alinhados: 97 blocos de estilo, 16 scripts inline, 43 scripts externos e 803 eventos. O novo OwnerCenter e a medição opcional de campanhas não acrescentam handler inline.
 
 O snapshot técnico atual corresponde ao hash do `index.html` conciliado. Seu contador de 815 handlers usa outro critério (`\bon(?:click|change|submit|input)=`) e não deve ser confundido com o inventário de 803. O snapshot precisa ser regenerado pelo responsável pelo pacote depois da adição do runner em `scripts/release/`, pois também inventaria scripts técnicos.
 

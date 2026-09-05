@@ -18,7 +18,26 @@
   }
   async function rpc(name, args = {}) {
     if (!allowed()) throw new Error('denied');
-    return window.CloudSync.request(`/rest/v1/rpc/${name}`, { method: 'POST', body: JSON.stringify(args) }, window.CloudSync.session?.access_token);
+    const path = `/rest/v1/rpc/${name}`;
+    const options = { method: 'POST', body: JSON.stringify(args) };
+    try {
+      return await window.CloudSync.request(path, options, window.CloudSync.session?.access_token);
+    } catch (error) {
+      const session = window.CloudSync.session;
+      if (error?.status !== 401 || !session?.refresh_token || typeof window.CloudSync.refreshSession !== 'function') throw error;
+      try {
+        const refreshed = await window.CloudSync.refreshSession(session);
+        return await window.CloudSync.request(path, options, refreshed?.access_token);
+      } catch (refreshError) {
+        if (window.CloudSync.isConfirmedAuthFailure?.(refreshError)) {
+          window.CloudSync.session = null;
+          window.CloudSync.ready = false;
+          try { localStorage.removeItem(CLOUD_CONFIG.sessionKey); } catch { /* armazenamento pode estar indisponível */ }
+          window.CloudSync.showAuth?.('signin', 'Sua sessão terminou. Entre novamente para continuar.', true);
+        }
+        throw refreshError;
+      }
+    }
   }
   function message(error) {
     if (error?.status === 404 || error?.code === 'PGRST202') return 'Acompanhamento ainda não ativado no banco. As funções atuais continuam disponíveis em Comercial e Configurações.';
@@ -45,7 +64,7 @@
   function overview() {
     const s = state.data.summary || {}, campaigns = state.data.campaigns || [];
     const total = (key) => campaigns.reduce((sum, c) => sum + number(c[key]), 0);
-    return `<div class="oc-stats">${stat('Cadastros no período', s.registered, 'contas, não funcionários cadastrados')}${stat('Pessoas que usaram', s.active, 'uso ativo com medição permitida')}${stat('Ativos recentemente', s.online, 'estimativa dos últimos 90 segundos')}${stat('Sem origem identificada', s.unattributed, 'não atribuímos uma origem por suposição')}</div>
+    return `<div class="oc-stats">${stat('Visitas medidas', s.visits, 'após a pessoa permitir a medição')}${stat('Cadastros no período', s.registered, 'contas, não funcionários cadastrados')}${stat('Pessoas que usaram', s.active, 'uso ativo com medição permitida')}${stat('Ativos recentemente', s.online, 'estimativa dos últimos 90 segundos')}${stat('Cadastros sem origem', s.unattributed, 'não atribuímos uma campanha por suposição')}</div>
       <div class="oc-grid"><section class="oc-card"><h3>Suas campanhas estão trazendo resultados?</h3><p>Investimento informado: <b>${cash(total('spent'))}</b></p><p>Recebimentos atribuídos no período: <b>${cash(total('revenue'))}</b></p><p>Cadastros identificados: <b>${total('signups')}</b> · Desses, começaram a usar: <b>${total('activated')}</b></p>${button('nav-campaigns', 'Ver resultados das campanhas')}<p class="oc-legend">Recebimentos comerciais informados manualmente, descontando estornos. Não representam lucro nem alteram o financeiro das obras.</p></section>
       <section class="oc-card"><h3>Entenda a adoção do aplicativo</h3><p>Veja quem entrou, quem voltou e quem ainda não começou. A ausência de medição não prova abandono: a pessoa pode ter recusado ou estar offline.</p>${button('nav-users', 'Acompanhar usuários')}<p class="oc-legend">Atualizado em ${date(state.data.server_time, true)}. Use Atualizar para consultar a presença recente.</p></section></div>`;
   }
@@ -67,6 +86,7 @@
   function campaigns() {
     const rows = state.data.campaigns || [];
     return `<div class="oc-tools">${button('new-campaign', '+ Nova campanha', '', true)}${button('new-spend', 'Informar investimento')}${button('new-receipt', 'Registrar recebimento comercial')}</div>
+      ${number(state.data.summary?.visits_unattributed) ? `<section class="oc-note oc-warning"><b>${number(state.data.summary.visits_unattributed)} visita(s) medida(s) sem campanha identificada.</b><p>Essas pessoas chegaram por um link comum. Para separar o resultado de cada anúncio, crie a campanha abaixo, copie o link identificado e use esse endereço no anúncio.</p></section>` : ''}
       ${state.link ? `<section class="oc-link-result"><b>Link identificado da campanha</b><input readonly aria-label="Link da campanha" value="${escape(state.link)}">${button('copy-link', 'Copiar link')}<small>Primeira campanha identificada neste navegador, por até 30 dias, somente com permissão. Use este link no anúncio.</small></section>` : ''}
       <div class="oc-campaign-list">${rows.map((c) => `<article class="oc-card oc-campaign"><div class="oc-toolbar"><div><h3>${escape(c.name)}</h3><small>${escape(c.source)}</small></div>${button('link','Ver link',c.id)}</div><div class="oc-campaign-summary">${[['Investido',cash(c.spent)],['Cadastros',number(c.signups)],['Desses, clientes',number(c.customers)],['Recebido no período*',cash(c.revenue)]].map(([label,value])=>`<div><small>${label}</small><b>${value}</b></div>`).join('')}</div><details><summary>Ver funil e custos</summary><div class="oc-campaign-summary">${[['Visitantes identificados*',number(c.visits)],['Interesses no WhatsApp',number(c.whatsapp)],['Desses cadastros, usaram',number(c.activated)],['Custo por cadastro',c.signups?cash(c.spent/c.signups):'—'],['Custo por cliente*',c.customers?cash(c.spent/c.customers):'—']].map(([label,value])=>`<div><small>${label}</small><b>${value}</b></div>`).join('')}</div></details></article>`).join('') || empty('Crie uma campanha para gerar seu primeiro link identificado.')}</div>
       <section class="oc-note"><b>Como ler os resultados</b><p>Cadastros são contas criadas no período. “Desses, usaram” acompanha esses cadastrados; “clientes” conta empresas deles com recebimento comercial registrado. Os resultados continuam amadurecendo depois do cadastro.</p><p>* Visitantes são navegadores identificados pela primeira visita, não todos os acessos nem pessoas únicas. Bloqueadores, falta de permissão e troca de aparelho reduzem a identificação. Custo/cliente é uma estimativa parcial: o gasto e a chegada do cliente podem ocorrer em períodos diferentes.</p><p>* Recebido soma os pagamentos manuais do período de clientes atribuídos, inclusive de cadastros anteriores, menos estornos. Não é lucro. Um clique no WhatsApp não é uma venda. Gastos não são importados automaticamente das plataformas.</p></section>

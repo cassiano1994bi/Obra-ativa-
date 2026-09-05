@@ -42,7 +42,7 @@ Implementação preparada para lançamento. A migration aditiva foi aplicada no 
 - `netlify/functions/product-insights-retention.mjs`: manutenção restrita.
 - `supabase/migrations/202609051200_owner_insights.sql`: tabelas novas, privilégios e contratos de coleta/relatório; sem alterações de tabelas operacionais existentes.
 - `index.html`: carregamento dos módulos/estilo; `service-worker.js`: recursos opcionais offline. A versão do cache será revista apenas na preparação de publicação aprovada.
-- `docs/audits/index-modularization-plan.md`: inventário atualizado (42 scripts externos; nenhum handler inline novo).
+- `docs/audits/index-modularization-plan.md`: inventário atualizado (43 scripts externos; nenhum handler inline novo).
 - `netlify/functions/_assistant/assistant-code-snapshot.generated.mjs`: inventário técnico regenerado.
 
 ## Verificação isolada
@@ -54,7 +54,7 @@ Implementação preparada para lançamento. A migration aditiva foi aplicada no 
 - Coletor testado em VM com relógio e armazenamento fictícios: ausência de coleta antes da escolha, visibilidade/foco/inatividade, batimentos em lote, saída, troca de conta e falhas sem logout.
 - UI real dos módulos em Chrome com RPCs apontando exclusivamente para PostgreSQL em memória: PC 1440×900, notebook 1280×720, tablet 1024×600, celular 844×390 e 667×375. Busca, detalhes, links, campanhas, investimento, recebimento e controles anteriores testados; sem overflow horizontal da página ou erros de JavaScript. Conta sem privilégio não mostra painel nem Campanhas.
 - Esses testes não comprovam conectividade com Supabase/Netlify de produção nem substituem validação de Android físico após ativação autorizada.
-- Scripts locais: `tests/owner-insights-database.test.mjs`, `tests/owner-insights-server.test.mjs`, `tests/product-activity.test.mjs`, `tests/owner-insights-visual-check.mjs`. Inventário confirmado em 42 scripts externos. Testes/fixtures/imagens de QA não podem ser publicados.
+- Scripts locais: `tests/owner-insights-database.test.mjs`, `tests/owner-insights-server.test.mjs`, `tests/product-activity.test.mjs`, `tests/owner-insights-visual-check.mjs`. Inventário confirmado em 43 scripts externos. Testes/fixtures/imagens de QA não podem ser publicados.
 - PGlite foi instalado apenas em `tmp/owner-qa-runtime`, ignorado pelo Git; nenhum pacote novo é necessário no navegador ou nas funções de produção.
 
 ## Ativação realizada e operação futura
