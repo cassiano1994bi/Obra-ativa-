@@ -1,0 +1,51 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(new URL('../tmp/owner-qa-runtime/package.json', import.meta.url));
+const { PGlite } = require('@electric-sql/pglite');
+const db = new PGlite();
+const owner = '11000000-0000-4000-8000-000000000001', outsider = '11000000-0000-4000-8000-000000000002', viewer = '11000000-0000-4000-8000-000000000003', company = '22000000-0000-4000-8000-000000000001';
+await db.exec(`create schema auth; create role anon; create role authenticated; create table auth.users(id uuid primary key);
+create function auth.uid() returns uuid language sql as $$ select nullif(current_setting('test.uid',true),'')::uuid $$;
+grant usage on schema auth to authenticated;`);
+for (const file of ['202608250900_core_schema_baseline.sql', '20260827_activate_company_invites_safely.sql', '202609051600_work_control_revision.sql']) {
+  const sql = (await fs.readFile(new URL(`../supabase/migrations/${file}`, import.meta.url), 'utf8')).replace('create extension if not exists pgcrypto;', '');
+  await db.exec(sql);
+}
+await db.exec(`insert into auth.users values('${owner}'),('${outsider}'),('${viewer}');
+insert into public.companies(id,name) values('${company}','EMPRESA FICTÍCIA');
+insert into public.company_members(company_id,user_id,role,permission_profile) values('${company}','${owner}','owner','gerente'),('${company}','${viewer}','viewer','visualizador');`);
+const initial = { db: { works: [{ id: 'OBRA-FICTICIA', name: 'OBRA FICTÍCIA' }], workPhases: [], workUpdates: [], attendance: [{ id: 'PRESENCA-FICTICIA', status: 'Trabalhou' }] } };
+await db.query('insert into public.company_app_state(company_id,data) values($1,$2)', [company, initial]);
+async function as(user) { await db.exec('reset role'); await db.query("select set_config('test.uid',$1,false)", [user]); await db.exec('set role authenticated'); }
+async function checked(payload, rev) { return (await db.query('select public.save_company_app_state_checked($1,$2,$3) result', [company, payload, rev])).rows[0].result; }
+await as(owner);
+const next = structuredClone(initial); next.db.works[0].control = { version: 1 }; next.db.workPhases = [{ id: 'FASE-FICTICIA', workId: 'OBRA-FICTICIA', controlVersion: 1, percent: 17, status: 'Em andamento' }]; next.db.workUpdates = [{ id: 'EVENTO-FICTICIO', workId: 'OBRA-FICTICIA', controlEvent: true, actorId: outsider, delta: 17 }];
+const result = await checked(next, 1); assert.equal(result.revision, 2);
+await assert.rejects(() => checked(initial, 1), /Outra sessão/);
+await assert.rejects(() => db.query('select public.save_company_app_state($1,$2)', [company, initial]), /Atualize o aplicativo/);
+const events = (await db.query('select actor_id,payload from public.work_control_events')).rows;
+assert.equal(events.length, 1); assert.equal(events[0].actor_id, owner); assert.equal(events[0].payload.actorId, owner);
+await assert.rejects(() => db.exec('delete from public.work_control_events'), /permission denied/);
+const invalid = structuredClone(next); invalid.db.workPhases[0].percent = 101;
+await assert.rejects(() => checked(invalid, 2), /inválido/);
+const protectedHistory=(await db.query('select public.read_work_control_history($1,$2) history',[company,'OBRA-FICTICIA'])).rows[0].history;
+assert.equal(protectedHistory[0].actorId,owner);assert.equal(protectedHistory[0].baseline,undefined);
+await db.exec('reset role');
+const supervisor='11000000-0000-4000-8000-000000000004';
+await db.exec(`insert into auth.users values('${supervisor}'); insert into company_members(company_id,user_id,role,permission_profile) values('${company}','${supervisor}','collaborator','supervisor')`);
+await as(supervisor);
+const financialAttempt=structuredClone(next);financialAttempt.db.works[0].control.plan={budgetValue:31};
+await assert.rejects(()=>checked(financialAttempt,2),/financeiro/);
+const operational=structuredClone(next);operational.db.workPhases[0].percent=21;
+assert.equal((await checked(operational,2)).revision,3);
+assert.equal((await db.query('select public.read_work_control_history($1,$2) history',[company,'OBRA-FICTICIA'])).rows[0].history.length,1);
+assert.equal((await db.query('select * from work_control_events')).rows.length,0,'sem acesso direto a snapshots financeiros');
+await as(viewer); await assert.rejects(() => checked(next, 3), /consulta/);
+await as(outsider); await assert.rejects(() => checked(next, 3), /Acesso/);
+await assert.rejects(()=>db.query('select public.read_work_control_history($1,$2)',[company,'OBRA-FICTICIA']),/Acesso/);
+assert.equal((await db.query('select * from public.work_control_events')).rows.length, 0);
+await db.exec('reset role'); const saved = (await db.query('select data from public.company_app_state')).rows[0].data;
+assert.deepEqual(saved.db.attendance, initial.db.attendance); assert.equal(saved.db.workPhases[0].percent, 21);
+await db.close();
+console.log('WORK_CONTROL_DATABASE_OK: concorrência, cliente antigo, RLS, autoria, validação e preservação de dados em banco fictício.');

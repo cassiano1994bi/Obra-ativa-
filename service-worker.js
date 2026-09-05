@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v44';
+const CACHE_VERSION = 'v45';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -33,6 +33,10 @@ const OPTIONAL_ASSETS = [
   '/public-assets/obraativa-mobile-brand-v1.js',
   '/public-assets/app-brand-lock-v1.css',
   '/public-assets/work-phase-density-v1.css',
+  '/public-assets/work-control-core-v1.js',
+  '/public-assets/work-control-sync-v1.js',
+  '/public-assets/work-control-v1.js',
+  '/public-assets/work-control-v1.css',
   '/public-assets/app-brand-lock-v1.js',
   '/public-assets/obraativa-auth-brand-v1.css',
   '/public-assets/obraativa-auth-brand-v1.js',
