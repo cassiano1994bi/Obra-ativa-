@@ -14,9 +14,9 @@ Nesta fase nenhuma extração de código foi executada.
 - CSS adicional criado em tempo de execução: 77 blocos.
 - JavaScript embutido: 15 blocos funcionais e um bloco de abertura.
 - Bloco JavaScript principal: aproximadamente 948 KB e 748 funções nomeadas.
-- Eventos HTML como `onclick`, `onsubmit` e semelhantes: 802 ocorrências.
+- Eventos HTML como `onclick`, `onsubmit` e semelhantes: 803 ocorrências.
 - Encadeamentos que guardam/substituem uma função anterior: aproximadamente 204.
-- Scripts externos existentes no final da página: 41 após a camada visual móvel isolada da Fase 8, a padronização da marca, o retorno visual de salvamento/exclusão, a recepção premium com autenticação social preparada e a landing pública modular.
+- Scripts externos existentes: 41 (39 já presentes na versão publicada e 2 módulos opcionais do painel do proprietário no cabeçalho), após a camada visual móvel isolada da Fase 8, a padronização da marca, o retorno visual de salvamento/exclusão, a recepção premium com autenticação social preparada, a landing pública modular e o acompanhamento do produto.
 
 Esses números tornam arriscada uma conversão direta para módulos ES, bundler ou
 novos componentes. A primeira passagem deve ser uma movimentação mecânica, com
@@ -111,7 +111,7 @@ Risco: médio, causado pela ordem da cascata e pelos pontos de quebra móveis.
 - Começar pelos blocos menores das linhas finais e deixar o bloco de 948 KB por
   último.
 - Extrair o bloco principal inteiro para um único arquivo antes de tentar separá-lo.
-- Manter temporariamente os 802 eventos HTML e seus nomes globais.
+- Manter temporariamente os 803 eventos HTML e seus nomes globais.
 
 Risco: alto para o bloco principal; baixo a médio para os blocos finais menores.
 
@@ -166,7 +166,7 @@ Risco: médio a alto em celular e no Financeiro, onde há muitas camadas tardias
 |---|---:|---|---|
 | Bloco principal | Alto | 948 KB e 748 funções | Extração integral antes da divisão |
 | Sobrescritas encadeadas | Alto | Cerca de 204 dependências de ordem | Teste de ordem e aliases |
-| Eventos HTML | Alto | 802 chamadas globais | Migração tela por tela |
+| Eventos HTML | Alto | 803 chamadas globais | Migração tela por tela |
 | Financeiro/pagamentos | Alto | Cálculos e várias camadas posteriores | Testes de valores e histórico |
 | CloudSync/empresas | Alto | Autenticação e isolamento | Mocks locais, sem conta real |
 | CSS móvel | Alto | Muitas regras tardias e específicas | Comparação visual em 6 tamanhos |

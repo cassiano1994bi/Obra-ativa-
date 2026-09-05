@@ -146,7 +146,7 @@
         body.responsive-landscape-density #app:not(.public-app) .payment-page-header .page-title {font-size:18px!important}
         body.responsive-landscape-density #app:not(.public-app) .payment-page-header .sub {margin:2px 0 0!important;font-size:9px!important}
         body.responsive-landscape-density #app:not(.public-app) .payment-page-header .btn,
-        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-controls .btn {min-height:32px!important;padding:5px 8px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .payment-cycle-controls .btn {min-height:44px!important;padding:10px 8px!important;font-size:11px!important}
         body.responsive-landscape-density #app:not(.public-app) .payment-cycle-controls {gap:5px!important;margin:0!important}
         body.responsive-landscape-density #app:not(.public-app) .payment-cycle-label {padding:5px 8px!important;font-size:9px!important}
         body.responsive-landscape-density #app:not(.public-app) .payment-group-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
@@ -166,7 +166,7 @@
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-hero h1 {font-size:18px!important}
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-hero p {margin-top:2px!important;font-size:9px!important}
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-tabs {gap:4px!important;padding-bottom:3px!important}
-        body.responsive-landscape-density #app:not(.public-app) .permission-hub-tabs button {min-height:32px!important;padding:5px 8px!important;border-radius:8px!important;font-size:9px!important}
+        body.responsive-landscape-density #app:not(.public-app) .permission-hub-tabs button {min-height:44px!important;padding:10px 8px!important;border-radius:8px!important;font-size:11px!important}
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-info {grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-info div {padding:7px 8px!important;border-radius:8px!important}
         body.responsive-landscape-density #app:not(.public-app) .permission-hub-card {padding:10px!important}
@@ -187,9 +187,9 @@
         body.responsive-landscape-density .landscape-compact-settings-dialog .company-logo-upload img {width:38px!important;height:38px!important}
         body.responsive-landscape-density .landscape-compact-settings-dialog .check-line {grid-column:1/-1!important;min-height:28px!important;margin:0!important;padding:4px 7px!important;font-size:9px!important}
         body.responsive-landscape-density .landscape-compact-settings-dialog .landscape-settings-shortcuts {display:flex!important;gap:6px!important;margin:5px 0 0!important;padding:0!important;border:0!important;background:transparent!important}
-        body.responsive-landscape-density .landscape-compact-settings-dialog .landscape-settings-shortcuts .btn {min-height:31px!important;padding:5px 8px!important;font-size:9px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog .landscape-settings-shortcuts .btn {min-height:44px!important;padding:10px 8px!important;font-size:11px!important}
         body.responsive-landscape-density .landscape-compact-settings-dialog footer {position:sticky!important;bottom:-9px!important;z-index:2!important;display:flex!important;justify-content:flex-end!important;gap:6px!important;margin:5px -13px -9px!important;padding:7px 13px calc(7px + env(safe-area-inset-bottom))!important;border-top:1px solid #dce5e1!important;background:#fff!important}
-        body.responsive-landscape-density .landscape-compact-settings-dialog footer .btn {flex:0 0 auto!important;width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:9px!important}
+        body.responsive-landscape-density .landscape-compact-settings-dialog footer .btn {flex:0 0 auto!important;width:auto!important;min-height:44px!important;padding:10px 9px!important;font-size:11px!important}
 
         body.responsive-landscape-density #view[data-landscape-page="planning"],
         body.responsive-landscape-density #view[data-landscape-page="team"],
@@ -326,9 +326,7 @@
         body.responsive-landscape-density #view[data-landscape-page="planning"] table tbody td .btn,
         body.responsive-landscape-density #view[data-landscape-page="team"] table tbody td .btn,
         body.responsive-landscape-density #view[data-landscape-page="vehicles"] table tbody td .btn {
-          min-height:32px!important;
-          padding:5px 7px!important;
-          font-size:9px!important;
+          min-height:44px!important;\r?\n          padding:10px 9px!important;\r?\n          font-size:11px!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page="planning"] .toolbar,
@@ -539,9 +537,7 @@
         }
 
         body.responsive-landscape-density #view[data-landscape-page="assistant"] .toolbar .btn {
-          min-height:32px!important;
-          padding:5px 7px!important;
-          font-size:9px!important;
+          min-height:44px!important;\r?\n          padding:10px 9px!important;\r?\n          font-size:11px!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page="assistant"] .chat {
@@ -650,10 +646,7 @@
         }
 
         body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .btn:not(.assistant-avatar-bubble) {
-          min-height:32px!important;
-          padding:5px 9px!important;
-          font-size:9px!important;
-          line-height:1.2!important;
+          min-height:44px!important;\r?\n          padding:10px 11px!important;\r?\n          font-size:11px!important;\r?\n          line-height:1.2!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .notice {
@@ -1009,7 +1002,7 @@
         }
 
         body.responsive-landscape-density #view[data-landscape-page="works"] .internal-work-card-actions .btn {
-          min-height:30px!important;
+          min-height:44px!important;
           padding:4px 5px!important;
           font-size:8px!important;
         }
@@ -1058,8 +1051,7 @@
         body.responsive-landscape-density #view[data-landscape-page="financial"] .finance-work-guide-toolbar .btn {
           flex:0 0 auto!important;
           width:auto!important;
-          min-height:34px!important;
-          padding:6px 9px!important;
+          min-height:44px!important;\n          padding:10px 9px!important;\n          font-size:11px!important;\n
         }
 
         body.responsive-landscape-density #view[data-landscape-page="financial"] .finance-work-guide-meta,

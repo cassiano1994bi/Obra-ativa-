@@ -182,8 +182,14 @@
       window.CloudSync.session = session;
       await window.CloudSync.activate();
     } catch (error) {
-      try { sessionStorage.removeItem(sessionKey()); } catch (storageError) { /* armazenamento opcional */ }
-      window.CloudSync.showAuth('signin', 'Sua sessão terminou. Entre novamente para continuar.', true);
+      if (window.CloudSync.isConfirmedAuthFailure?.(error)) {
+        try { sessionStorage.removeItem(sessionKey()); } catch (storageError) { /* armazenamento opcional */ }
+        window.CloudSync.showAuth('signin', 'Sua sessão terminou. Entre novamente para continuar.', true);
+      } else {
+        window.CloudSync.session = stored;
+        if (typeof window.CloudSync.showSessionRetry === 'function') window.CloudSync.showSessionRetry();
+        else window.CloudSync.showAuth('signin', 'Não foi possível acessar a nuvem agora. Sua sessão continua salva neste dispositivo.', true);
+      }
     }
     return true;
   }

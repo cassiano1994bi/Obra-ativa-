@@ -130,6 +130,11 @@
   }
 
   function tabs() {
+    if (window.CloudSync?.isSalesAdmin && window.ObraAtivaOwnerCenter) {
+      const ownerTabs = [['overview', 'Visão geral'], ['owner-users', 'Usuários'], ['owner-campaigns', 'Campanhas'], ['commercial', 'Comercial'], ['owner-settings', 'Configurações e histórico']];
+      const selected = ['access', 'company', 'subscription', 'security', 'company-overview'].includes(permissionHubTab) ? 'owner-settings' : permissionHubTab === 'owner-overview' ? 'overview' : permissionHubTab;
+      return `<nav class="permission-hub-tabs" aria-label="Painel do proprietário">${ownerTabs.map(([key, label]) => `<button type="button" class="${selected === key ? 'active' : ''}" aria-current="${selected === key ? 'page' : 'false'}" onclick="openPermissionHub('${key}')">${label}</button>`).join('')}</nav>`;
+    }
     const basic = [['overview', '⌂', 'Visão geral'], ['access', '👥', 'Acessos'], ['company', '🏢', 'Empresa'], ['subscription', '💳', 'Assinatura'], ['security', '🔒', 'Segurança']];
     return `<nav class="permission-hub-tabs" aria-label="Áreas do administrador">${basic.map(([key, icon, label]) => `<button class="${permissionHubTab === key ? 'active' : ''}" type="button" onclick="openPermissionHub('${key}')"><span>${icon}</span>${label}</button>`).join('')}${window.CloudSync?.isSalesAdmin ? `<button class="commercial ${permissionHubTab === 'commercial' ? 'active' : ''}" type="button" onclick="openPermissionHub('commercial')"><span>📈</span>Área comercial · somente você</button>` : ''}</nav>`;
   }
@@ -362,6 +367,11 @@
     const permissionControlCenterOriginal = permissionControlCenter;
     permissionControlCenter = function permissionControlCenterHub() {
       const panels = { overview: overviewPanel, access: () => accessPanel(permissionControlCenterOriginal), company: companyPanel, subscription: subscriptionPanel, security: securityPanel, commercial: commercialPanel };
+      if (window.CloudSync?.isSalesAdmin && window.ObraAtivaOwnerCenter) {
+        panels['company-overview'] = overviewPanel;
+        panels.overview = () => window.ObraAtivaOwnerCenter.render('overview');
+        for (const key of ['overview', 'users', 'campaigns', 'settings']) panels[`owner-${key}`] = () => window.ObraAtivaOwnerCenter.render(key);
+      }
       const selected = panels[permissionHubTab] || overviewPanel;
       return `<main class="permission-hub">${hero()}${tabs()}<div class="permission-hub-content">${selected()}</div></main>`;
     };

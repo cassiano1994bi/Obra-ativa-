@@ -11,7 +11,7 @@
        * Fase 2 — tabelas como cartões em celular/tablet horizontal.
        * Camada estritamente visual: preserva linhas, colunas, textos e ações.
        */
-      @media (orientation:landscape) and (max-width:1366px) {
+      @media (max-width:1366px) {
         body.responsive-landscape-density #app:not(.public-app) #view .table-wrap.responsive-v3-card-wrap {
           width:100%!important;
           max-width:100%!important;
@@ -95,12 +95,13 @@
           overflow-wrap:anywhere!important;
         }
 
-        body.responsive-landscape-density #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td::before {
+        body.responsive-landscape-density #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td::before,
+        body.responsive-v3-device #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td::before {
           content:attr(data-responsive-label)!important;
           flex:0 0 40%!important;
           max-width:40%!important;
           color:#6c7e90!important;
-          font-size:10px!important;
+          font-size:11px!important;
           font-weight:850!important;
           line-height:1.25!important;
           letter-spacing:.035em!important;
@@ -127,10 +128,13 @@
           content:none!important;
         }
 
-        body.responsive-landscape-density #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td .btn {
+        body.responsive-landscape-density #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td .btn,
+        body.responsive-v3-device #app:not(.public-app) #view table.responsive-v3-card-table > tbody > tr > td .btn {
           flex:1 1 128px!important;
           min-width:0!important;
+          min-height:44px!important;
           max-width:100%!important;
+          font-size:12px!important;
           white-space:normal!important;
         }
 
@@ -144,7 +148,7 @@
         }
       }
 
-      @media (orientation:landscape) and (max-width:760px) {
+      @media (max-width:760px) {
         body.responsive-landscape-density #app:not(.public-app) #view table.responsive-v3-card-table > tbody {
           grid-template-columns:minmax(0,1fr)!important;
         }

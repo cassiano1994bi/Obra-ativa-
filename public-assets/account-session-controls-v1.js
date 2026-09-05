@@ -194,6 +194,7 @@
     const backdrop = ensureDialog();
     const remember = Boolean($('[data-account-remember]', backdrop)?.checked);
     const session = window.CloudSync?.session;
+    try { window.ObraAtivaUsage?.end(); } catch { /* medição nunca impede sair */ }
     closeDialog();
     if (remember && session) {
       if (!rememberSession(session)) {
