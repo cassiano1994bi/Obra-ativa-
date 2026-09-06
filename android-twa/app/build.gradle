@@ -22,7 +22,7 @@ plugins {
 
 def twaManifest = [
     applicationId: 'br.com.escritoriodaminhaobra.controledeobra',
-    hostName: 'controle-de-obra-app.netlify.app', // The domain being opened in the TWA.
+    hostName: 'obraativa.com.br', // The domain being opened in the TWA.
     launchUrl: '/?app=1&source=android', // The start path for the TWA. Must be relative to the domain.
     name: 'ObraAtiva', // The application name.
     launcherName: 'ObraAtiva', // The name shown on the Android Launcher.
@@ -39,7 +39,7 @@ def twaManifest = [
     // - short_name: Shorter string used if |name| is too long.
     // - url: Absolute path of the URL to launch the app with (e.g '/create').
     // - icon: Name of the resource in the drawable folder to use as an icon.
-    shortcuts: [[name:'Abrir obras', short_name:'Obras', url:'https://controle-de-obra-app.netlify.app/?app=1&area=works', icon:'shortcut_0'],[name:'Registrar presença', short_name:'Presença', url:'https://controle-de-obra-app.netlify.app/?app=1&area=attendance', icon:'shortcut_1'],[name:'Abrir financeiro', short_name:'Financeiro', url:'https://controle-de-obra-app.netlify.app/?app=1&area=financial', icon:'shortcut_2']],
+    shortcuts: [[name:'Abrir obras', short_name:'Obras', url:'https://obraativa.com.br/?app=1&area=works', icon:'shortcut_0'],[name:'Registrar presença', short_name:'Presença', url:'https://obraativa.com.br/?app=1&area=attendance', icon:'shortcut_1'],[name:'Abrir financeiro', short_name:'Financeiro', url:'https://obraativa.com.br/?app=1&area=financial', icon:'shortcut_2']],
     // The duration of fade out animation in milliseconds to be played when removing splash screen.
     splashScreenFadeOutDuration: 300,
     generatorApp: 'bubblewrap-cli', // Application that generated the Android Project
@@ -57,8 +57,8 @@ android {
         applicationId "br.com.escritoriodaminhaobra.controledeobra"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 6
-        versionName "6"
+        versionCode 7
+        versionName "7"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -76,12 +76,12 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://controle-de-obra-app.netlify.app/manifest.webmanifest'
+            resValue "string", "webManifestUrl", 'https://obraativa.com.br/manifest.webmanifest'
         
 
         
             // This is used by Meta Quest.
-            resValue "string", "fullScopeUrl", 'https://controle-de-obra-app.netlify.app/'
+            resValue "string", "fullScopeUrl", 'https://obraativa.com.br/'
         
 
         

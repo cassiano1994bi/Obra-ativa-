@@ -7,9 +7,9 @@
 - Categoria sugerida: Corporativo
 - Idioma principal: Português (Brasil)
 - E-mail de suporte: escritoriodaminhaobra@gmail.com
-- Site: https://controle-de-obra-app.netlify.app/
-- Política de privacidade: https://controle-de-obra-app.netlify.app/privacidade.html
-- Exclusão de conta: https://controle-de-obra-app.netlify.app/exclusao-de-conta.html
+- Site: https://obraativa.com.br/
+- Política de privacidade: https://obraativa.com.br/privacidade.html
+- Exclusão de conta: https://obraativa.com.br/exclusao-de-conta.html
 
 ## Descrição curta
 
@@ -38,4 +38,3 @@ O aplicativo foi criado para empresas e profissionais da construção civil que 
 - Ícone 512 × 512: `play-store-assets/app-icon-512x512.png`
 - Imagem de destaque 1024 × 500: `play-store-assets/feature-graphic-1024x500.png`
 - Capturas de tela: pendentes do teste final em aparelho Android, sempre sem dados reais de clientes.
-

@@ -34,6 +34,5 @@ Marcar como compartilhamento apenas quando a definição da Play exigir. Provedo
 
 ## URLs obrigatórias
 
-- Política: https://controle-de-obra-app.netlify.app/privacidade.html
-- Exclusão: https://controle-de-obra-app.netlify.app/exclusao-de-conta.html
-
+- Política: https://obraativa.com.br/privacidade.html
+- Exclusão: https://obraativa.com.br/exclusao-de-conta.html

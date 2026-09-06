@@ -11,13 +11,15 @@
 - Android 16 / API 36.
 - Orientação preferencial horizontal.
 - Localização habilitada somente para a previsão do tempo; notificações continuam desativadas.
-- APK e AAB assinados e verificados.
+- APK e AAB da versão 6 assinados e verificados; continuam preservados enquanto a versão 7 é validada.
 - Digital Asset Links publicado para a assinatura local.
 - Ícone e imagem de destaque preparados.
+- Domínio oficial `obraativa.com.br` configurado no código-fonte da versão 7.
 
 ## Antes do envio à produção
 
 - Instalar o APK em um aparelho Android real e testar celular e tablet na horizontal.
+- Gerar e assinar o APK/AAB da versão 7 com a mesma chave da versão anterior.
 - Capturar imagens da loja usando dados fictícios isolados, nunca dados de empresa real.
 - Criar ou confirmar a conta de desenvolvedor da Play Console.
 - Criar o aplicativo na Play Console como aplicativo, gratuito, categoria Corporativo.
@@ -29,8 +31,9 @@
 
 ## Arquivos de entrega
 
-- APK: `android-twa/app-release-signed.apk`
-- AAB: `android-twa/app-release-bundle.aab`
+- APK atual preservado: `android-twa/app-release-signed.apk` (versão 6)
+- Próximo APK: `release-android-20260906-v7-obraativa/obraativa-v7.apk`
+- Próximo AAB: `release-android-20260906-v7-obraativa/obraativa-v7.aab`
 - Chave: `android-twa/android.keystore`
 - Ficha da loja: `docs/distribution/play-store/listing-pt-BR.md`
 - Segurança dos dados: `docs/distribution/play-store/data-safety-draft.md`

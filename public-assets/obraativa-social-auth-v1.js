@@ -87,7 +87,9 @@
     const url = new URL(location.href);
     url.hash = '';
     ['code', 'error', 'error_code', 'error_description'].forEach((key) => url.searchParams.delete(key));
-    return url.href;
+    return typeof window.canonicalAppEntryUrl === 'function'
+      ? window.canonicalAppEntryUrl(url.searchParams)
+      : url.href;
   }
 
   async function signInWithProvider(provider) {

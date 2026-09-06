@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-06T18:04:12.173Z",
-  "codeHash": "5eb76426efc1994b379966d01cd8369c5289258f84e2ced32d86f4fe64a94e65",
+  "generatedAt": "2026-09-06T19:32:31.256Z",
+  "codeHash": "23f01b3cd92befdfd085a6d7248e49124aba16dded312e2d95f4783b651485bc",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 147,
-    "totalBytes": 5308082,
-    "totalLines": 25129,
+    "totalBytes": 5308499,
+    "totalLines": 25134,
     "findingCount": 194,
     "severityCounts": {
       "critical": 0,
@@ -43,9 +43,9 @@ export default Object.freeze({
     {
       "path": "android-twa/app/build.gradle",
       "scope": "application",
-      "bytes": 10381,
+      "bytes": 10285,
       "lines": 216,
-      "sha256": "c4cf27fe79cb85172bb34efda86776dcb5a31cea51af4b94904dfec12295e36a",
+      "sha256": "25d3c66abe6221d2e6eb04052bbe2c4040ad4b628a890a75e358911e26b759b9",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -142,9 +142,9 @@ export default Object.freeze({
     {
       "path": "android-twa/app/src/main/res/values/strings.xml",
       "scope": "application",
-      "bytes": 1603,
+      "bytes": 1587,
       "lines": 55,
-      "sha256": "0153d2b634c77b57fc22f9f0bb2335c3ea70154e1414aa45a3c52fc7988c7b06",
+      "sha256": "f7f93fa55b5385de03125b4cdbfe9b54d8b496e82d98afbc8238e0229514fdd5",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -164,9 +164,9 @@ export default Object.freeze({
     {
       "path": "android-twa/app/src/main/res/xml/shortcuts.xml",
       "scope": "application",
-      "bytes": 1878,
+      "bytes": 1830,
       "lines": 15,
-      "sha256": "cd0a888e5a12042d32e77a82aa0d93d17db027703409bd352124fc51d3d1f0dc",
+      "sha256": "fbdf1aa1450d617b7a194d47ed7ab75ecf70531a45c31ea5a28fc30d5e1f72a2",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -208,9 +208,9 @@ export default Object.freeze({
     {
       "path": "android-twa/twa-manifest.json",
       "scope": "application",
-      "bytes": 2598,
+      "bytes": 2422,
       "lines": 74,
-      "sha256": "2f74c7f3255b88b15dc5688df8ac030943c085f9def5a6fe94fd83ec01f8ef28",
+      "sha256": "1a8d069688a8adbe9bb6869044901493a77efb1d507d8086d8136eafc7fc1bbd",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -230,10 +230,10 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1169144,
-      "lines": 3087,
-      "sha256": "1ef7feb1cf298e21e66373497daac49c91687c987b0ba85e970b4ee37c74125a",
-      "functions": 829,
+      "bytes": 1169737,
+      "lines": 3089,
+      "sha256": "01ca0a9cab10f32387006d2ba636502c81e54efa3752f88d601024dec7d53a09",
+      "functions": 830,
       "fetches": 2,
       "domWrites": 257,
       "inlineHandlers": 815
@@ -1132,9 +1132,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-social-auth-v1.js",
       "scope": "application",
-      "bytes": 10022,
-      "lines": 228,
-      "sha256": "71c1c2fbecfb563aa387e52ab6fde09ad7d2dfa3dafe10bbf89140e98c7af60e",
+      "bytes": 10134,
+      "lines": 230,
+      "sha256": "e47e9dfcdd2bcac006591b91f7ba5a8506a343adcf4bf7f104a856e67940c812",
       "functions": 18,
       "fetches": 0,
       "domWrites": 0,
@@ -1495,9 +1495,9 @@ export default Object.freeze({
     {
       "path": "service-worker.js",
       "scope": "application",
-      "bytes": 8623,
-      "lines": 214,
-      "sha256": "9569794c594e7e34e9c22e053ad7e62f2e2b527dfae6aea040a1b17779948b5f",
+      "bytes": 8671,
+      "lines": 215,
+      "sha256": "a40a3eac49bbf270f6e696fb41c8fa14ef72c0809886e335977b68ac869b1f93",
       "functions": 5,
       "fetches": 3,
       "domWrites": 0,
@@ -1696,7 +1696,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-79E53AA0D4FB",
+      "id": "QF-C3F1661A9549",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1706,7 +1706,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 467,
+      "line": 468,
       "evidence": "catch(e){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1714,7 +1714,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-660A671F4F4E",
+      "id": "QF-8CF09865F8D9",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1724,7 +1724,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 1149,
+      "line": 1151,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1732,7 +1732,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-C9EE3BEE4384",
+      "id": "QF-80BD61267E79",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1742,7 +1742,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2439,
+      "line": 2441,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1750,7 +1750,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-4506BA8BC83D",
+      "id": "QF-4313DD9A45AA",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1760,7 +1760,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2442,
+      "line": 2444,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2571,7 +2571,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1169144 bytes e 3087 linhas",
+      "evidence": "1169737 bytes e 3089 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
