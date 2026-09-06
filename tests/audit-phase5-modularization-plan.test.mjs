@@ -14,7 +14,7 @@ test('plan inventory matches the current monolith', () => {
   const externalScripts = [...source.matchAll(/<script[^>]+\bsrc\s*=/gi)];
   assert.equal(styles.length, 97);
   assert.equal(inlineScripts.length, 16);
-  assert.equal(externalScripts.length, 46);
+  assert.equal(externalScripts.length, 47);
   assert.equal((source.match(/\son[a-z]+=/gi) || []).length, 803);
   assert.match(plan, /aproximadamente 1,15 MB/i);
   assert.match(plan, /CSS escrito diretamente no cabeçalho: 20 blocos/i);

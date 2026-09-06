@@ -1,0 +1,205 @@
+/* Billing is server-authoritative. This file improves UX; PostgreSQL enforces access. */
+(() => {
+  'use strict';
+  let access = null, identity = '', receivedAt = 0, busy = false, pending = null, message = '', verified = false;
+  let adminRows = null, adminSearch = '', adminOffset = 0, adminLoading = false, adminError = '';
+  const notified = new Set();
+  const labels = { trial:'Teste grátis', active:'Assinatura ativa', grace:'Pagamento em atraso · tolerância', payment_due:'Pagamento pendente', expired:'Teste encerrado', cancelled:'Renovação cancelada', administrator:'Administrador do aplicativo' };
+  const escape = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cloud = () => window.CloudSync;
+  const company = () => typeof CompanyWorkspace !== 'undefined' ? CompanyWorkspace.current?.id || null : null;
+  const key = () => `${cloud()?.session?.user?.id || ''}|${company() || ''}`;
+  const signedIn = () => Boolean(cloud()?.session?.user?.id && !document.body.classList.contains('public-mode'));
+  const date = v => v && Number.isFinite(Date.parse(v)) ? new Date(v).toLocaleDateString('pt-BR') : '—';
+  function current() {
+    if (identity !== key()) return null;
+    if (!access?.enabled || !access.can_write || access.mode === 'administrator') return access;
+    const serverTime = Date.parse(access.server_now) + (performance.now()-receivedAt);
+    const deadline = Math.max(...['trial_ends_at','paid_until','grace_ends_at'].map(k => Date.parse(access[k]) || 0));
+    if (!Number.isFinite(serverTime) || serverTime >= deadline) return { ...access, can_write:false, mode:access.mode === 'trial' ? 'expired' : 'payment_due' };
+    return access;
+  }
+  function canWrite() {
+    if (!signedIn() || cloud()?.suppress === true) return true;
+    if (current()?.enabled) return verified && current().can_write === true;
+    return (!cloud()?.ready && !access) || (verified && current()?.can_write === true);
+  }
+  function assertWrite() {
+    if (canWrite()) return true;
+    open();
+    const e = new Error('Somente consulta no momento. Seus dados estão seguros. Confira sua assinatura para salvar alterações.');
+    e.code = 'OB069'; throw e;
+  }
+  async function rpc(name, body = {}) {
+    return cloud().request(`/rest/v1/rpc/${name}`, {method:'POST',body:JSON.stringify(body)}, cloud().session.access_token);
+  }
+  function accept(value, requestKey) {
+    if (requestKey !== key()) return;
+    if (!value || typeof value.enabled !== 'boolean' || typeof value.can_write !== 'boolean') throw Error('Resposta de assinatura indisponível.');
+    access = value; identity = requestKey; receivedAt = performance.now(); verified = true;
+    paint();
+  }
+  async function refresh() {
+    if (!signedIn()) { access=null; identity=''; verified=false; paint(); return; }
+    if (pending) return pending;
+    const requestKey = key();
+    if (requestKey !== identity) { access=null; verified=false; identity=requestKey;adminRows=null;adminOffset=0;document.getElementById('oaBillingDialog')?.close(); }
+    pending = (async () => {
+      try { accept(await rpc('billing_access', {p_company_id:company()}), requestKey); message=''; }
+      catch (e) {
+        if (requestKey !== key()) return;
+        // A missing migration keeps the previous system, not a partial activation.
+        if (e.code === 'PGRST202') accept({enabled:false,can_write:true,mode:'not_enabled'},requestKey);
+        else { verified=false; message='Não foi possível verificar sua assinatura. A consulta continua disponível. Reconecte e toque em Atualizar.'; paint(); }
+      } finally { pending=null; }
+    })();
+    return pending;
+  }
+  function detail(a = current()) {
+    if (!verified || !a) return message || 'Estamos verificando sua assinatura. Seus dados continuam disponíveis para consulta.';
+    if (a.mode === 'trial') return `Acesso completo grátis até ${date(a.trial_ends_at)}. Nenhum cartão é necessário para testar.`;
+    if (a.mode === 'active') return `Acesso completo liberado até ${date(a.paid_until)}.${a.provider_status === 'cancelled' ? ' A renovação foi cancelada.' : ' Renovação mensal automática no Mercado Pago.'}`;
+    if (a.mode === 'grace') return `O pagamento não foi aprovado. Você pode continuar usando tudo até ${date(a.grace_ends_at)}. Regularize a cobrança no Mercado Pago.`;
+    if (a.mode === 'administrator') return 'Conta administrativa do produto. Sem cobrança de assinatura.';
+    return 'Seus dados estão seguros. Você pode consultar e exportar normalmente. Assine para continuar criando e editando.';
+  }
+  function markup() {
+    const a = current(), recurring = ['authorized','paused'].includes(a?.provider_status);
+    if (a?.enabled === false) return '<section class="oa-billing-panel"><h2>Assinaturas em preparação</h2><p>O novo plano ainda não foi ativado neste ambiente.</p></section>';
+    return `<section class="oa-billing-panel"><span class="oa-billing-tag">OBRAATIVA · ACESSO COMPLETO</span>
+      <h2>${!verified ? 'Verificando assinatura' : a?.mode === 'expired' ? 'Seu teste terminou' : escape(labels[a?.mode] || 'Sua assinatura')}</h2>
+      <p>${escape(detail())}</p>${a?.mode === 'administrator' ? '' : '<div class="oa-billing-price">R$ 69 <small>/ mês</small></div>'}${a?.mode === 'trial' ? '<p>Um único plano, com todas as funcionalidades. Sem cartão para testar.</p>' : ''}
+      <div class="oa-billing-actions">${a?.can_manage && a.mode !== 'administrator' && verified ? recurring ? '<p>A cobrança recorrente já está autorizada. Para trocar a forma de pagamento, abra sua assinatura no Mercado Pago.</p><a class="btn" href="https://www.mercadopago.com.br/subscriptions" target="_blank" rel="noopener">Gerenciar no Mercado Pago</a>' : `<label class="oa-billing-consent"><input type="checkbox" data-billing-consent> Autorizo R$ 69/mês com renovação automática, após o período grátis ou já pago. Posso cancelar a renovação.</label><button class="btn" type="button" data-billing-action="checkout">Assinar agora</button>` : a?.can_manage === false ? '<p>Peça ao responsável pela conta para gerenciar a assinatura. Seu perfil e suas permissões continuam os mesmos.</p>' : ''}
+      <button class="btn alt" type="button" data-billing-action="refresh">Atualizar status</button>
+      ${a?.can_manage && ['pending','authorized','paused'].includes(a.provider_status) ? '<button class="btn alt" type="button" data-billing-action="cancel">Cancelar renovação</button>' : ''}</div>
+      <p class="oa-billing-help">O cancelamento e o vencimento nunca apagam seus dados. Pagamentos são confirmados pelo Mercado Pago, não pelo clique no botão.</p>
+      <p class="oa-billing-message" role="status">${escape(message)}</p></section>`;
+  }
+  function open() {
+    let dialog = document.getElementById('oaBillingDialog');
+    if (!dialog) {
+      dialog=document.createElement('dialog'); dialog.id='oaBillingDialog'; dialog.className='oa-billing-dialog';
+      dialog.setAttribute('aria-label','Assinatura ObraAtiva'); document.body.append(dialog);
+    }
+    dialog.innerHTML=`<div class="oa-billing-close"><button type="button" class="btn alt" data-billing-action="close">Continuar consultando</button></div>${markup()}`;
+    if (!dialog.open) dialog.showModal();
+  }
+  function paint() {
+    const a=current();
+    let bar=document.getElementById('oaBillingBanner');
+    if (!signedIn() || a?.enabled === false) { bar?.remove(); return; }
+    const view=document.getElementById('view');
+    if (!view || !cloud()?.ready) return;
+    if (!bar) { bar=document.createElement('aside');bar.id='oaBillingBanner';bar.className='oa-billing-banner';bar.setAttribute('aria-label','Status da assinatura');view.before(bar); }
+    const title=!verified ? 'Verificando assinatura' : labels[a?.mode] || 'Assinatura';
+    const text=`<div><b>${escape(title)}</b><span>${escape(detail())}</span></div><button type="button" class="btn alt" data-billing-action="open">${a?.can_write ? 'Ver assinatura' : 'Assinar agora'}</button>`;
+    if (bar.innerHTML!==text) bar.innerHTML=text;
+    bar.dataset.readonly=String(!canWrite());
+    if (!canWrite()) clearTimeout(cloud()?.timer);
+    if (verified && a?.enabled && !a.can_write && !notified.has(identity)) { notified.add(identity); open(); }
+  }
+  async function api(name, body) {
+    const response=await fetch(`/.netlify/functions/billing-${name}`, {method:'POST',headers:{authorization:`Bearer ${cloud().session.access_token}`,'content-type':'application/json'},body:JSON.stringify({companyId:company(),...body}),signal:AbortSignal.timeout(25000)});
+    const result=await response.json();
+    if (!response.ok) throw Error(result.error || 'Não foi possível confirmar. Tente novamente.');
+    return result;
+  }
+  async function action(name, button) {
+    if (name==='open') return open();
+    if (name==='close') return document.getElementById('oaBillingDialog')?.close();
+    if (busy) return;
+    if (name==='checkout' && !button.closest('.oa-billing-panel')?.querySelector('[data-billing-consent]')?.checked) { message='Marque a autorização da assinatura mensal antes de continuar.'; open(); return; }
+    if (name==='cancel' && !confirm('Cancelar a renovação automática? O período já liberado continua válido. Seus dados não serão apagados.')) return;
+    busy=true; const requestKey=key(),original=button.textContent;button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Confirmando…';
+    try {
+      message='';
+      if (name==='checkout') {
+        const reply=await api('checkout',{acceptRecurring:true}), url=new URL(reply.url);
+        if(requestKey!==key())return;
+        if (url.protocol!=='https:' || !['www.mercadopago.com.br','mercadopago.com.br'].includes(url.hostname) || !url.pathname.startsWith('/subscriptions/')) throw Error('Endereço de pagamento não confirmado.');
+        location.assign(url.href); return;
+      }
+      if (name==='cancel') { const result=await api('cancel',{confirm:true});message=result.message;await refresh(); }
+      else if (current()?.enabled) { accept(await api('status',{}),requestKey); message=current()?.mode==='active' ? 'Pagamento confirmado. Acesso completo liberado!' : 'Status atualizado. A liberação acontece quando o pagamento é confirmado.'; }
+      else await refresh();
+      if(requestKey===key())open();
+    } catch(e) { message=e.message || 'Não foi possível confirmar. Tente novamente.';open(); }
+    finally {busy=false;button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original;}
+  }
+  function adminMarkup() {
+    if (!cloud()?.isSalesAdmin) return '';
+    if (adminRows===null && !adminLoading) setTimeout(()=>loadAdmin(),0);
+    return `<section class="oa-billing-panel" id="oaBillingAdmin"><h2>Assinaturas</h2><p>Plano completo · R$ 69/mês · 30 dias grátis · 3 dias de tolerância para falhas de pagamento.</p>
+      <div class="oa-billing-actions"><label>Buscar conta <input type="search" data-billing-search value="${escape(adminSearch)}" placeholder="Nome ou e-mail"></label><button class="btn" type="button" data-billing-action="admin-search">Buscar / atualizar</button></div>
+      <p role="status">${escape(adminError || (adminLoading ? 'Carregando assinaturas…' : 'Somente leitura. Pagamentos são confirmados automaticamente pelo Mercado Pago.'))}</p>
+      <div class="oa-billing-table-wrap"><table><thead><tr><th>Conta</th><th>Status</th><th>Fim do teste</th><th>Pago até</th><th>Tolerância até</th><th>Última conferência</th></tr></thead><tbody>${(adminRows||[]).map(row=>`<tr><td><b>${escape(row.name)}</b><br>${escape(row.email)}</td><td>${escape(labels[row.access.mode] || row.access.mode)}${row.sync_error ? '<br><small>Conferência pendente</small>':''}</td><td>${date(row.access.trial_ends_at)}</td><td>${date(row.access.paid_until)}</td><td>${date(row.access.grace_ends_at)}</td><td>${date(row.last_sync)}</td></tr>`).join('') || '<tr><td colspan="6">Nenhuma assinatura carregada nesta página.</td></tr>'}</tbody></table></div>
+      <div class="oa-billing-actions"><button class="btn alt" type="button" data-billing-action="admin-prev" ${adminOffset===0?'disabled':''}>Anterior</button><span>Página ${adminOffset/50+1}</span><button class="btn alt" type="button" data-billing-action="admin-next" ${(adminRows||[]).length<50?'disabled':''}>Próxima</button></div></section>`;
+  }
+  async function loadAdmin() {
+    if (adminLoading || !cloud()?.isSalesAdmin) return;
+    adminLoading=true;adminError='';
+    try {const report=await rpc('billing_admin_report',{p_search:adminSearch,p_offset:adminOffset});adminRows=report.rows||[];if(!report.enabled)adminError='O novo sistema ainda não foi ativado. Nenhuma cobrança automática foi iniciada.';}
+    catch {adminError='Não foi possível carregar as assinaturas. Confira sua sessão de proprietário e tente atualizar.';adminRows=[];}
+    finally {adminLoading=false;const el=document.getElementById('oaBillingAdmin');if(el)el.outerHTML=adminMarkup();}
+  }
+  // Capture at window, ahead of legacy delegated handlers on document.
+  // Navigation, filters, consultation and exports are deliberately not blocked.
+  function guardEvent(event) {
+    const billing=event.target.closest?.('[data-billing-action]');
+    if (billing && event.type==='click') {
+      event.preventDefault();event.stopImmediatePropagation();const name=billing.dataset.billingAction;
+      if (name.startsWith('admin-')) {
+        if(name==='admin-search'){adminSearch=document.querySelector('[data-billing-search]')?.value||'';adminOffset=0;}
+        if(name==='admin-next')adminOffset+=50;if(name==='admin-prev')adminOffset=Math.max(0,adminOffset-50);
+        loadAdmin();return;
+      }
+      action(name,billing);return;
+    }
+    if (canWrite() || event.target.closest?.('.oa-billing-dialog,.oa-billing-panel,[data-billing-query]')) return;
+    const el=event.target.closest?.('button,a,[onclick],[data-wc-action],input[type=file]');
+    const handler=el?.getAttribute('onclick')||'', text=(el?.textContent||'').trim();
+    const mutating=event.type==='submit' || (event.type==='change' && event.target.matches('input[type=file]')) ||
+      (event.type==='click' && el && (/\b(save|delete|remove|restore|import|addSuggested|moveWorkPhase|payAll|confirmPayment)/.test(handler) ||
+        /^(?:[+✓💾✎🗑️\s]*)(salvar|excluir|remover|adicionar|criar|nova?\b|editar|registrar|pagar|confirmar|importar|restaurar|distribuir|sugerir fases)/i.test(text) ||
+        (el.dataset.wcAction && el.dataset.wcAction!=='close')));
+    if (mutating) {event.preventDefault();event.stopImmediatePropagation();open();}
+  }
+  for(const type of ['click','submit','change']) window.addEventListener(type,guardEvent,true);
+  function wrap(object, name) {
+    const original=object?.[name];if(typeof original!=='function' || original.__billingGuard)return;
+    const guarded=function(...args){assertWrite();return original.apply(this,args)};
+    guarded.__billingGuard=true;object[name]=guarded;
+  }
+  function install() {
+    if (!cloud()) return;
+    // Explicit mutation families; date helpers (addDays etc.) stay untouched.
+    for(const name of Object.keys(window)) if (/^(save(?!d|r)|delete|remove(?:Work|Employee|Assignment|Role|Company)|restoreOfficeBackup|importOffice|addSuggestedWorkPhases|addRole|moveWorkPhase|confirmTransfer|markAll|payAll)/.test(name)) wrap(window,name);
+    for(const [object,names] of [[window.COBudget,['saveForm','remove','importPdf']], [window.COBudgetLinks,['issue']], [window.COBudgetDistribution,['importFile','usePastedScope','distributeAll','redistribute','prepareBudget']], [typeof ClientDataService!=='undefined'?ClientDataService:null,['persist']], [typeof ServerWorkMedia!=='undefined'?ServerWorkMedia:null,['upload','uploadMany','remove']]]) names.forEach(name=>wrap(object,name));
+    if(window.AssistantActionsCore){const original=window.AssistantActionsCore;window.AssistantActionsCore=Object.freeze({...original,applyConfirmedProposal(...args){assertWrite();return original.applyConfirmedProposal(...args)}});}
+    const finish=cloud().finishActivation;
+    cloud().finishActivation=function(...args){const r=finish.apply(this,args);refresh();return r;};
+    const schedule=cloud().schedule,flush=cloud().flush,request=cloud().request;
+    cloud().schedule=function(...args){if(!canWrite()){clearTimeout(this.timer);return;}return schedule.apply(this,args)};
+    cloud().flush=function(...args){if(!canWrite())return Promise.resolve(false);return flush.apply(this,args)};
+    cloud().request=async function(path,options={},...rest){
+      const mutation=/\/rpc\/(save_|create_company|update_company|remove_company|budget_public_(issue|revoke))/.test(path) ||
+        (/\/rest\/v1\/(app_state|company_app_state|companies|work_media)(?:\?|$)/.test(path) && !['GET','HEAD'].includes(options.method||'GET'));
+      if(mutation)assertWrite();
+      try{return await request.call(this,path,options,...rest)}catch(e){if(e.code==='OB069'){verified=false;message=e.message;paint();refresh();}throw e;}
+    };
+    if(typeof CompanyWorkspace!=='undefined') {const show=CompanyWorkspace.showSubscription;CompanyWorkspace.showSubscription=function(...args){return current()?.enabled?open():show.apply(this,args)};}
+    window.addEventListener('focus',()=>refresh());
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+    setInterval(()=>{if(!document.hidden){paint();if(signedIn())refresh();}},60000);
+    // Poll server status, never infer success from the return URL.
+    // Hosted checkout may append ?preapproval_id even when back_url has a query.
+    // Recognize that shape only; the ID is never used to select or unlock an account.
+    const billingReturn=new URLSearchParams(location.search).get('billing');
+    if(billingReturn==='return' || /^return\?preapproval_id=[a-fA-F0-9]{32}$/.test(billingReturn||'')) {
+      let tries=0;const timer=setInterval(async()=>{if(++tries>12 || current()?.mode==='active'){clearInterval(timer);return;}if(signedIn()){await refresh();const requestKey=key();if(tries===1&&current()?.enabled)api('status',{}).then(v=>accept(v,requestKey)).catch(()=>{});}},10000);
+    }
+    if(cloud().ready)refresh();
+  }
+  window.ObraAtivaBilling=Object.freeze({refresh,open,markup,adminMarkup,canWrite,assertWrite,get access(){return current()}});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();

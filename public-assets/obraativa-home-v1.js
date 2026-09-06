@@ -1,6 +1,9 @@
 (() => {
   'use strict';
 
+  // Somente distribuição visual: no tablet/celular, a rotina precede o clima.
+  const compactHome = window.matchMedia?.('(max-width: 1180px)') || { matches: false };
+
   const ICON_PATHS = {
     home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6h5v6"/>',
     works: '<path d="M4 21V8l8-4v17"/><path d="M12 10h8v11"/><path d="M7 11h2m-2 4h2m6-1h2m-2 4h2M2 21h20"/>',
@@ -290,7 +293,10 @@
     const insights = home.querySelector(':scope>.home-insights');
     const weather = home.querySelector(':scope>.home-weather-card');
     const assistant = home.querySelector(':scope>.assistant-home-shortcut');
-    const desiredOrder = [head, quickSection, metrics, weather, schedule, overview, insights, assistant].filter(Boolean);
+    // A rotina e os avisos vêm antes do detalhamento, também na ordem de leitura/teclado.
+    const desiredOrder = (compactHome.matches
+      ? [head, quickSection, metrics, schedule, insights, weather, overview, assistant]
+      : [head, quickSection, metrics, weather, schedule, insights, overview, assistant]).filter(Boolean);
     const currentOrder = [...home.children].filter((section) => desiredOrder.includes(section));
     if (currentOrder.length !== desiredOrder.length || currentOrder.some((section, index) => section !== desiredOrder[index])) {
       desiredOrder.forEach((section) => home.appendChild(section));
@@ -414,6 +420,8 @@
   }
 
   window.ObraAtivaVisualV1 = { refresh: queueRefresh, showSplash };
+  if (compactHome.addEventListener) compactHome.addEventListener('change', queueRefresh);
+  else compactHome.addListener?.(queueRefresh);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();
 })();

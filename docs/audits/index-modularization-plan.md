@@ -16,7 +16,7 @@ Nesta fase nenhuma extração de código foi executada.
 - Bloco JavaScript principal: aproximadamente 948 KB e 748 funções nomeadas.
 - Eventos HTML como `onclick`, `onsubmit` e semelhantes: 803 ocorrências.
 - Encadeamentos que guardam/substituem uma função anterior: aproximadamente 204.
-- Scripts externos existentes: 46 (incluindo o painel do proprietário, o carregador de medição opcional de campanhas e os três módulos isolados do painel inteligente de Obras). As camadas anteriores de visual móvel, marca, retorno de ações, recepção, landing e acompanhamento do produto foram preservadas.
+- Scripts externos existentes: 47 (incluindo o painel do proprietário, o carregador de medição opcional de campanhas, os três módulos isolados de Obras e a interface de assinaturas). As camadas anteriores de visual móvel, marca, retorno de ações, recepção, landing e acompanhamento do produto foram preservadas.
 
 Esses números tornam arriscada uma conversão direta para módulos ES, bundler ou
 novos componentes. A primeira passagem deve ser uma movimentação mecânica, com

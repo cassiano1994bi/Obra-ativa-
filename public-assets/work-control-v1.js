@@ -13,7 +13,7 @@
     return { companyId: current.id || '', userId: CloudSync.session?.user?.id || '',
       userName: CloudSync.session?.user?.user_metadata?.full_name || db.settings?.responsible || '',
       now: new Date().toISOString(), today: today(), id: uid, modules,
-      readOnly: current.role === 'viewer' || current.permissionProfile === 'visualizador' || window.AccessControl?.isReadOnly?.() || false };
+      readOnly: current.role === 'viewer' || current.permissionProfile === 'visualizador' || window.AccessControl?.isReadOnly?.() || window.ObraAtivaBilling?.canWrite() === false || false };
   }
   function editable(area = 'works') { const c = ctx(); return !!(c.companyId && !c.readOnly && c.modules.includes(area)); }
   function enabled() { const id = ctx().companyId; return !!(id && (window.ObraAtivaWorkSync?.ready(id) || window.ObraAtivaWorkSync?.error(id))); }

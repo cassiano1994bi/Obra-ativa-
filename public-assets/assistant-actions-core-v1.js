@@ -215,6 +215,7 @@
   }
 
   function applyConfirmedProposal({ data, proposal, confirmation, currentCompanyId, currentUserId, now, uid }) {
+    if (typeof window !== 'undefined' && window.ObraAtivaBilling) window.ObraAtivaBilling.assertWrite();
     validateProposalForState(data, proposal, currentCompanyId);
     if (!confirmation || confirmation.proposalId !== proposal.id || confirmation.companyId !== String(currentCompanyId) || confirmation.userId !== String(currentUserId) || confirmation.actionType !== proposal.type) throw new Error('A confirmação segura não corresponde à proposta.');
     if (!confirmation.expiresAt || Date.parse(confirmation.expiresAt) <= Date.now()) throw new Error('A confirmação segura expirou. Prepare a ação novamente.');

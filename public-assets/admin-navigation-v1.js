@@ -22,6 +22,8 @@
   }
 
   function currentPlan() {
+    const billing = window.ObraAtivaBilling?.access;
+    if (billing?.enabled) return { subscription: { trial_ends_at: billing.trial_ends_at }, usage: workspace()?.current?.usage || {}, limits: ['Sem limite', 'Sem limite'], name: 'ObraAtiva completo', status: billing.can_write ? 'Acesso completo' : 'Somente consulta' };
     const subscription = workspace()?.current?.subscription || {};
     const usage = workspace()?.current?.usage || {};
     const limits = PLAN_LIMITS[subscription.plan] || ['—', '—'];
@@ -132,6 +134,7 @@
   function tabs() {
     if (window.CloudSync?.isSalesAdmin && window.ObraAtivaOwnerCenter) {
       const ownerTabs = [['overview', 'Visão geral'], ['owner-users', 'Usuários'], ['owner-campaigns', 'Campanhas'], ['commercial', 'Comercial'], ['owner-settings', 'Configurações e histórico']];
+      if (window.ObraAtivaBilling) ownerTabs.splice(3, 0, ['billing', 'Assinaturas']);
       const selected = ['access', 'company', 'subscription', 'security', 'company-overview'].includes(permissionHubTab) ? 'owner-settings' : permissionHubTab === 'owner-overview' ? 'overview' : permissionHubTab;
       return `<nav class="permission-hub-tabs" aria-label="Painel do proprietário">${ownerTabs.map(([key, label]) => `<button type="button" class="${selected === key ? 'active' : ''}" aria-current="${selected === key ? 'page' : 'false'}" onclick="openPermissionHub('${key}')">${label}</button>`).join('')}</nav>`;
     }
@@ -165,6 +168,7 @@
   }
 
   function subscriptionPanel() {
+    if (window.ObraAtivaBilling?.access?.enabled) return window.ObraAtivaBilling.markup();
     const plan = currentPlan();
     const endDate = plan.subscription.trial_ends_at ? new Date(plan.subscription.trial_ends_at).toLocaleDateString('pt-BR') : 'Não se aplica';
     return `<section class="permission-hub-card"><div class="permission-hub-card-head"><div><h2>Assinatura e capacidade</h2><p>Acompanhe o plano atual e quanto da capacidade contratada está em uso.</p></div><span class="badge b">${safe(plan.status)}</span></div><div class="permission-hub-info"><div><small>Plano atual</small><b>${safe(plan.name)}</b></div><div><small>Obras ativas</small><b>${plan.usage.active_works || 0} de ${safe(plan.limits[0])}</b></div><div><small>Usuários ativos</small><b>${plan.usage.active_users || 0} de ${safe(plan.limits[1])}</b></div><div><small>Fotos registradas</small><b>${plan.usage.photo_count || 0}</b></div><div><small>Fim do teste</small><b>${safe(endDate)}</b></div><div><small>Dados da empresa</small><b>Privados e separados</b></div></div><div class="permission-hub-buttons"><button class="btn alt" type="button" onclick="exportPermissionSubscriptionData()">💾 Exportar meus dados</button><button class="btn" type="button" onclick="openPermissionSubscriptionDetails()">Abrir detalhes da assinatura</button></div></section>`;
@@ -367,6 +371,7 @@
     const permissionControlCenterOriginal = permissionControlCenter;
     permissionControlCenter = function permissionControlCenterHub() {
       const panels = { overview: overviewPanel, access: () => accessPanel(permissionControlCenterOriginal), company: companyPanel, subscription: subscriptionPanel, security: securityPanel, commercial: commercialPanel };
+      if (window.CloudSync?.isSalesAdmin && window.ObraAtivaBilling) panels.billing = () => window.ObraAtivaBilling.adminMarkup();
       if (window.CloudSync?.isSalesAdmin && window.ObraAtivaOwnerCenter) {
         panels['company-overview'] = overviewPanel;
         panels.overview = () => window.ObraAtivaOwnerCenter.render('overview');
