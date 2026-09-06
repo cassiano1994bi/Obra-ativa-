@@ -79,6 +79,11 @@
       document.getElementById?.('oaMeasurementChoice')?.remove();
       return;
     }
+    const authTitle = document.querySelector('#cloudGate .cloud-auth-card h1')?.textContent || '';
+    if (document.querySelector('#cloudGate .obraativa-auth-confirmation') || /confirme seu e-mail/i.test(authTitle)) {
+      document.querySelectorAll('[data-usage-privacy]').forEach(element => element.remove());
+      return;
+    }
     let host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
       || document.querySelector('.oa-public-footer');
     if (!host) { document.querySelector('#app:not(.public-app) .oa-usage-privacy-slot')?.remove(); return; }

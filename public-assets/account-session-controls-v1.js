@@ -31,6 +31,38 @@
     return text;
   }
 
+  function isSignupConfirmation(message) {
+    const normalized = String(message || '').toLocaleLowerCase('pt-BR');
+    return /conta criada/.test(normalized) && /(confirme|confirmar|verifique)/.test(normalized) && /e-mail|email/.test(normalized);
+  }
+
+  function showEmailConfirmation(email = lastAuthEmail) {
+    let gate = $('#cloudGate');
+    if (!gate) {
+      document.body.insertAdjacentHTML('beforeend', '<div class="cloud-gate" id="cloudGate"></div>');
+      gate = $('#cloudGate');
+    }
+    const safeEmail = escapeHtml(String(email || '').trim() || 'o e-mail informado');
+    gate.innerHTML = `<section class="cloud-auth-card" style="position:relative">
+      <button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>
+      <div class="top-brand"><span>✓ CONTA CRIADA</span><strong>CONTROLE DE OBRA</strong></div>
+      <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
+      <span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span>
+      <h1>Confirme seu e-mail</h1>
+      <p>Sua conta foi criada com sucesso. Agora falta confirmar que este e-mail é seu.</p>
+      <div class="obraativa-email-confirmation-address"><small>Enviamos o link de confirmação para</small><b>${safeEmail}</b></div>
+      <ol class="obraativa-email-confirmation-steps">
+        <li><b>Abra sua caixa de entrada</b><span>Procure a mensagem de confirmação do ObraAtiva.</span></li>
+        <li><b>Toque em “Confirmar e-mail”</b><span>Se não encontrar, confira também Spam ou Lixo eletrônico.</span></li>
+        <li><b>Volte e entre na sua conta</b><span>O acesso será liberado depois da confirmação.</span></li>
+      </ol>
+      <div class="obraativa-email-confirmation-note"><b>Importante:</b> antes de confirmar o e-mail, o login ainda não será liberado.</div>
+      <button type="button" class="btn obraativa-auth-primary obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei — entrar</button>
+      <button type="button" class="cloud-link obraativa-email-confirmation-change" onclick="CloudSync.showAuth('signup')">O e-mail está errado — corrigir</button>
+    </section>`;
+    schedule();
+  }
+
   function passwordToggleMarkup(visible) {
     return visible
       ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.3 0 9 5 9 5s-1.2 1.6-3.1 3M6.6 6.6C4.4 8 3 10 3 10s3.7 5 9 5c1.1 0 2.1-.2 3-.5"/></svg>'
@@ -39,6 +71,7 @@
 
   function authMode(card) {
     const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
+    if (title.includes('confirme seu e-mail')) return 'confirmation';
     if (title.includes('criar acesso')) return 'signup';
     if (title.includes('entrar')) return 'signin';
     if (title.includes('recuperar senha')) return 'recovery';
@@ -378,12 +411,17 @@
     originalShowOnboarding = window.CompanyWorkspace?.showOnboarding?.bind(window.CompanyWorkspace);
     if (originalShowAuth) {
       window.CloudSync.showAuth = function (...args) {
+        if (isSignupConfirmation(args[1])) {
+          showEmailConfirmation(lastAuthEmail);
+          return;
+        }
         if (args[1]) args[1] = humanizeAuthMessage(args[1]);
         const result = originalShowAuth(...args);
         schedule();
         return result;
       };
     }
+    window.CloudSync.showEmailConfirmation = showEmailConfirmation;
     if (originalShowRecovery) {
       window.CloudSync.showRecovery = function (...args) {
         if (args[0]) args[0] = humanizeAuthMessage(args[0]);
@@ -452,7 +490,7 @@
     }, true);
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('resize', schedule, { passive: true });
-    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore });
+    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore, showEmailConfirmation });
     schedule();
   }
 

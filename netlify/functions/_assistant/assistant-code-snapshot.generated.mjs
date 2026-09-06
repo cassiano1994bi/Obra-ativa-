@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-06T12:53:22.649Z",
-  "codeHash": "15f56e29ce1330cf5239aff0eac4ad4980e1db52c99fe1df6a9eb281418f4d42",
+  "generatedAt": "2026-09-06T13:44:59.273Z",
+  "codeHash": "0dce8be64325be347288d653ce28eda7843eaead0533bea59adbb419dd114518",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 147,
-    "totalBytes": 5290206,
-    "totalLines": 24940,
+    "totalBytes": 5299199,
+    "totalLines": 25032,
     "findingCount": 193,
     "severityCounts": {
       "critical": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1169088,
+      "bytes": 1169090,
       "lines": 3087,
-      "sha256": "f39289ae3c1c22e2dff5735fa89bf27543df6b283dff11821d576489c2f8a8f2",
+      "sha256": "09947d4599f86a7301ef2690eeedc35344471d24df4fdbe7fc4303c386febe9c",
       "functions": 829,
       "fetches": 2,
       "domWrites": 257,
@@ -681,9 +681,9 @@ export default Object.freeze({
     {
       "path": "public-assets/account-session-controls-v1.css",
       "scope": "application",
-      "bytes": 16218,
-      "lines": 138,
-      "sha256": "3c2a9c3848b74b6af5bcb6f74f70d65f7904fd2a5b688abb1cfbcd4403188b89",
+      "bytes": 19535,
+      "lines": 167,
+      "sha256": "b2e113a85cf01c7ed1648939e16018bc9d304b28096a27275d8baf1e12428f2c",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -692,13 +692,13 @@ export default Object.freeze({
     {
       "path": "public-assets/account-session-controls-v1.js",
       "scope": "application",
-      "bytes": 22093,
-      "lines": 462,
-      "sha256": "b8f16ecc0c73294d305f056c0cf5ae78f5297bb7a6ae2043ba57d431f3231067",
-      "functions": 28,
+      "bytes": 24821,
+      "lines": 500,
+      "sha256": "b2733d9d686fd74869ca116d35019314646720aa91f48c2b6b712baf4ff9c1de",
+      "functions": 30,
       "fetches": 0,
-      "domWrites": 11,
-      "inlineHandlers": 1
+      "domWrites": 13,
+      "inlineHandlers": 4
     },
     {
       "path": "public-assets/action-feedback-v1.js",
@@ -1110,9 +1110,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-reception-v1.css",
       "scope": "application",
-      "bytes": 24588,
-      "lines": 93,
-      "sha256": "d69efb337faeb1bc140ff63e09c42c6b6bbf341ae584a9c35ebd910b7019a3be",
+      "bytes": 27177,
+      "lines": 113,
+      "sha256": "b87d0f8be6562271a0508746ccb69355761670d85f3f661ee8a19542f3275569",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1121,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-reception-v1.js",
       "scope": "application",
-      "bytes": 13026,
+      "bytes": 13051,
       "lines": 245,
-      "sha256": "f6e53905c43b9555c32346f71751c06b56385fefea5ebf47a9ef932a9d0505b9",
+      "sha256": "663c865ce1e136026eb646c765170f750dcb16a0d4e0cdd866e4766295aa230f",
       "functions": 23,
       "fetches": 0,
       "domWrites": 8,
@@ -1231,9 +1231,9 @@ export default Object.freeze({
     {
       "path": "public-assets/product-activity-v1.js",
       "scope": "application",
-      "bytes": 9808,
-      "lines": 152,
-      "sha256": "c76d2e26c56ba0db159a508dfa5568dd44436862e4c33b0f20da2a3802779311",
+      "bytes": 10140,
+      "lines": 157,
+      "sha256": "983c0dbcf1bbd9cfdb3919022491625a6b5db14f9bd5b577797f33a33d47ff11",
       "functions": 7,
       "fetches": 2,
       "domWrites": 1,
@@ -1497,7 +1497,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 8258,
       "lines": 207,
-      "sha256": "32a584a39d6276bdf2a7d5d0c29391c255f6e70033213fc32ecf5e24d9ee5566",
+      "sha256": "2a81fc3271701e1e91e46c691f012af9d24025b69259045c6684e79027249ab0",
       "functions": 5,
       "fetches": 3,
       "domWrites": 0,
@@ -1905,7 +1905,7 @@ export default Object.freeze({
       "title": "Uso intenso de geração dinâmica de HTML",
       "file": "public-assets/account-session-controls-v1.js",
       "line": 1,
-      "evidence": "11 escrita(s) dinâmica(s) de HTML",
+      "evidence": "13 escrita(s) dinâmica(s) de HTML",
       "probableCause": "A tela é construída por templates de string e inserções no DOM.",
       "impact": "Entradas não escapadas podem causar falhas visuais ou risco de injeção.",
       "recommendation": "Auditar escaping, acessibilidade e duplicações; não substituir sem teste visual.",
@@ -2553,7 +2553,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1169088 bytes e 3087 linhas",
+      "evidence": "1169090 bytes e 3087 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
@@ -3298,7 +3298,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-9C32DC05A351",
+      "id": "QF-8BE275BDB641",
       "recurrenceKey": "714ab1137f29272b58d9c62d",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -3308,7 +3308,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/account-session-controls-v1.js",
-      "line": 353,
+      "line": 386,
       "evidence": "refresh aparece em 10 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
@@ -3316,7 +3316,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-E8E41378CD8C",
+      "id": "QF-75F1A6B4B1FB",
       "recurrenceKey": "714ab1137f29272b58d9c62d",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -3326,7 +3326,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/account-session-controls-v1.js",
-      "line": 362,
+      "line": 395,
       "evidence": "schedule aparece em 4 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",
@@ -3334,7 +3334,7 @@ export default Object.freeze({
       "validationPlan": "Comparar assinatura, chamadas e testes de cada módulo antes de qualquer mudança."
     },
     {
-      "id": "QF-384E3B53E950",
+      "id": "QF-57A2A94AF7DE",
       "recurrenceKey": "714ab1137f29272b58d9c62d",
       "ruleId": "duplication.cross-module-name",
       "severity": "info",
@@ -3344,7 +3344,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Função com o mesmo nome em vários módulos",
       "file": "public-assets/account-session-controls-v1.js",
-      "line": 369,
+      "line": 402,
       "evidence": "install aparece em 23 arquivos",
       "probableCause": "Módulos independentes usam nomes genéricos para responsabilidades possivelmente diferentes.",
       "impact": "O nome repetido pode confundir manutenção, mas não confirma duplicação de lógica.",

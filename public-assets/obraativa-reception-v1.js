@@ -186,7 +186,7 @@
     if (mode === 'signin') enhanceSignin(card);
     else {
       const title = $('h1', card);
-      if (mode !== 'signup' && title && !card.querySelector('.obraativa-reception-lock')) title.insertAdjacentHTML('beforebegin', lockMarkup());
+      if (!['signup', 'confirmation'].includes(mode) && title && !card.querySelector('.obraativa-reception-lock')) title.insertAdjacentHTML('beforebegin', lockMarkup());
       enhanceFields(card);
     }
     enhanceAccessChoices(card, mode);

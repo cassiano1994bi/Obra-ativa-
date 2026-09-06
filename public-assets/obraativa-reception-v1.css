@@ -47,6 +47,8 @@ body:has(#cloudGate.obraativa-reception-gate){overflow:hidden;background:var(--o
 #cloudGate .obraativa-access-choices>button:hover{filter:brightness(1.16);cursor:pointer}
 #cloudGate .obraativa-access-choices>button:focus-visible{outline:3px solid #92efb0;outline-offset:3px}
 #cloudGate .obraativa-reception-access .obraativa-auth-trust{display:none!important}#cloudGate .obraativa-reception-access .cloud-message{margin:12px 0 0;border-color:#ffffff25;background:#0f2331;color:#b9d9e7}#cloudGate .obraativa-reception-access .cloud-message.error{border-color:#ff76854d;background:#2c121a;color:#ffb1b7}#cloudGate .obraativa-reception-access .cloud-message.success{border-color:#52d3794d;background:#0d2518;color:#a6ebba}
+#cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps b{color:#eaf5fb}
+#cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps span{color:#9db2c0}
 .obraativa-reception-support{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(520px,100%);margin:12px auto auto}.obraativa-reception-support article{display:flex;align-items:center;gap:11px;min-width:0;padding:11px 12px;border:1px solid #ffffff24;border-radius:12px;background:#091522;color:#eef5fa}.obraativa-reception-support article>span:first-child{flex:none}.obraativa-reception-support article>div{display:grid;gap:3px;min-width:0}.obraativa-reception-support b{font-size:10px}.obraativa-reception-support small{color:#8e9dac;font-size:8px;line-height:1.4}.obraativa-reception-security>span{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#123c24;color:#55e27b;font-size:19px;box-shadow:0 0 18px #20c55c25}.obraativa-reception-phone{position:relative;width:27px;height:43px;border:2px solid #91a4b5;border-radius:7px;background:linear-gradient(160deg,#0e4031,#071422)}.obraativa-reception-phone::after{position:absolute;content:'';inset:6px 3px;background:radial-gradient(circle,#41dd74 0 2px,transparent 3px)}.obraativa-reception-app p{display:flex;flex-wrap:wrap;gap:4px;margin:1px 0 0}.obraativa-reception-app p span{padding:3px 5px;border:1px solid #ffffff20;border-radius:5px;color:#aab7c4;font-size:6px}
 .obraativa-auth-step{background:#123922!important;color:#72ec94!important}.obraativa-auth-optional{border-color:#ffffff25!important;background:#0b1724!important}.obraativa-auth-optional summary{color:#d2dde6!important}.obraativa-auth-optional-grid{padding-top:8px}.obraativa-password-strength{color:#97a9b7}.obraativa-password-meter{background:#ffffff17}.obraativa-password-strength>b{color:#bdc8d1}.obraativa-password-strength li{color:#8899a6}.obraativa-password-strength li.done{color:#5ce080}
 #cloudGate.obraativa-reception-loading{background:radial-gradient(circle at 50% 40%,#25c95a22,transparent 34%),#020b13!important}#cloudGate.obraativa-reception-loading .cloud-loading{border-color:#4cdf7552;background:#07131ff2}
@@ -88,5 +90,23 @@ body:has(#cloudGate.obraativa-reception-gate){overflow:hidden;background:var(--o
   #cloudGate .obraativa-reception-field-icon svg{width:17px;height:17px}
   #cloudGate .obraativa-reception-access .obraativa-auth-primary{min-height:44px!important}
   #cloudGate .obraativa-reception-support{margin-bottom:0}
+  /* O cadastro precisa de leitura sequencial no celular deitado. Mantê-lo em
+     duas colunas comprimia o e-mail, a senha e as orientações de segurança. */
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-reception-access{padding-top:9px;padding-bottom:9px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-auth-step{margin-bottom:3px;padding:3px 6px;font-size:8px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .cloud-auth-card h1{margin-bottom:3px!important;font-size:20px!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .cloud-auth-card>p{font-size:10px!important;line-height:1.3}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .cloud-auth-card .form{grid-template-columns:minmax(0,1fr)!important;gap:5px!important;margin-top:7px!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .cloud-auth-card .form>.field{grid-column:1/-1!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .field>label{margin-bottom:3px;font-size:9px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] input:not([type="checkbox"]):not([type="radio"]){min-height:40px!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-password-strength{grid-template-columns:minmax(100px,1fr) auto;gap:2px 7px;margin-top:3px;font-size:8px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-password-strength>b{font-size:8px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-password-strength ul{display:grid;grid-template-columns:repeat(3,auto);justify-content:space-between;gap:3px 7px;font-size:8px;white-space:nowrap}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-auth-primary{min-height:44px!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-access-choices{margin-top:5px}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-access-choices>[data-access-mode]{min-height:44px!important;padding:6px!important}
+  #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps b{color:#173f55}
+  #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps span{color:#617581}
 }
 @media(prefers-reduced-motion:reduce){.obraativa-reception-shell *{scroll-behavior:auto!important;transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}}
