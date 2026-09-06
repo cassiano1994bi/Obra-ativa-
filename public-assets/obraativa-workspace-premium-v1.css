@@ -417,3 +417,57 @@ body:has(#app:not(.public-app)) .obraativa-shortcut-editor-preview-card { backgr
 body:has(#app:not(.public-app)) .obraativa-shortcut-editor-preview-card .home-shortcut-icon { background: transparent; }
 body:has(#app:not(.public-app)) .obraativa-shortcut-editor-preview-card :is(b,small) { white-space: normal; overflow-wrap: anywhere; }
 body:has(#app:not(.public-app)) .obraativa-shortcut-editor-preview-card small { color: #4c6374; }
+
+/* Resumo financeiro: leitura executiva sem ocultar tabelas, guias ou históricos existentes. */
+body:has(#app:not(.public-app)) .finance-executive-summary { display:grid; gap:14px; margin:14px 0; padding:16px; border:1px solid #cfe1dd; border-radius:16px; background:linear-gradient(145deg,#f8fcfb,#fff); box-shadow:0 12px 30px #0c2c3c0b; }
+body:has(#app:not(.public-app)) .finance-executive-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; }
+body:has(#app:not(.public-app)) .finance-executive-head small,
+body:has(#app:not(.public-app)) .finance-executive-chart-head small { color:#17845d; font-size:10px; font-weight:900; letter-spacing:.1em; }
+body:has(#app:not(.public-app)) .finance-executive-head h2 { margin:3px 0 0; color:#123b50; font-size:19px; }
+body:has(#app:not(.public-app)) .finance-executive-head p { max-width:390px; margin:0; color:#637b75; font-size:12px; line-height:1.45; text-align:right; }
+body:has(#app:not(.public-app)) .finance-executive-metrics { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
+body:has(#app:not(.public-app)) .finance-executive-metrics article { min-width:0; padding:11px; border:1px solid #dce9e6; border-radius:11px; background:#fff; }
+body:has(#app:not(.public-app)) .finance-executive-metrics small { display:block; color:#678078; font-size:8.5px; font-weight:900; letter-spacing:.055em; }
+body:has(#app:not(.public-app)) .finance-executive-metrics b { display:block; margin-top:5px; color:#143f51; font-size:17px; line-height:1.1; overflow-wrap:anywhere; }
+body:has(#app:not(.public-app)) .finance-executive-metrics span { display:block; margin-top:5px; color:#758984; font-size:10px; line-height:1.25; }
+body:has(#app:not(.public-app)) .finance-executive-metrics .positive b,
+body:has(#app:not(.public-app)) .finance-executive-chart-head .positive { color:#0d8558; }
+body:has(#app:not(.public-app)) .finance-executive-metrics .negative b,
+body:has(#app:not(.public-app)) .finance-executive-chart-head .negative { color:#b23f47; }
+body:has(#app:not(.public-app)) .finance-executive-detail { display:grid; grid-template-columns:minmax(280px,.8fr) minmax(420px,1.2fr); gap:10px; }
+body:has(#app:not(.public-app)) .finance-executive-chart,
+body:has(#app:not(.public-app)) .finance-executive-recent article { min-width:0; margin:0; padding:13px; border:1px solid #dce9e6; border-radius:12px; background:#fff; }
+body:has(#app:not(.public-app)) .finance-executive-chart-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+body:has(#app:not(.public-app)) .finance-executive-chart-head h3,
+body:has(#app:not(.public-app)) .finance-executive-recent h3 { margin:3px 0 0; color:#183f51; font-size:14px; }
+body:has(#app:not(.public-app)) .finance-executive-chart-head strong { font-size:12px; text-align:right; }
+body:has(#app:not(.public-app)) .finance-executive-bars { display:grid; gap:9px; margin-top:14px; }
+body:has(#app:not(.public-app)) .finance-executive-bars>div { display:grid; grid-template-columns:54px minmax(80px,1fr) 82px; align-items:center; gap:8px; color:#58736a; font-size:10px; }
+body:has(#app:not(.public-app)) .finance-executive-bars i { height:9px; overflow:hidden; border-radius:999px; background:#e8f0ee; }
+body:has(#app:not(.public-app)) .finance-executive-bars i b { display:block; width:var(--finance-bar); height:100%; border-radius:inherit; background:linear-gradient(90deg,#0f8b5d,#32cb83); }
+body:has(#app:not(.public-app)) .finance-executive-bars i b.out { background:linear-gradient(90deg,#da8d39,#eeae52); }
+body:has(#app:not(.public-app)) .finance-executive-bars strong { color:#204859; font-size:11px; text-align:right; }
+body:has(#app:not(.public-app)) .finance-executive-chart>p { margin:13px 0 0; color:#70847f; font-size:10px; line-height:1.4; }
+body:has(#app:not(.public-app)) .finance-executive-recent { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+body:has(#app:not(.public-app)) .finance-executive-recent ul { display:grid; gap:0; margin:8px 0 0; padding:0; list-style:none; }
+body:has(#app:not(.public-app)) .finance-executive-recent li { display:flex; align-items:center; justify-content:space-between; gap:10px; min-width:0; padding:7px 0; border-top:1px solid #edf2f0; }
+body:has(#app:not(.public-app)) .finance-executive-recent li span { min-width:0; }
+body:has(#app:not(.public-app)) .finance-executive-recent li b,
+body:has(#app:not(.public-app)) .finance-executive-recent li small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+body:has(#app:not(.public-app)) .finance-executive-recent li b { color:#214755; font-size:11px; }
+body:has(#app:not(.public-app)) .finance-executive-recent li small { margin-top:2px; color:#71847f; font-size:9px; }
+body:has(#app:not(.public-app)) .finance-executive-recent li strong { color:#1c5945; font-size:11px; white-space:nowrap; }
+body:has(#app:not(.public-app)) .finance-executive-recent .finance-executive-empty { justify-content:flex-start; color:#71847f; font-size:11px; }
+@media(max-width:1120px){
+  body:has(#app:not(.public-app)) .finance-executive-metrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body:has(#app:not(.public-app)) .finance-executive-detail { grid-template-columns:1fr; }
+}
+@media(max-width:700px){
+  body:has(#app:not(.public-app)) .finance-executive-summary { gap:10px; margin:10px 0; padding:11px; border-radius:12px; }
+  body:has(#app:not(.public-app)) .finance-executive-head { display:block; }
+  body:has(#app:not(.public-app)) .finance-executive-head p { margin-top:5px; text-align:left; }
+  body:has(#app:not(.public-app)) .finance-executive-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+  body:has(#app:not(.public-app)) .finance-executive-metrics article { padding:9px; }
+  body:has(#app:not(.public-app)) .finance-executive-metrics b { font-size:15px; }
+  body:has(#app:not(.public-app)) .finance-executive-recent { grid-template-columns:1fr; }
+}

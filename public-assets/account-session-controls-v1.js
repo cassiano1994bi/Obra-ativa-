@@ -150,6 +150,25 @@
     });
   }
 
+  function improveAutofill(card, mode) {
+    const rules = {
+      email: { autocomplete: 'email', inputmode: 'email', autocapitalize: 'none', spellcheck: 'false' },
+      password: { autocomplete: mode === 'signin' ? 'current-password' : 'new-password' },
+      confirmation: { autocomplete: 'new-password' },
+      company: { autocomplete: 'organization' },
+      responsible: { autocomplete: 'name' },
+      whatsapp: { autocomplete: 'tel', inputmode: 'tel' },
+      city: { autocomplete: 'address-level2' },
+      firstWork: { autocomplete: 'off' },
+      firstService: { autocomplete: 'organization-title' }
+    };
+    Object.entries(rules).forEach(([name, attributes]) => {
+      const input = card.querySelector(`[name="${name}"]`);
+      if (!input) return;
+      Object.entries(attributes).forEach(([attribute, value]) => input.setAttribute(attribute, value));
+    });
+  }
+
   function localSessionKey() {
     const params = new URLSearchParams(location.search);
     return location.hostname === '127.0.0.1' || location.hostname === 'localhost'
@@ -314,6 +333,7 @@
     if (mode === 'signup' && heading) heading.insertAdjacentHTML('beforebegin', '<span class="obraativa-auth-step">ETAPA 1 DE 2 · SUA CONTA</span>');
     if (mode === 'onboarding' && heading) heading.insertAdjacentHTML('beforebegin', '<span class="obraativa-auth-step">ETAPA 2 DE 2 · SUA EMPRESA</span>');
     labelInputs(card);
+    improveAutofill(card, mode);
     const email = $('input[name="email"]', card);
     if (email && lastAuthEmail && !email.value) email.value = lastAuthEmail;
     card.querySelectorAll('input[type="password"]').forEach((input, index) => enhancePasswordInput(input, ['signup', 'reset'].includes(mode) && index === 0));

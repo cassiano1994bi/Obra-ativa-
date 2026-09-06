@@ -326,7 +326,9 @@
         body.responsive-landscape-density #view[data-landscape-page="planning"] table tbody td .btn,
         body.responsive-landscape-density #view[data-landscape-page="team"] table tbody td .btn,
         body.responsive-landscape-density #view[data-landscape-page="vehicles"] table tbody td .btn {
-          min-height:44px!important;\r?\n          padding:10px 9px!important;\r?\n          font-size:11px!important;
+          min-height:44px!important;
+          padding:10px 9px!important;
+          font-size:11px!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page="planning"] .toolbar,
@@ -537,7 +539,9 @@
         }
 
         body.responsive-landscape-density #view[data-landscape-page="assistant"] .toolbar .btn {
-          min-height:44px!important;\r?\n          padding:10px 9px!important;\r?\n          font-size:11px!important;
+          min-height:44px!important;
+          padding:10px 9px!important;
+          font-size:11px!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page="assistant"] .chat {
@@ -646,7 +650,10 @@
         }
 
         body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .btn:not(.assistant-avatar-bubble) {
-          min-height:44px!important;\r?\n          padding:10px 11px!important;\r?\n          font-size:11px!important;\r?\n          line-height:1.2!important;
+          min-height:44px!important;
+          padding:10px 11px!important;
+          font-size:11px!important;
+          line-height:1.2!important;
         }
 
         body.responsive-landscape-density #view[data-landscape-page]:not([data-landscape-page="home"]) .notice {

@@ -78,3 +78,22 @@ body.responsive-v3-landscape-phone #app:not(.public-app) .wc-phase-labor{display
   html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-simple .work-phase-folder-empty{min-height:44px!important;height:44px!important;max-height:44px!important}
   html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-simple .simple-phase-add-photo{min-height:28px!important;height:28px!important;max-height:28px!important;padding:4px 5px!important;font-size:8.5px!important}
 }
+
+/* Cartões são contêineres; somente as ações explícitas recebem interação. */
+#app:not(.public-app) .internal-work-card,
+#app:not(.public-app) .simple-phase-folder{cursor:default!important}
+#app:not(.public-app) .simple-phase-folder .work-phase-folder-preview,
+#app:not(.public-app) .simple-phase-folder .work-phase-folder-empty{pointer-events:auto!important;cursor:pointer!important}
+
+@media(orientation:landscape) and (max-height:600px) and (max-width:1024px){
+  html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-simple .simple-phase-head .wc-button,
+  html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-simple .simple-phase-head .btn,
+  html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-phase-info .wc-button,
+  html body.responsive-v3-landscape-phone #app#app:not(.public-app) #view .wc-simple .simple-phase-add-photo{
+    min-height:44px!important;
+    height:auto!important;
+    max-height:none!important;
+    padding:8px 9px!important;
+    font-size:12px!important
+  }
+}

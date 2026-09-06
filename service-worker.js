@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v56';
+const CACHE_VERSION = 'v57';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -78,6 +78,7 @@ const OPTIONAL_ASSETS = [
   '/public-assets/landscape-density-v1.js',
   '/public-assets/mobile-ui-v2.js',
   '/public-assets/mobile-control-standards-v1.js',
+  '/public-assets/modal-accessibility-v1.js',
   '/public-assets/orcamentos-admin-v1.js',
   '/public-assets/orcamentos-distribuicao-v1.js',
   '/public-assets/orcamentos-links-v1.js',
@@ -109,6 +110,10 @@ const NETWORK_FIRST_ASSETS = new Set([
 
 function canStore(response) {
   return Boolean(response && response.ok && (response.type === 'basic' || response.type === 'default'));
+}
+
+function assetCacheKey(url) {
+  return `${url.pathname}${url.search}`;
 }
 
 async function putIfValid(cacheName, key, response) {
@@ -154,7 +159,7 @@ async function networkFirstNavigation(request) {
 }
 
 async function staleWhileRevalidate(request, url, event) {
-  const key = url.pathname;
+  const key = assetCacheKey(url);
   const staticCache = await caches.open(STATIC_CACHE);
   const runtimeCache = await caches.open(RUNTIME_CACHE);
   const cached = (await staticCache.match(key)) || (await runtimeCache.match(key));
@@ -172,13 +177,14 @@ async function staleWhileRevalidate(request, url, event) {
 }
 
 async function networkFirstVersionedAsset(request, url) {
+  const key = assetCacheKey(url);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
   try {
     const response = await fetch(request, { cache: 'no-cache', signal: controller.signal });
     if (canStore(response)) {
       // Falhar ao gravar o cache não deve descartar a oferta atual recebida.
-      await putIfValid(STATIC_CACHE, url.pathname, response).catch(() => {});
+      await putIfValid(STATIC_CACHE, key, response).catch(() => {});
     }
     if (response.ok) return response;
   } catch {
@@ -187,7 +193,7 @@ async function networkFirstVersionedAsset(request, url) {
     clearTimeout(timeout);
   }
   const cache = await caches.open(STATIC_CACHE);
-  return (await cache.match(url.pathname)) || Response.error();
+  return (await cache.match(key)) || Response.error();
 }
 
 self.addEventListener('fetch', (event) => {

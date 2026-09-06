@@ -18,5 +18,13 @@ body:has(.oa-public-site){margin:0;background:var(--oa-night);color:var(--oa-tex
 @media(max-width:720px){.oa-public-shell{width:calc(100% - 26px)}.oa-login-button{min-height:39px;padding:7px 13px}.oa-public-hero{min-height:0}.oa-hero-grid{grid-template-columns:1fr;padding-top:25px}.oa-hero-copy h1{font-size:42px}.oa-public-hero::before{background-size:auto 55%;background-position:left bottom}.oa-public-hero::after{background:linear-gradient(180deg,#020b18c4 0%,#020b18f2 48%,#020b18bd)}.oa-hero-dashboard{margin-top:4px}.oa-module-grid{grid-template-columns:repeat(3,1fr)}.oa-device-grid{grid-template-columns:1fr}.oa-device-copy{padding-top:20px}.oa-audience-grid{grid-template-columns:repeat(2,1fr)}.oa-step-grid{grid-template-columns:1fr}.oa-step-grid article:not(:last-child)::after{display:none}.oa-price-grid{grid-template-columns:1fr 1fr}.oa-trial-strip{grid-template-columns:1fr}.oa-faq-grid{grid-template-columns:1fr}.oa-final-cta .oa-public-shell{grid-template-columns:1fr;text-align:center}.oa-final-cta small{grid-column:1}.oa-footer-grid{grid-template-columns:1fr 1fr}.oa-footer-grid>div,.oa-creator-credit{grid-column:1/-1}.oa-footer-bottom{display:grid;text-align:center}}
 @media(max-width:500px){.oa-public-brand small{display:none}.oa-module-grid,.oa-price-grid,.oa-audience-grid{grid-template-columns:1fr 1fr}.oa-dashboard-top{grid-template-columns:100px 1fr}.oa-dashboard-top>small{display:none}.oa-dashboard-body{grid-template-columns:1fr}.oa-dashboard-body>aside{display:none}.oa-dashboard-panels{grid-template-columns:1fr 1fr}.oa-hero-copy h1{font-size:36px}.oa-creator-credit{display:block}.oa-footer-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.oa-public-site *{scroll-behavior:auto!important;transition:none!important}}
+/* Alvos de toque da recepção: mantém a composição e aumenta somente a área útil. */
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+  .oa-public-site a[href],.oa-public-site button,.oa-public-site summary{min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .oa-public-site .oa-login-button,.oa-public-site .oa-button,.oa-public-site .oa-store-row>a{min-height:44px;font-size:13px}
+  .oa-public-site .oa-hero-note a,.oa-public-site .oa-creator-credit a{display:inline-flex;align-items:center;padding-block:7px;font-size:12px}
+  .oa-public-site .oa-public-footer nav a{display:flex;align-items:center;width:100%;font-size:12px}
+  .oa-public-site .oa-faq-grid summary{display:flex;align-items:center}
+}
 /* Um plano, sem colunas vazias de uma tabela de planos antiga. */
 .oa-public-site .oa-price-grid{grid-template-columns:minmax(0,640px);justify-content:center}
