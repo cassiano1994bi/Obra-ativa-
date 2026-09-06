@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = fs.readFileSync(path.join(root, 'public-assets', 'obraativa-product-site-v2.js'), 'utf8');
@@ -60,4 +61,31 @@ test('camada pública não lê dados operacionais nem cria persistência paralel
   assert.doesNotMatch(source, /\bfetch\s*\(/);
   assert.doesNotMatch(source, /localStorage|sessionStorage|indexedDB/);
   assert.doesNotMatch(source, /db\.(works|employees|attendance|payments|receivables)/);
+});
+
+test('a navegação identifica um plano único e renova os recursos da oferta', () => {
+  assert.equal((source.match(/href="#planos">Plano único<\/a>/g) || []).length, 2);
+  assert.doesNotMatch(source, />Planos<\/a>/);
+  for (const ext of ['js', 'css']) {
+    assert.ok(index.includes(`obraativa-product-site-v2.${ext}?v=20260906-plano-unico`));
+  }
+});
+
+test('a oferta renderizada tem exatamente um plano e todos os convites usam 30 dias', () => {
+  const document = { title: '', body: { innerHTML: '' } };
+  vm.runInNewContext(source, {
+    document, window: {}, URLSearchParams,
+    location: { pathname: '/', search: '?produto=1' },
+    isProductPage: () => true,
+    PRODUCT_SALES_WHATSAPP_DEFAULT: '5500000000000',
+    productSalesUrl: () => 'https://example.invalid/contato-ficticio',
+    productSalesMessage: () => 'TESTE FICTÍCIO',
+    productUrl: extra => '/?produto=1' + extra
+  });
+  const markup = document.body.innerHTML;
+  assert.equal((markup.match(/<article class="oa-price-card /g) || []).length, 1);
+  assert.match(markup, /R\$ 69\/mês após 30 dias grátis/);
+  assert.doesNotMatch(markup, /14 dias|R\$ (49|97|197)\/mês|MAIS ESCOLHIDO|>Planos</);
+  assert.equal((markup.match(/href="[^"]*\?app=1&onboarding=1"/g) || []).length, 4);
+  assert.equal((markup.match(/<summary>/g) || []).length, 6, 'todas as perguntas permanecem disponíveis');
 });

@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v48';
+const CACHE_VERSION = 'v49';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -93,6 +93,12 @@ const OPTIONAL_ASSETS = [
 
 const STATIC_ASSETS = [...new Set([...CORE_ASSETS, ...OPTIONAL_ASSETS])];
 
+// A oferta comercial precisa vir da versão publicada, não de uma visita antiga.
+const PUBLIC_OFFER_ASSETS = new Set([
+  '/public-assets/obraativa-product-site-v2.js',
+  '/public-assets/obraativa-product-site-v2.css'
+]);
+
 function canStore(response) {
   return Boolean(response && response.ok && (response.type === 'basic' || response.type === 'default'));
 }
@@ -157,6 +163,25 @@ async function staleWhileRevalidate(request, url, event) {
   return network;
 }
 
+async function networkFirstPublicOffer(request, url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const response = await fetch(request, { cache: 'no-cache', signal: controller.signal });
+    if (canStore(response)) {
+      // Falhar ao gravar o cache não deve descartar a oferta atual recebida.
+      await putIfValid(STATIC_CACHE, url.pathname, response).catch(() => {});
+    }
+    if (response.ok) return response;
+  } catch {
+    // Sem rede (ou rede lenta), preserva a última versão válida para consulta.
+  } finally {
+    clearTimeout(timeout);
+  }
+  const cache = await caches.open(STATIC_CACHE);
+  return (await cache.match(url.pathname)) || Response.error();
+}
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET' || request.headers?.has?.('range')) return;
@@ -167,6 +192,11 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(networkFirstNavigation(request));
+    return;
+  }
+
+  if (PUBLIC_OFFER_ASSETS.has(url.pathname)) {
+    event.respondWith(networkFirstPublicOffer(request, url));
     return;
   }
 

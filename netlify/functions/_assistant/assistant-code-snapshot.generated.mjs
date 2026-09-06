@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-06T08:48:40.891Z",
-  "codeHash": "fcc26c419c1d7f2d461ac476b223f0c05afce481c5892f6281b5f0bf6c225f9c",
+  "generatedAt": "2026-09-06T09:27:16.999Z",
+  "codeHash": "c63017fe4e34066040d00578dfea003dec2c138cee30766f49805dd46b071f42",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,13 +28,13 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 146,
-    "totalBytes": 5277011,
-    "totalLines": 24728,
-    "findingCount": 193,
+    "totalBytes": 5278126,
+    "totalLines": 24758,
+    "findingCount": 192,
     "severityCounts": {
       "critical": 0,
       "high": 0,
-      "medium": 49,
+      "medium": 48,
       "low": 10,
       "info": 134
     }
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1169078,
+      "bytes": 1169082,
       "lines": 3087,
-      "sha256": "a9e75714997290b5677cc27015ded434f26f30d2e40f17d4fa0e991fa4fabac0",
+      "sha256": "e2c186e29ab0409eb2d6be793a91206d4af290d19830816bbd503d627764639a",
       "functions": 829,
       "fetches": 2,
       "domWrites": 257,
@@ -1088,9 +1088,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-product-site-v2.js",
       "scope": "application",
-      "bytes": 14688,
+      "bytes": 14700,
       "lines": 135,
-      "sha256": "a647c36f34ca6af79c9400748fc221f45e657879577e7fa00310d54575c03df3",
+      "sha256": "3d142047da30484290288145c89714059860f8b94dde4d664213bff2c32ff57f",
       "functions": 12,
       "fetches": 0,
       "domWrites": 1,
@@ -1495,11 +1495,11 @@ export default Object.freeze({
     {
       "path": "service-worker.js",
       "scope": "application",
-      "bytes": 7159,
-      "lines": 177,
-      "sha256": "6cc6a25a798ae1cb54574f906b8243aa6d4c265059591a5d6d075844a5bcb0b0",
-      "functions": 4,
-      "fetches": 2,
+      "bytes": 8258,
+      "lines": 207,
+      "sha256": "78a69f9bd4979485321c770b176aac1f0f6c9b2d6c9c3f68dbae722a8505c846",
+      "functions": 5,
+      "fetches": 3,
       "domWrites": 0,
       "inlineHandlers": 0
     },
@@ -2513,24 +2513,6 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-13F468ADE1BE",
-      "recurrenceKey": "496b7ff2a2ee0db04b643bbc",
-      "ruleId": "reliability.fetch-without-abort",
-      "severity": "medium",
-      "status": "probable",
-      "confidence": "medium",
-      "category": "reliability",
-      "scope": "application",
-      "title": "Requisições sem cancelamento explícito no mesmo módulo",
-      "file": "service-worker.js",
-      "line": 130,
-      "evidence": "2 chamada(s) fetch; AbortController não localizado",
-      "probableCause": "A função depende apenas do término natural da rede.",
-      "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
-      "recommendation": "Revisar timeouts e cancelamento antes de considerar alteração.",
-      "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
-    },
-    {
       "id": "QF-CBBB2604BC95",
       "recurrenceKey": "98c9d01dd95fe94a74a43a78",
       "ruleId": "maintainability.large-file",
@@ -2542,7 +2524,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1169078 bytes e 3087 linhas",
+      "evidence": "1169082 bytes e 3087 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",
