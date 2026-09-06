@@ -103,7 +103,8 @@ async function checkScreen(mode,writable) {
   const guard=await page.evaluate(()=>{try{ObraAtivaBilling.assertWrite();return 'allowed'}catch(e){return e.code}});
   assert.equal(guard,writable?'allowed':'OB069');
   await page.evaluate(()=>document.getElementById('oaBillingDialog')?.close());
-  return page.locator('#oaBillingBanner').innerText();
+  const banner=page.locator('#oaBillingBanner');
+  return await banner.count() ? banner.innerText() : '';
 }
 async function scenario(name,run) {await run();scenarios.push(name);console.log('LOCAL_FLOW_OK: '+name);}
 async function connectBillingScreen() {
@@ -137,6 +138,7 @@ try {
     await q('insert into company_app_state(company_id,data) values($1,$2::jsonb)',[cid,JSON.stringify({fixture:'REGISTROS FICTÍCIOS PRESERVADOS '+label})]);
   }
   await database.exec(await fs.readFile(path.join(root,'supabase/migrations/202609052000_mercadopago_billing.sql'),'utf8'));
+  await database.exec(await fs.readFile(path.join(root,'supabase/migrations/202609061030_billing_trial_signup_repair.sql'),'utf8'));
   await value('select billing_activate()');
   await q("update billing_accounts set trial_started_at=now()-interval '60 days',trial_ends_at=now()-interval '30 days'");
   attempt=await value('select billing_claim_checkout($1)',[owner]);
@@ -208,7 +210,7 @@ try {
     assert.equal(await value("select count(*)::int from billing_payments where provider_payment_id='PAYMENT_APPROVED'"),0);
     // No notify() call: exercise the real return timer -> status handler -> SQL.
     await page.waitForFunction(()=>window.returnStatusChecks===1,null,{timeout:15000});
-    assert.match(await checkScreen('active',true),/Assinatura ativa/);
+    assert.equal(await checkScreen('active',true),'','assinatura ativa longe do vencimento não ocupa o topo');
     assert.ok(calls.slice(callsBefore).some(call=>call.host==='api.mercadopago.com'&&call.path===`/preapproval/${provider.id}`&&call.method==='GET'));
     assert.equal(await value("select count(*)::int from billing_payments where provider_payment_id='PAYMENT_APPROVED' and status='approved'"),1);
     assert.equal(await page.evaluate(()=>CloudSync.session.user.id),owner);
@@ -217,7 +219,7 @@ try {
   await scenario('pagamento aprovado: webhook → SQL → interface liberada',async()=>{
     invoiceFixture('PAYMENT_APPROVED','approved',at(-day));
     assert.equal((await notify(signed('subscription_authorized_payment','INVOICE_PAYMENT_APPROVED'))).status,200);
-    assert.match(await checkScreen('active',true),/Assinatura ativa/);
+    assert.equal(await checkScreen('active',true),'','assinatura ativa longe do vencimento não ocupa o topo');
     await q('update company_app_state set data=data where company_id=$1',[company]);
     assert.equal((await value('select billing_account_access($1)',[other])).can_write,false);
     assert.deepEqual(await q('select company_id,data from company_app_state order by company_id'),dataBefore);
@@ -260,13 +262,13 @@ try {
     // The prior checkout-return test legitimately consumed the persistent 30s
     // sync claim. Advance only this in-memory test row past the cooldown.
     await q("update billing_attempts set sync_requested_at=now()-interval '31 seconds' where id=$1",[attempt.id]);
-    await recover();assert.match(await checkScreen('active',true),/Assinatura ativa/);
+    await recover();assert.equal(await checkScreen('active',true),'','renovação longe do vencimento não ocupa o topo');
     assert.equal(await value("select count(*)::int from billing_payments where provider_payment_id='PAYMENT_RENEWAL' and status='approved'"),1);
   });
   await scenario('cancelamento mantém período pago; estorno volta à consulta preservando dados',async()=>{
     const request=new Request(env.BILLING_APP_URL+'/.netlify/functions/billing-cancel',{method:'POST',headers:{authorization:'Bearer SESSION-FICTICIA','content-type':'application/json'},body:JSON.stringify({companyId:company,confirm:true})});
     const cancelled=await cancelHandler(request);assert.equal(cancelled.status,200);
-    assert.match(await checkScreen('active',true),/renovação foi cancelada/i);
+    assert.equal(await checkScreen('active',true),'','cancelamento com período ainda distante não ocupa o topo');
     payments.get('PAYMENT_RENEWAL').transaction_amount_refunded=69;payments.get('PAYMENT_RENEWAL').date_last_updated=at(20000);
     assert.equal((await notify(signed('payment','PAYMENT_RENEWAL'))).status,200);
     await checkScreen('cancelled',false);

@@ -11,8 +11,10 @@ const source = fixture.slice(fixture.indexOf('let db='), fixture.indexOf('let pe
 export const init = `(() => {
   const values = new Map();
   const storage = {getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,String(v)),removeItem:k=>values.delete(k),clear:()=>values.clear(),key:i=>[...values.keys()][i]||null,get length(){return values.size}};
-  Object.defineProperty(window,'localStorage',{value:storage});
-  Object.defineProperty(window,'sessionStorage',{value:storage});
+  if (new URLSearchParams(location.search).get('storage') !== 'native') {
+    Object.defineProperty(window,'localStorage',{value:storage});
+    Object.defineProperty(window,'sessionStorage',{value:storage});
+  }
   const NativeDate=Date;
   window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:['2031-01-15T12:00:00Z']))}static now(){return NativeDate.parse('2031-01-15T12:00:00Z')}};
   window.fetch = async () => new Response('[]',{headers:{'Content-Type':'application/json'}});
@@ -51,14 +53,15 @@ export const activate = `(() => {
   document.title='TESTE FICTÍCIO — ObraAtiva premium';
   if (new URLSearchParams(location.search).has('billingtest')) {
     const modes = {trial:true,active:true,grace:true,expired:false,payment_due:false,cancelled:false,administrator:true};
-    window.billingFixtureMode=new URLSearchParams(location.search).get('billingtest')||'trial';
+    window.billingFixtureScenario=new URLSearchParams(location.search).get('billingtest')||'trial';
+    window.billingFixtureMode=window.billingFixtureScenario==='trial-ending'?'trial':window.billingFixtureScenario==='active-ending'?'active':window.billingFixtureScenario;
     window.billingFixtureAccess=()=>({enabled:true,can_write:modes[window.billingFixtureMode]===true,can_manage:true,
       owner_user_id:'USUARIO-TESTE',mode:window.billingFixtureMode,plan:'obraativa',price:69,currency:'BRL',server_now:'2031-01-15T12:00:00Z',
-      trial_ends_at:window.billingFixtureMode==='trial'?'2031-02-01T12:00:00Z':'2030-12-01T12:00:00Z',
-      paid_until:window.billingFixtureMode==='active'?'2031-02-15T12:00:00Z':null,
+      trial_ends_at:window.billingFixtureMode==='trial'?(window.billingFixtureScenario==='trial-ending'?'2031-01-20T12:00:00Z':'2031-02-01T12:00:00Z'):'2030-12-01T12:00:00Z',
+      paid_until:window.billingFixtureMode==='active'?(window.billingFixtureScenario==='active-ending'?'2031-01-20T12:00:00Z':'2031-02-15T12:00:00Z'):null,
       grace_ends_at:window.billingFixtureMode==='grace'?'2031-01-17T12:00:00Z':null,
       provider_status:['active','grace','payment_due'].includes(window.billingFixtureMode)?'authorized':null});
-    CloudSync.ready=true;CloudSync.isSalesAdmin=true;
+    CloudSync.ready=true;CloudSync.isSalesAdmin=window.billingFixtureMode==='administrator';
     CloudSync.request=async(path)=>{
       if(path.endsWith('/billing_access'))return window.billingFixtureAccess();
       if(path.endsWith('/billing_admin_report'))return {enabled:true,rows:Object.keys(modes).map((mode,i)=>({name:'CONTA FICTÍCIA '+(i+1),email:'conta-teste-'+i+'@example.invalid',access:{...window.billingFixtureAccess(),mode},last_sync:'2031-01-15T12:00:00Z'}))};

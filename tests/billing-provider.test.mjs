@@ -64,6 +64,20 @@ test('checkout exige login, responsável, autorização expressa e plano definid
   f.state.canManage=false;assert.equal((await handle(request({acceptRecurring:true}))).status,403);
   assert.equal(f.state.calls.filter(x=>x.url.endsWith('/preapproval')&&x.method==='POST').length,0);
 });
+test('falha do provedor orienta teste com conta Comprador sem expor resposta interna',async()=>{
+  const f=fixture();
+  f.deps.fetchImpl=async(raw,opts={})=>{
+    const url=new URL(raw);
+    if(url.host==='api.mercadopago.com')return new Response(JSON.stringify({message:'DETALHE INTERNO FICTÍCIO'}),{status:422,headers:{'content-type':'application/json'}});
+    return fixture().deps.fetchImpl(raw,opts);
+  };
+  const response=await checkout(f.deps)(request({acceptRecurring:true}));
+  assert.equal(response.status,503);
+  const body=await response.json();
+  assert.equal(body.code,'provider_checkout');
+  assert.match(body.error,/conta Comprador/);
+  assert.doesNotMatch(body.error,/DETALHE INTERNO/);
+});
 test('30 dias sem cobrar; clique repetido reutiliza reserva e não duplica recorrência',async()=>{
   const f=fixture(),handle=checkout(f.deps);
   const first=await handle(request({acceptRecurring:true}));assert.equal(first.status,200);

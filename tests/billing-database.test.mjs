@@ -40,6 +40,7 @@ test('assinaturas: PostgreSQL isolado, dados FICTÍCIOS, nenhuma chamada externa
       insert into app_state(user_id,data) values('${owner}','{"fixture":"CONTA ANTIGA FICTÍCIA"}');`);
     const before = await q('select data from company_app_state');
     await db.exec(read('202609052000_mercadopago_billing'));
+    await db.exec(read('202609061030_billing_trial_signup_repair'));
     await t.test('instalação não ativa nem modifica dados; mantém acesso legado', async () => {
       assert.equal((await access()).enabled, false);
       await as(owner);
@@ -59,6 +60,12 @@ test('assinaturas: PostgreSQL isolado, dados FICTÍCIOS, nenhuma chamada externa
     });
     await t.test('novo cadastro recebe acesso completo automaticamente; convidado não ganha cobrança da empresa', async () => {
       await db.exec(`insert into auth.users(id,email) values('${newUser}','novo-ficticio@example.invalid');`);
+      assert.equal(await value(`select extract(epoch from trial_ends_at-trial_started_at)/86400 from billing_accounts where owner_user_id='${newUser}'`), '30.0000000000000000');
+      await db.exec(`delete from billing_accounts where owner_user_id='${newUser}'`);
+      await as(newUser);
+      const repaired=await value('select billing_access()');
+      assert.equal(repaired.mode,'trial');assert.equal(repaired.can_write,true);
+      await db.exec('reset role');
       assert.equal(await value(`select extract(epoch from trial_ends_at-trial_started_at)/86400 from billing_accounts where owner_user_id='${newUser}'`), '30.0000000000000000');
       await as(member);
       const result = await value(`select billing_access('${company}')`);

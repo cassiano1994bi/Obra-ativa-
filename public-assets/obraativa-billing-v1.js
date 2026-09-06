@@ -11,6 +11,18 @@
   const key = () => `${cloud()?.session?.user?.id || ''}|${company() || ''}`;
   const signedIn = () => Boolean(cloud()?.session?.user?.id && !document.body.classList.contains('public-mode'));
   const date = v => v && Number.isFinite(Date.parse(v)) ? new Date(v).toLocaleDateString('pt-BR') : '—';
+  const DAY = 86400000, EXPIRING_NOTICE_DAYS = 7;
+  function daysUntil(value, a = current()) {
+    const deadline=Date.parse(value), serverNow=Date.parse(a?.server_now)+(performance.now()-receivedAt);
+    return Number.isFinite(deadline) && Number.isFinite(serverNow) ? Math.ceil((deadline-serverNow)/DAY) : Infinity;
+  }
+  function shouldShowBanner(a = current()) {
+    if (!verified || !a?.enabled || a.mode === 'administrator') return false;
+    if (!a.can_write || ['grace','payment_due','expired','cancelled'].includes(a.mode)) return true;
+    if (a.mode === 'trial') return daysUntil(a.trial_ends_at,a) <= EXPIRING_NOTICE_DAYS;
+    if (a.mode === 'active') return daysUntil(a.paid_until,a) <= EXPIRING_NOTICE_DAYS;
+    return false;
+  }
   function current() {
     if (identity !== key()) return null;
     if (!access?.enabled || !access.can_write || access.mode === 'administrator') return access;
@@ -21,6 +33,10 @@
   }
   function canWrite() {
     if (!signedIn() || cloud()?.suppress === true) return true;
+    // No primeiro acesso ainda não existe resposta local. O banco continua sendo
+    // a autoridade e bloqueia contas vencidas; não travamos a criação inicial
+    // enquanto os 30 dias grátis são confirmados pelo servidor.
+    if (!verified && !current()) return true;
     if (current()?.enabled) return verified && current().can_write === true;
     return (!cloud()?.ready && !access) || (verified && current()?.can_write === true);
   }
@@ -57,19 +73,26 @@
   }
   function detail(a = current()) {
     if (!verified || !a) return message || 'Estamos verificando sua assinatura. Seus dados continuam disponíveis para consulta.';
-    if (a.mode === 'trial') return `Acesso completo grátis até ${date(a.trial_ends_at)}. Nenhum cartão é necessário para testar.`;
-    if (a.mode === 'active') return `Acesso completo liberado até ${date(a.paid_until)}.${a.provider_status === 'cancelled' ? ' A renovação foi cancelada.' : ' Renovação mensal automática no Mercado Pago.'}`;
+    if (a.mode === 'trial') return `Acesso completo grátis até ${date(a.trial_ends_at)}. Você pode contratar antes do fim sem perder os dias restantes.`;
+    if (a.mode === 'active') return `Acesso completo liberado até ${date(a.paid_until)}.${a.provider_status === 'cancelled' ? ' A renovação foi cancelada.' : a.provider_status === 'authorized' ? ` A próxima cobrança já está programada para ${date(a.paid_until)} no Mercado Pago.` : ' Você pode deixar a próxima renovação autorizada antes do vencimento.'}`;
     if (a.mode === 'grace') return `O pagamento não foi aprovado. Você pode continuar usando tudo até ${date(a.grace_ends_at)}. Regularize a cobrança no Mercado Pago.`;
     if (a.mode === 'administrator') return 'Conta administrativa do produto. Sem cobrança de assinatura.';
     return 'Seus dados estão seguros. Você pode consultar e exportar normalmente. Assine para continuar criando e editando.';
   }
   function markup() {
-    const a = current(), recurring = ['authorized','paused'].includes(a?.provider_status);
+    const a = current(), scheduled = a?.provider_status === 'authorized', paused = a?.provider_status === 'paused';
+    const startsAt = a?.mode === 'trial' ? a?.trial_ends_at : a?.paid_until;
+    const checkoutLabel = ['expired','payment_due','grace'].includes(a?.mode) ? 'Assinar agora por R$ 69/mês' : 'Garantir renovação por R$ 69/mês';
+    const checkoutDisclosure = a?.mode === 'trial'
+      ? `Ao continuar, você autoriza a renovação mensal de R$ 69. A primeira cobrança será somente em ${date(startsAt)}, depois do teste grátis.`
+      : a?.mode === 'active' && startsAt
+        ? `Ao continuar, você autoriza a renovação mensal de R$ 69. O período já pago até ${date(startsAt)} será preservado.`
+        : 'Ao continuar, você autoriza a cobrança de R$ 69 por mês, com renovação automática e cancelamento disponível.';
     if (a?.enabled === false) return '<section class="oa-billing-panel"><h2>Assinaturas em preparação</h2><p>O novo plano ainda não foi ativado neste ambiente.</p></section>';
     return `<section class="oa-billing-panel"><span class="oa-billing-tag">OBRAATIVA · ACESSO COMPLETO</span>
       <h2>${!verified ? 'Verificando assinatura' : a?.mode === 'expired' ? 'Seu teste terminou' : escape(labels[a?.mode] || 'Sua assinatura')}</h2>
       <p>${escape(detail())}</p>${a?.mode === 'administrator' ? '' : '<div class="oa-billing-price">R$ 69 <small>/ mês</small></div>'}${a?.mode === 'trial' ? '<p>Um único plano, com todas as funcionalidades. Sem cartão para testar.</p>' : ''}
-      <div class="oa-billing-actions">${a?.can_manage && a.mode !== 'administrator' && verified ? recurring ? '<p>A cobrança recorrente já está autorizada. Para trocar a forma de pagamento, abra sua assinatura no Mercado Pago.</p><a class="btn" href="https://www.mercadopago.com.br/subscriptions" target="_blank" rel="noopener">Gerenciar no Mercado Pago</a>' : `<label class="oa-billing-consent"><input type="checkbox" data-billing-consent> Autorizo R$ 69/mês com renovação automática, após o período grátis ou já pago. Posso cancelar a renovação.</label><button class="btn" type="button" data-billing-action="checkout">Assinar agora</button>` : a?.can_manage === false ? '<p>Peça ao responsável pela conta para gerenciar a assinatura. Seu perfil e suas permissões continuam os mesmos.</p>' : ''}
+      <div class="oa-billing-actions">${a?.can_manage && a.mode !== 'administrator' && verified ? scheduled ? `<p>A forma de pagamento já está vinculada. A cobrança de R$ 69 será feita automaticamente em ${date(a.paid_until || a.trial_ends_at)}. Para trocar o cartão ou consultar a cobrança, abra o Mercado Pago.</p><a class="btn" href="https://www.mercadopago.com.br/subscriptions" target="_blank" rel="noopener">Gerenciar forma de pagamento</a>` : paused ? '<p>A assinatura está pausada no Mercado Pago. Abra o gerenciamento para regularizar ou trocar a forma de pagamento.</p><a class="btn" href="https://www.mercadopago.com.br/subscriptions" target="_blank" rel="noopener">Regularizar no Mercado Pago</a>' : `<p class="oa-billing-consent">${escape(checkoutDisclosure)}</p><button class="btn" type="button" data-billing-action="checkout">${escape(checkoutLabel)}</button>` : a?.can_manage === false ? '<p>Peça ao responsável pela conta para gerenciar a assinatura. Seu perfil e suas permissões continuam os mesmos.</p>' : ''}
       <button class="btn alt" type="button" data-billing-action="refresh">Atualizar status</button>
       ${a?.can_manage && ['pending','authorized','paused'].includes(a.provider_status) ? '<button class="btn alt" type="button" data-billing-action="cancel">Cancelar renovação</button>' : ''}</div>
       <p class="oa-billing-help">O cancelamento e o vencimento nunca apagam seus dados. Pagamentos são confirmados pelo Mercado Pago, não pelo clique no botão.</p>
@@ -88,6 +111,10 @@
     const a=current();
     let bar=document.getElementById('oaBillingBanner');
     if (!signedIn() || a?.enabled === false) { bar?.remove(); return; }
+    // A conta administradora já é identificada no cabeçalho; não repete um cartão de cobrança.
+    if (cloud()?.isSalesAdmin === true || (verified && a?.mode === 'administrator')) { bar?.remove(); return; }
+    // O topo fica livre durante o uso normal; avisa apenas nos 7 dias finais ou quando há ação necessária.
+    if (!shouldShowBanner(a)) { bar?.remove(); return; }
     const view=document.getElementById('view');
     if (!view || !cloud()?.ready) return;
     if (!bar) { bar=document.createElement('aside');bar.id='oaBillingBanner';bar.className='oa-billing-banner';bar.setAttribute('aria-label','Status da assinatura');view.before(bar); }
@@ -108,7 +135,6 @@
     if (name==='open') return open();
     if (name==='close') return document.getElementById('oaBillingDialog')?.close();
     if (busy) return;
-    if (name==='checkout' && !button.closest('.oa-billing-panel')?.querySelector('[data-billing-consent]')?.checked) { message='Marque a autorização da assinatura mensal antes de continuar.'; open(); return; }
     if (name==='cancel' && !confirm('Cancelar a renovação automática? O período já liberado continua válido. Seus dados não serão apagados.')) return;
     busy=true; const requestKey=key(),original=button.textContent;button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Confirmando…';
     try {
@@ -200,6 +226,6 @@
     }
     if(cloud().ready)refresh();
   }
-  window.ObraAtivaBilling=Object.freeze({refresh,open,markup,adminMarkup,canWrite,assertWrite,get access(){return current()}});
+  window.ObraAtivaBilling=Object.freeze({refresh,open,markup,adminMarkup,canWrite,assertWrite,shouldShowBanner,get access(){return current()}});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();

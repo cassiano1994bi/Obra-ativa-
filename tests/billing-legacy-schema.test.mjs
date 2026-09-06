@@ -36,6 +36,7 @@ test('instala sem a tabela opcional de mídia e protege todos os armazenamentos 
   try{
     const before=(await db.query('select data from company_app_state')).rows;
     await db.exec(read('202609052000_mercadopago_billing'));
+    await db.exec(read('202609061030_billing_trial_signup_repair'));
     assert.equal(await value(db,"select to_regclass('public.work_media')"),null);
     assert.equal(await value(db,'select enabled from billing_control'),false);
     for(const table of ['app_state','companies','company_app_state','company_members','company_invitations']){
@@ -51,6 +52,7 @@ test('cadastro administrativo legado sem active não quebra consulta, trial ou c
   const db=await fixture({legacyAdmin:true});
   try{
     await db.exec(read('202609052000_mercadopago_billing'));
+    await db.exec(read('202609061030_billing_trial_signup_repair'));
     assert.equal(await value(db,"select count(*)::int from pg_trigger where tgrelid='public.work_media'::regclass and tgname='obraativa_billing_write'"),1);
     await db.exec('select billing_activate()');
     assert.equal((await value(db,`select billing_account_access('${admin}')`)).mode,'administrator');
@@ -69,6 +71,7 @@ test('cadastro moderno continua negando isenção ao administrador explicitament
   const db=await fixture();
   try{
     await db.exec(read('202609052000_mercadopago_billing'));
+    await db.exec(read('202609061030_billing_trial_signup_repair'));
     await db.exec(`select billing_activate();update sales_admins set active=false where user_id='${admin}';update billing_accounts set trial_ends_at=now()-interval '1 second' where owner_user_id='${admin}';`);
     const access=await value(db,`select billing_account_access('${admin}')`);
     assert.equal(access.mode,'expired');assert.equal(access.can_write,false);

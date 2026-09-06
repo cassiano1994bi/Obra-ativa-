@@ -141,7 +141,6 @@
     const invite = /convite/i.test(String(title?.textContent || ''));
     if (!invite && title) title.textContent = 'Bem-vindo de volta!';
     if (!invite && subtitle) subtitle.textContent = 'Faça login para acessar sua conta e gerenciar suas obras.';
-    if (title && !card.querySelector('.obraativa-reception-lock')) title.insertAdjacentHTML('beforebegin', lockMarkup());
     enhanceFields(card);
     const form = $('form', card);
     const submit = $('button[type="submit"]', form);
@@ -155,13 +154,30 @@
     }
     if (submit && !submit.querySelector('span')) submit.innerHTML = '<b>Entrar</b><span aria-hidden="true">→</span>';
     if (!card.querySelector('[data-reception-social]')) form?.insertAdjacentHTML('afterend', signinExtrasMarkup());
-    const create = [...card.querySelectorAll('.cloud-link')].find((button) => /criar meu primeiro acesso|criar minha conta/i.test(button.textContent));
-    if (create) {
-      create.classList.add('obraativa-reception-create-account');
-      create.textContent = 'Ainda não tem conta? Criar minha conta';
-      card.querySelector('[data-reception-social]')?.insertAdjacentElement('afterend', create);
-    }
     updateProviderButtons();
+  }
+
+  function enhanceAccessChoices(card, mode) {
+    if (!['signin', 'signup'].includes(mode) || card.querySelector('.obraativa-access-choices')) return;
+    const nextMode = mode === 'signin' ? 'signup' : 'signin';
+    // Move o botão original: mantém o evento e o fluxo de autenticação existentes.
+    const switchButton = [...card.querySelectorAll('.cloud-link')].find((button) =>
+      button.getAttribute('onclick') === `CloudSync.showAuth('${nextMode}')`);
+    if (!switchButton) return;
+    const choices = document.createElement('section');
+    choices.className = 'obraativa-access-choices';
+    choices.setAttribute('aria-label', 'Entrar ou criar conta');
+    switchButton.dataset.accessMode = nextMode;
+    switchButton.innerHTML = nextMode === 'signin'
+      ? '<span>Já tem conta? <b>Entrar</b></span>'
+      : '<b>Criar conta grátis</b><small>30 dias grátis</small>';
+    choices.append(switchButton);
+    const form = $('form', card);
+    form?.insertAdjacentElement('afterend', choices);
+    if (mode === 'signup') {
+      const submit = $('button[type="submit"]', card);
+      if (submit) submit.textContent = 'Criar conta grátis';
+    }
   }
 
   function refineCard(card, mode) {
@@ -170,9 +186,10 @@
     if (mode === 'signin') enhanceSignin(card);
     else {
       const title = $('h1', card);
-      if (title && !card.querySelector('.obraativa-reception-lock')) title.insertAdjacentHTML('beforebegin', lockMarkup());
+      if (mode !== 'signup' && title && !card.querySelector('.obraativa-reception-lock')) title.insertAdjacentHTML('beforebegin', lockMarkup());
       enhanceFields(card);
     }
+    enhanceAccessChoices(card, mode);
   }
 
   function enhanceCard(card) {

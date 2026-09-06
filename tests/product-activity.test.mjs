@@ -35,11 +35,12 @@ test('mede em lote; aba oculta, inativa e sem foco não geram batimentos de pres
   f.focus(true); for (let i = 0; i < 15; i++) await f.advance();
   assert.equal(f.calls.filter((c) => c.url.endsWith('tick')).length, 2);
 });
-test('saída confirmada envia encerramento sem bloquear; troca de conta não herda permissão', async () => {
+test('saída confirmada envia encerramento sem bloquear; permissão permanece neste dispositivo', async () => {
   const f = await fixture('allow'); f.sandbox.ObraAtivaUsage.end();
   assert.equal(f.calls.at(-1).args.p_end, true); assert.equal(f.calls.at(-1).options.keepalive, true);
   f.cloud.session = { user: { id: 'OUTRO_USUARIO_FICTICIO' }, access_token: 'OUTRO_TOKEN_FICTICIO' };
-  const count = f.calls.length; await f.advance(60000); assert.equal(f.calls.length, count);
+  const count = f.calls.length; await f.advance(60000); assert.ok(f.calls.length > count);
+  assert.ok(f.calls.slice(count).some(call => call.options.headers.authorization === 'Bearer OUTRO_TOKEN_FICTICIO'));
 });
 test('erros da medição usam espera progressiva e nunca encerram a sessão', async () => {
   const f = await fixture('allow', true), count = f.calls.length;

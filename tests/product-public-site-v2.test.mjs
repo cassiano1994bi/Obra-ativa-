@@ -67,7 +67,7 @@ test('a navegação identifica um plano único e renova os recursos da oferta', 
   assert.equal((source.match(/href="#planos">Plano único<\/a>/g) || []).length, 2);
   assert.doesNotMatch(source, />Planos<\/a>/);
   for (const ext of ['js', 'css']) {
-    assert.ok(index.includes(`obraativa-product-site-v2.${ext}?v=20260906-plano-unico`));
+    assert.ok(index.includes(`obraativa-product-site-v2.${ext}?v=20260906-free-account`));
   }
 });
 
@@ -87,5 +87,6 @@ test('a oferta renderizada tem exatamente um plano e todos os convites usam 30 d
   assert.match(markup, /R\$ 69\/mês após 30 dias grátis/);
   assert.doesNotMatch(markup, /14 dias|R\$ (49|97|197)\/mês|MAIS ESCOLHIDO|>Planos</);
   assert.equal((markup.match(/href="[^"]*\?app=1&onboarding=1"/g) || []).length, 4);
+  assert.equal((markup.match(/href="[^"]*\?app=1&onboarding=1">Criar conta grátis<\/a>/g) || []).length, 4);
   assert.equal((markup.match(/<summary>/g) || []).length, 6, 'todas as perguntas permanecem disponíveis');
 });

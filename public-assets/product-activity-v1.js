@@ -1,12 +1,27 @@
 (() => {
   'use strict';
   const KEY = 'oa-optional-measurement-v1:';
+  const DEVICE_ALLOW_KEY = KEY + 'device-allowed';
   const MODULES = new Set(['home', 'works', 'planning', 'team', 'attendance', 'payments', 'financial', 'vehicles', 'reports', 'assistant', 'permissions', 'reminders', 'budgets']);
   let identity = '', session = '', lastInput = Date.now(), lastSample = Date.now(), seconds = 0;
-  let lastSend = 0, retryAt = 0, linkRetryAt = 0, configured = false, enabled = false, busy = false, linked = false, publicSent = false;
+  let lastSend = 0, retryAt = 0, linkRetryAt = 0, configured = false, enabled = false, busy = false, linked = false, publicSent = false, dismissed = false;
   const currentUser = () => window.CloudSync?.session?.user?.id || 'visitor';
+  const signedInApp = () => Boolean(window.CloudSync?.session?.user?.id
+    && !document.body?.classList?.contains?.('auth-mode') && !document.body?.classList?.contains?.('public-mode'));
   const config = () => typeof CLOUD_CONFIG !== 'undefined' ? CLOUD_CONFIG : null;
-  const choice = () => { try { return localStorage.getItem(KEY + currentUser()); } catch { return null; } };
+  const preferenceKeys = () => { const keys=[]; try { for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith(KEY))keys.push(key);} } catch {} return keys; };
+  const deviceAllowed = () => {
+    try {
+      if (localStorage.getItem(DEVICE_ALLOW_KEY) === 'allow') return true;
+      // Migra uma permissão antiga vinculada à conta para a preferência deste aparelho.
+      if (localStorage.getItem(KEY + currentUser()) === 'allow'
+        || preferenceKeys().some(key => key !== DEVICE_ALLOW_KEY && localStorage.getItem(key) === 'allow')) {
+        localStorage.setItem(DEVICE_ALLOW_KEY, 'allow'); return true;
+      }
+    } catch { /* sem armazenamento, a escolha não é presumida */ }
+    return false;
+  };
+  const choice = () => deviceAllowed() ? 'allow' : dismissed ? 'deny' : null;
   const token = () => window.CloudSync?.session?.access_token;
   const moduleName = () => { const value = typeof page !== 'undefined' ? page : 'home'; return MODULES.has(value) ? value : 'home'; };
   async function rpc(name, args, keepalive = false) {
@@ -25,11 +40,11 @@
   }
   function prompt(force = false) {
     const existing = document.getElementById('oaMeasurementChoice');
+    if (signedInApp()) { existing?.remove(); return; }
     if (existing) { if (force) existing.scrollIntoView({ block: 'center' }); return; }
     if (!force && choice()) return;
     const host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
-      || document.querySelector('.oa-public-footer .oa-public-shell') || document.querySelector('.permission-hub-content')
-      || document.querySelector('#view');
+      || document.querySelector('.oa-public-footer .oa-public-shell');
     if (!host) return;
     const panel = document.createElement('aside');
     panel.id = 'oaMeasurementChoice'; panel.className = 'oa-measurement-choice';
@@ -41,7 +56,17 @@
   }
   async function setChoice(value) {
     if (!['allow', 'deny'].includes(value)) return;
-    try { localStorage.setItem(KEY + currentUser(), value); } catch { /* sem armazenamento, não inicia coleta */ }
+    try {
+      if (value === 'allow') {
+        localStorage.setItem(DEVICE_ALLOW_KEY, 'allow');
+        localStorage.setItem(KEY + currentUser(), 'allow');
+      } else {
+        localStorage.removeItem(DEVICE_ALLOW_KEY);
+        for (const key of preferenceKeys()) if (localStorage.getItem(key) === 'allow') localStorage.removeItem(key);
+        localStorage.setItem(KEY + currentUser(), 'deny');
+      }
+    } catch { /* sem armazenamento, não inicia coleta */ }
+    dismissed = value === 'deny';
     configured = false; enabled = false; retryAt = 0; seconds = 0; linked = false; linkRetryAt = 0; publicSent = false;
     session = window.crypto?.randomUUID?.() || ''; lastSend = 0;
     document.getElementById('oaMeasurementChoice')?.remove();
@@ -49,27 +74,19 @@
     await tick();
   }
   function addPrivacyLink() {
+    if (signedInApp()) {
+      (document.querySelectorAll?.('[data-usage-privacy],#app:not(.public-app) .oa-usage-privacy-slot') || []).forEach(element => element.remove());
+      document.getElementById?.('oaMeasurementChoice')?.remove();
+      return;
+    }
     let host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
       || document.querySelector('.oa-public-footer');
-    if (!host) {
-      const side = document.querySelector('#app:not(.public-app) .side');
-      if (!side) return;
-      const rail = window.matchMedia('(min-width:761px), (orientation:landscape) and (max-height:600px) and (max-width:1024px)').matches;
-      const parent = rail ? side : side.querySelector('.nav-extra-scroll');
-      if (!parent) return; // No retrato, o controle fica dentro do menu Mais.
-      host = parent.querySelector(':scope > .oa-usage-privacy-slot');
-      if (!host) {
-        host = document.createElement('div'); host.className = 'oa-usage-privacy-slot';
-        // Separado do rodapé de saída: não herda o evento de encerrar a conta.
-        parent.insertBefore(host, rail ? parent.querySelector('.obraativa-account-session-footer') : null);
-      }
-    }
+    if (!host) { document.querySelector('#app:not(.public-app) .oa-usage-privacy-slot')?.remove(); return; }
     let link = document.querySelector('[data-usage-privacy]');
     if (!link) {
       link = document.createElement('button'); link.type = 'button'; link.dataset.usagePrivacy = '1';
       link.className = 'oa-usage-privacy'; link.textContent = 'Privacidade de uso';
       link.addEventListener('click', () => {
-        if (link.closest('.nav-extra-scroll')) window.toggleMoreNavigation?.();
         prompt(true);
       });
     }
@@ -115,6 +132,12 @@
     rpc('product_insight_tick', args, true).catch(() => {});
   }
   window.ObraAtivaUsage = { openPrivacy: () => prompt(true), end };
+  const finishActivation = window.CloudSync?.finishActivation;
+  if (typeof finishActivation === 'function') window.CloudSync.finishActivation = function(...args) {
+    const result = finishActivation.apply(this, args);
+    requestAnimationFrame(() => { addPrivacyLink(); prompt(); });
+    return result;
+  };
   for (const event of ['pointerdown', 'keydown', 'scroll']) document.addEventListener(event, () => { lastInput = Date.now(); }, { passive: true, capture: event === 'scroll' });
   document.addEventListener('visibilitychange', () => { lastSample = Date.now(); if (document.visibilityState === 'visible') tick(); });
   document.addEventListener('click', (event) => {

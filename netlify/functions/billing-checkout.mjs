@@ -39,6 +39,7 @@ export function createHandler(deps) {
         await b.recordError(a, e.code).catch(() => {});
         if (e.definitiveCreateFailure) await b.db(`billing_attempts?id=eq.${a.id}&provider_id=is.null`, {method:'PATCH',body:{status:'cancelled',last_error:'checkout_rejected_before_creation'}}).catch(()=>{});
       }
+      if (e.code === 'upstream') fail(503, 'provider_checkout', 'O Mercado Pago não conseguiu abrir a forma de pagamento. Tente novamente. Se estiver fazendo um teste, use a conta Comprador; a conta Vendedor não pode comprar da própria loja.');
       throw e;
     }
   });

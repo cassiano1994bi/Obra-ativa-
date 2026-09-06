@@ -40,7 +40,7 @@ test('Home e módulos: cinco tamanhos, navegação, preferências e sessão fict
     await page.waitForSelector('.obraativa-home-premium');
     await page.waitForTimeout(400);
     await page.evaluate(()=>ObraAtivaUsage.openPrivacy());
-    await page.locator('[data-measurement=deny]').click();
+    assert.equal(await page.locator('[data-measurement]').count(),0,'medição opcional permanece somente na recepção pública/login');
     for (const [device,width,height] of dimensions) {
       await page.setViewportSize({width,height});
       for (const module of ['home','works','planning','attendance','payments','financial','team','reports','permissions']) {

@@ -29,7 +29,7 @@ try {
     for(const module of ['home','works','planning','attendance','payments','financial','team','reports']){
       await page.evaluate(module=>go(module),module);assert.ok((await page.locator('#view').innerText()).length>10,module+' still readable');
     }
-    await page.evaluate(()=>openPermissionHub('billing'));await page.waitForSelector('#oaBillingAdmin tbody tr');
+    await page.evaluate(()=>{CloudSync.isSalesAdmin=true;openPermissionHub('billing')});await page.waitForSelector('#oaBillingAdmin tbody tr');
     await page.waitForFunction(()=>document.querySelector('#oaBillingAdmin')?.textContent.includes('CONTA FICTÍCIA'));
     await page.screenshot({path:path.join(out,`${device}-admin.png`)});
     await page.evaluate(async()=>{window.billingFixtureMode='active';await ObraAtivaBilling.refresh()});
@@ -40,19 +40,34 @@ try {
   await page.setViewportSize({width:844,height:390});
   await page.goto(origin+'/tests/premium-workspace-preview.html?app=1&billingtest=trial');
   await page.waitForFunction(()=>ObraAtivaBilling.access?.mode==='trial');
+  assert.equal(await page.locator('#oaBillingBanner').count(),0,'trial banner stays hidden before final seven days');
   await page.evaluate(()=>ObraAtivaBilling.open());
+  assert.match(await page.locator('.oa-billing-panel').innerText(),/contratar antes do fim sem perder os dias restantes/i);
+  assert.match(await page.locator('[data-billing-action="checkout"]').innerText(),/Garantir renovação por R\$ 69\/mês/);
+  assert.equal(await page.locator('[data-billing-consent]').count(),0,'no redundant consent checkbox blocks checkout');
   await page.click('[data-billing-action="checkout"]');
-  assert.match(await page.locator('.oa-billing-message').innerText(),/Marque a autorização/);
-  await page.check('[data-billing-consent]');await page.click('[data-billing-action="checkout"]');
   await page.waitForFunction(()=>document.querySelector('.oa-billing-message')?.textContent.includes('PRÉVIA FICTÍCIA'));
   assert.equal(new URL(page.url()).origin,origin,'no actual checkout');
   const guarded=await page.evaluate(()=>Object.keys(window).filter(k=>typeof window[k]==='function'&&window[k].__billingGuard));
   console.log(JSON.stringify({guarded}));
   await page.evaluate(async()=>{CloudSync.request=async()=>{throw Error('OFFLINE FICTÍCIO')};await ObraAtivaBilling.refresh();CloudSync.ready=false});
   assert.equal(await page.evaluate(()=>ObraAtivaBilling.canWrite()),false,'known subscription stays read-only when connectivity is lost');
+  await page.goto(origin+'/tests/premium-workspace-preview.html?app=1&billingtest=trial-ending');
+  await page.waitForSelector('#oaBillingBanner');
+  assert.match(await page.locator('#oaBillingBanner').innerText(),/Teste grátis/);
+  await page.goto(origin+'/tests/premium-workspace-preview.html?app=1&billingtest=active');
+  await page.waitForFunction(()=>ObraAtivaBilling.access?.mode==='active');
+  assert.equal(await page.locator('#oaBillingBanner').count(),0,'active banner stays hidden before final seven days');
+  await page.evaluate(()=>ObraAtivaBilling.open());
+  assert.match(await page.locator('.oa-billing-panel').innerText(),/próxima cobrança já está programada/i);
+  assert.match(await page.locator('.oa-billing-panel').innerText(),/Gerenciar forma de pagamento/i);
+  assert.equal(await page.locator('[data-billing-action="checkout"]').count(),0,'authorized recurrence is not duplicated');
+  await page.click('[data-billing-action="close"]');
+  await page.goto(origin+'/tests/premium-workspace-preview.html?app=1&billingtest=active-ending');
+  await page.waitForSelector('#oaBillingBanner');
+  assert.match(await page.locator('#oaBillingBanner').innerText(),/Assinatura ativa/);
   await page.goto(origin+'/tests/billing-subscriptions-review.html');
   const preview=page.frameLocator('#preview');
-  await preview.locator('#oaBillingBanner').waitFor();
   await page.selectOption('#mode','expired');await preview.locator('#oaBillingDialog[open]').waitFor();
   await page.screenshot({path:path.join(out,'review.png')});
   assert.deepEqual(errors,[]);
