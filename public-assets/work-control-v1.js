@@ -147,6 +147,24 @@
       if (e.target.matches('[data-wc-suggestion-percent]')) choices.set(e.target.dataset.wcSuggestionPercent, e.target.value);
     });
   }
+  // Keep the Obras card compact and reuse the same confirmed labor total that
+  // already feeds the phase and finance views. Users without financial access
+  // continue to see the original card unchanged.
+  const previousInternalWorkGridCard = typeof internalWorkGridCard === 'function' ? internalWorkGridCard : null;
+  if (previousInternalWorkGridCard) {
+    internalWorkGridCard = function (work) {
+      const html = previousInternalWorkGridCard(work);
+      if (!enabled() || !ctx().modules.includes('financial')) return html;
+      const labor = typeof workClosingCost === 'function' ? workClosingCost(work.id) : null;
+      if (!Number.isFinite(Number(labor))) return html;
+      const container = document.createElement('div'); container.innerHTML = html;
+      const status = container.querySelector('.internal-work-status');
+      if (!status || status.querySelector('.wc-work-labor-total')) return html;
+      status.insertAdjacentHTML('beforeend', '<span class="wc-work-labor-total">Mão de obra: <b>' + cash(labor) + '</b></span>');
+      return container.innerHTML;
+    };
+    window.internalWorkGridCard = internalWorkGridCard;
+  }
   // Keep the original folders, photo actions and work navigation. Only augment
   // each phase with its percentage and confirmed labor cost.
   const previousPhaseList = workTrackerPhaseList;

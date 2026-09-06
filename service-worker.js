@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v54';
+const CACHE_VERSION = 'v55';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -93,10 +93,17 @@ const OPTIONAL_ASSETS = [
 
 const STATIC_ASSETS = [...new Set([...CORE_ASSETS, ...OPTIONAL_ASSETS])];
 
-// A oferta comercial precisa vir da versão publicada, não de uma visita antiga.
-const PUBLIC_OFFER_ASSETS = new Set([
+// Informações comerciais e recursos operacionais sensíveis a versão precisam
+// vir primeiro da publicação atual. Isso evita que o aplicativo instalado no
+// celular fique visualmente atrás da versão aberta no computador.
+const NETWORK_FIRST_ASSETS = new Set([
   '/public-assets/obraativa-product-site-v2.js',
-  '/public-assets/obraativa-product-site-v2.css'
+  '/public-assets/obraativa-product-site-v2.css',
+  '/public-assets/work-control-v1.js',
+  '/public-assets/work-control-v1.css',
+  '/public-assets/work-phase-density-v1.css',
+  '/public-assets/responsive-ui-v3.js',
+  '/public-assets/landscape-density-v1.js'
 ]);
 
 function canStore(response) {
@@ -163,7 +170,7 @@ async function staleWhileRevalidate(request, url, event) {
   return network;
 }
 
-async function networkFirstPublicOffer(request, url) {
+async function networkFirstVersionedAsset(request, url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
   try {
@@ -195,8 +202,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (PUBLIC_OFFER_ASSETS.has(url.pathname)) {
-    event.respondWith(networkFirstPublicOffer(request, url));
+  if (NETWORK_FIRST_ASSETS.has(url.pathname)) {
+    event.respondWith(networkFirstVersionedAsset(request, url));
     return;
   }
 

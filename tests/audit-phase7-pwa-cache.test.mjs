@@ -36,6 +36,17 @@ test('cache is versioned, resilient and excludes private or unsafe requests', ()
   assert.match(swSource, /networkFirstNavigation/);
 });
 
+test('celular busca primeiro a versão atual dos controles de obra', () => {
+  for (const asset of [
+    '/public-assets/work-control-v1.js',
+    '/public-assets/work-control-v1.css',
+    '/public-assets/work-phase-density-v1.css',
+    '/public-assets/responsive-ui-v3.js',
+    '/public-assets/landscape-density-v1.js'
+  ]) assert.match(swSource, new RegExp(`NETWORK_FIRST_ASSETS[\\s\\S]*?'${asset.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}'`), `${asset} precisa acompanhar a publicação atual`);
+  assert.match(swSource, /NETWORK_FIRST_ASSETS\.has\(url\.pathname\)[\s\S]*?networkFirstVersionedAsset/);
+});
+
 test('service worker serves the application shell while offline and ignores APIs', async () => {
   const listeners = {};
   const stores = new Map();

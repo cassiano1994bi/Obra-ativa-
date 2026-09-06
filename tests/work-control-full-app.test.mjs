@@ -39,9 +39,11 @@ try{
  },data);
  const loaded=await page.evaluate(()=>({html:document.getElementById('view').innerHTML.slice(0,250),ready:ObraAtivaWorkSync.ready('EMPRESA-TESTE')}));
  assert.equal(loaded.ready,true);
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
- assert.match(await page.locator('.clean-work-head h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
- assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
+ assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/Mão de obra:.*11,50/);
+  await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+  assert.match(await page.locator('.clean-work-head h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
+  assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
+  assert.match(await page.locator('[data-wc-phase="FASE-TESTE-0"] .wc-phase-info').textContent(),/100% pronto/,'Percentual da fase permanece visível');
  await page.locator('[data-work-phase-action=new-phase]').click();
  assert.equal(await page.locator('#wc-form [name]').count(),2);
  await page.locator('#wc-form [name=name]').fill('ETAPA FICTÍCIA INTEGRADA');await page.locator('#wc-form [type=submit]').click();
@@ -59,8 +61,10 @@ try{
  await page.locator('#wc-form [type=submit]').click();
  assert.equal(await page.evaluate(()=>db.workPhases.length),8);
  const suggestion=await page.evaluate(()=>db.workPhases.at(-1).id);
- await page.evaluate(()=>{planningDate='2031-01-15';planningWorkId='OBRA-TESTE';go('planning')});
- assert.ok(await page.locator('[data-wc-plan-person]').count()>0,'Fase disponível na escala real');
+  await page.evaluate(()=>{planningDate='2031-01-15';planningWorkId='OBRA-TESTE';go('planning')});
+  assert.ok(await page.locator('[data-wc-plan-person]').count()>0,'Fase disponível na escala real');
+  assert.match(await page.locator('thead').textContent(),/Fase do dia \(opcional\)/,'Coluna de fase permanece na Escala diária');
+  assert.ok((await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"] option').allTextContents()).includes('Estrutura FICTÍCIA'),'Fases da obra permanecem disponíveis na Escala diária');
  await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"]').selectOption(suggestion);
  await page.evaluate(()=>saveBulkDistribution());
  assert.equal(await page.evaluate(()=>db.distributions.find(d=>d.employeeId==='PESSOA-TESTE-A').phaseId),suggestion);
@@ -70,13 +74,33 @@ try{
  page.once('dialog',dialog=>dialog.accept());await page.evaluate(id=>deleteWorkPhase('OBRA-TESTE',id),deleteId);
  assert.equal(await page.evaluate(()=>db.workPhases.length),7);assert.equal(await page.evaluate(()=>db.workMedia.length),oldPhotos);assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).kind),'Fase excluída');
  await page.evaluate(()=>go('works'));
- assert.equal(await page.locator('.wc-tabs').count(),0);
- assert.doesNotMatch(await page.locator('#view').textContent(),/Radar da empresa|Histórico e comparação/);
- await fs.mkdir(path.join(root,'tmp/work-control-qa'),{recursive:true});
+  assert.equal(await page.locator('.wc-tabs').count(),0);
+  assert.doesNotMatch(await page.locator('#view').textContent(),/Radar da empresa|Histórico e comparação/);
+  await page.evaluate(()=>{CompanyWorkspace.current.role='collaborator';CompanyWorkspace.current.permissionProfile='supervisor';CompanyWorkspace.current.permissionModules=['works','planning'];go('works')});
+  assert.equal(await page.locator('.wc-work-labor-total').count(),0,'Custo oculto sem acesso ao Financeiro');
+  await page.evaluate(()=>{CompanyWorkspace.current.role='owner';CompanyWorkspace.current.permissionProfile='gerente';CompanyWorkspace.current.permissionModules=[];go('works')});
+  await fs.mkdir(path.join(root,'tmp/work-control-qa'),{recursive:true});
  await page.waitForFunction(()=>!document.querySelector('#obraativa-action-feedback.is-visible'));
  for(const [label,width,height] of [['desktop',1440,900],['tablet',1024,768],['phone',844,390],['small',667,375],['portrait',390,844]]){
-   await page.setViewportSize({width,height});await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+   await page.setViewportSize({width,height});await page.evaluate(()=>go('works'));
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: valor da obra sem overflow`);
+   assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/11,50/,`${label}: custo da obra visível`);
+   await page.screenshot({path:path.join(root,`tmp/work-control-qa/work-total-${label}.png`),fullPage:true});
+   await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: overflow no app completo`);
+   if(label==='desktop'){
+     const desktop=await page.evaluate(()=>({mobile:document.body.classList.contains('responsive-v3-landscape-phone'),progressMinHeight:getComputedStyle(document.querySelector('.wc-phase-info .wc-button')).minHeight}));
+     assert.equal(desktop.mobile,false,'desktop não recebe regra exclusiva de celular');
+     assert.equal(desktop.progressMinHeight,'44px','controle do computador mantém o tamanho existente');
+   }
+   if(label==='phone'||label==='small'){
+     const mobile=await page.evaluate(()=>({mobile:document.body.classList.contains('responsive-v3-landscape-phone'),info:getComputedStyle(document.querySelector('.wc-phase-info')).display,labor:getComputedStyle(document.querySelector('.wc-phase-labor')).display,progressMinHeight:getComputedStyle(document.querySelector('.wc-phase-info .wc-button')).minHeight,addMinHeight:getComputedStyle(document.querySelector('.simple-phase-add-photo')).minHeight}));
+     assert.equal(mobile.mobile,true,`${label}: modo celular horizontal ativo`);
+     assert.equal(mobile.info,'grid',`${label}: percentual visível`);
+     assert.equal(mobile.labor,'flex',`${label}: valor da fase visível`);
+     assert.equal(mobile.progressMinHeight,'29px',`${label}: percentual compacto`);
+     assert.equal(mobile.addMinHeight,'28px',`${label}: cartão compacto`);
+   }
    await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}.png`),fullPage:true});
    for(const form of ['create','progress','suggestions']){
      if(form==='create')await page.evaluate(()=>openInternalWorkModal());
@@ -93,9 +117,17 @@ try{
        return rect.left>=0&&rect.top>=0&&rect.right<=innerWidth&&rect.bottom<=innerHeight&&element.contains(document.elementFromPoint(rect.left+5,rect.top+rect.height/2));
      }));
      assert.ok(unobscured,`${label}/${form}: título, campo e botão sem barra lateral por cima`);
-     await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}-${form}.png`)});
-     await page.locator('[data-wc-action=close]').click();
-   }
- }
+      await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}-${form}.png`)});
+      await page.locator('[data-wc-action=close]').click();
+    }
+    if(label==='phone'||label==='small'){
+      await page.evaluate(()=>{planningDate='2031-01-15';planningWorkId='OBRA-TESTE';go('planning')});
+      const phaseSelect=page.locator('[data-wc-plan-person="PESSOA-TESTE-A"]');
+      assert.equal(await phaseSelect.isVisible(),true,`${label}: fase visível na Escala diária`);
+      assert.ok((await phaseSelect.locator('option').allTextContents()).includes('Estrutura FICTÍCIA'),`${label}: opções de fase disponíveis`);
+      await phaseSelect.scrollIntoViewIfNeeded();
+      await page.screenshot({path:path.join(root,`tmp/work-control-qa/planning-${label}.png`),fullPage:true});
+    }
+  }
  assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, fases/fotos/progresso/escala e cinco dispositivos; nenhuma conta ou rede real.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}
