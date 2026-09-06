@@ -23,6 +23,7 @@
     if (!text) return '';
     const normalized = text.toLocaleLowerCase('pt-BR');
     if (/invalid login|invalid credentials|email or password/.test(normalized)) return 'E-mail ou senha não conferem. Revise os dados e tente novamente.';
+    if (/email_address_invalid|invalid email|email.*invalid|unable to validate email/.test(normalized)) return 'Confira o e-mail digitado. Use o formato nome@exemplo.com.';
     if (/email not confirmed|email.*confirm/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
     if (/already registered|already exists|user.*registered/.test(normalized)) return 'Este e-mail já possui uma conta. Entre normalmente ou use “Esqueci minha senha”.';
     if (/password.*(least|characters|weak)|senha.*(fraca|caracteres)/.test(normalized)) return 'Crie uma senha com 8 caracteres, incluindo letra maiúscula, minúscula e número.';
@@ -45,20 +46,20 @@
     const safeEmail = escapeHtml(String(email || '').trim() || 'o e-mail informado');
     gate.innerHTML = `<section class="cloud-auth-card" style="position:relative">
       <button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>
-      <div class="top-brand"><span>✓ CONTA CRIADA</span><strong>CONTROLE DE OBRA</strong></div>
+      <div class="top-brand"><span>✓ CONTA CRIADA COM SUCESSO</span><strong>CONTROLE DE OBRA</strong></div>
       <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
-      <span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span>
-      <h1>Confirme seu e-mail</h1>
-      <p>Sua conta foi criada com sucesso. Agora falta confirmar que este e-mail é seu.</p>
-      <div class="obraativa-email-confirmation-address"><small>Enviamos o link de confirmação para</small><b>${safeEmail}</b></div>
+      <span class="obraativa-auth-step">AÇÃO OBRIGATÓRIA PARA ENTRAR</span>
+      <h1>Abra seu e-mail agora</h1>
+      <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Sem essa confirmação, o aplicativo ainda não libera o primeiro acesso.</p>
+      <div class="obraativa-email-confirmation-address"><small>Abra o Gmail, Outlook ou outro aplicativo deste e-mail</small><b>${safeEmail}</b></div>
       <ol class="obraativa-email-confirmation-steps">
-        <li><b>Abra sua caixa de entrada</b><span>Procure a mensagem de confirmação do ObraAtiva.</span></li>
-        <li><b>Toque em “Confirmar e-mail”</b><span>Se não encontrar, confira também Spam ou Lixo eletrônico.</span></li>
-        <li><b>Volte e entre na sua conta</b><span>O acesso será liberado depois da confirmação.</span></li>
+        <li><b>Procure a mensagem do ObraAtiva</b><span>Ela foi enviada para o endereço mostrado acima.</span></li>
+        <li><b>Abra a mensagem e toque em “Confirmar e-mail”</b><span>Se não aparecer, confira Spam ou Lixo eletrônico.</span></li>
+        <li><b>Volte ao ObraAtiva e entre</b><span>Use o mesmo e-mail e a senha que você acabou de criar.</span></li>
       </ol>
-      <div class="obraativa-email-confirmation-note"><b>Importante:</b> antes de confirmar o e-mail, o login ainda não será liberado.</div>
-      <button type="button" class="btn obraativa-auth-primary obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei — entrar</button>
-      <button type="button" class="cloud-link obraativa-email-confirmation-change" onclick="CloudSync.showAuth('signup')">O e-mail está errado — corrigir</button>
+      <div class="obraativa-email-confirmation-note"><b>Não é um erro:</b> sua conta foi criada. Falta apenas clicar no link recebido por e-mail.</div>
+      <button type="button" class="btn obraativa-auth-primary obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei no e-mail — entrar</button>
+      <button type="button" class="cloud-link obraativa-email-confirmation-change" onclick="CloudSync.showAuth('signup')">Digitou outro e-mail? Voltar e corrigir</button>
     </section>`;
     schedule();
   }
@@ -71,7 +72,7 @@
 
   function authMode(card) {
     const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
-    if (title.includes('confirme seu e-mail')) return 'confirmation';
+    if (title.includes('confirme seu e-mail') || title.includes('abra seu e-mail agora')) return 'confirmation';
     if (title.includes('criar acesso')) return 'signup';
     if (title.includes('entrar')) return 'signin';
     if (title.includes('recuperar senha')) return 'recovery';
