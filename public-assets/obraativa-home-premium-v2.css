@@ -453,7 +453,7 @@ body.responsive-landscape-density #app:not(.public-app) #view[data-landscape-pag
     margin:0!important;
     border-radius:12px!important;
   }
-  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand .brand-text{display:none!important}
+  body.responsive-v3-landscape-phone #app:not(.public-app):has(#view[data-landscape-page="home"])>.side>.brand .brand-text{display:block!important}
   body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium .obraativa-home-brandline{display:none!important}
   body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child{grid-template-columns:minmax(0,1fr)}
   body.responsive-v3-landscape-phone #app:not(.public-app) #view[data-landscape-page="home"] .obraativa-home-premium>.home-operational-head>div:first-child>:not(.obraativa-home-brandline){grid-column:1}

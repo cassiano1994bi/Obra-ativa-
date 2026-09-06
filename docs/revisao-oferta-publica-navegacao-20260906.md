@@ -32,7 +32,25 @@ Testes locais, em navegador isolado, armazenamento em memória, dados exclusivam
 3. **Espaço e sobreposição:** em celular horizontal, a bolha da IA pode ficar sobre controles no canto inferior direito (observado junto aos controles do Administrador e da Escala). Convém reservar espaço ou revisar a posição inicial, mantendo a IA e os botões.
 4. **Sugestão de densidade:** cabeçalho, aviso de teste e título do módulo consomem bastante altura nas telas internas. Compactar sua apresentação pode expor mais conteúdo sem remover o aviso nem alterar a assinatura.
 
-Esses pontos NÃO foram alterados: a autorização desta publicação é para a oferta pública. Não foram exercitadas gravações, exclusões, cobrança real, envio de arquivos ou operação em Android físico; a revisão não equivale a homologação completa de todas as funções.
+Esses quatro pontos NÃO foram alterados. A autorização adicional descrita abaixo é restrita à logo e ao posicionamento do controle de privacidade. Não foram exercitadas gravações, exclusões, cobrança real, envio de arquivos ou operação em Android físico; a revisão não equivale a homologação completa de todas as funções.
+
+## Correção adicional autorizada: logo e privacidade no celular
+
+O proprietário autorizou corrigir e publicar a duplicação da logo e a sobreposição de “Privacidade de uso”, mantendo a logo com o nome ObraAtiva.
+
+- Reprodução isolada: uma configuração fictícia antiga de logo mantinha a imagem original e a marca decorativa simultaneamente visíveis; no celular, uma terceira imagem era inserida no topo. O controle de privacidade aparecia após a atualização periódica dentro da grade de navegação, ocupando o espaço dos atalhos.
+- A barra lateral usa uma única imagem oficial com o nome ObraAtiva. No celular horizontal e no tablet com barra lateral, a imagem redundante do topo deixa de aparecer. O nome também foi mantido na Home horizontal. No celular em retrato, que não exibe a barra lateral, a logo superior permanece.
+- “Privacidade de uso” passa a ter um espaço próprio acima de “Sair da conta”, fora da grade de atalhos e fora do componente que encerra a sessão. No celular em retrato, fica dentro de “Mais”. Abrir a preferência fecha esse menu e leva o painel de escolha à área visível.
+- Permitir ou recusar a medição continua funcionando; a recusa não limita o aplicativo. Nenhuma regra de coleta, consentimento, permissão, assinatura ou encerramento de sessão foi alterada.
+- Cache e versões dos recursos atualizados para entregar a correção também a instalações existentes, sem apagar os dados locais.
+
+### Verificação adicional
+
+- 120 verificações de layout: 12 módulos × cinco tamanhos de tela × duas condições de logo, sempre com dados fictícios e rede externa bloqueada.
+- PC 1440×900, tablet 1024×768, celulares horizontais 844×390 e 667×375, retrato 390×844.
+- Dez fluxos de permitir/recusar a medição, sem encerramento de sessão. Controles de privacidade com altura mínima de 44 px, sem sobreposição aos atalhos nem estouro horizontal da página.
+- Repetidas as 60 aberturas de módulos, 30 aberturas de guias administrativas e seis verificações da oferta pública: nenhum erro de JavaScript nos cenários conferidos.
+- Teste específico: `tests/mobile-brand-privacy-check.mjs`. Capturas e resultados mantidos apenas na área local de revisão; não integram a publicação.
 
 ## Preservação
 

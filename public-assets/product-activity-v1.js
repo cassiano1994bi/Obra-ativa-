@@ -24,7 +24,9 @@
     return response.ok;
   }
   function prompt(force = false) {
-    if (document.getElementById('oaMeasurementChoice') || (!force && choice())) return;
+    const existing = document.getElementById('oaMeasurementChoice');
+    if (existing) { if (force) existing.scrollIntoView({ block: 'center' }); return; }
+    if (!force && choice()) return;
     const host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
       || document.querySelector('.oa-public-footer .oa-public-shell') || document.querySelector('.permission-hub-content')
       || document.querySelector('#view');
@@ -35,6 +37,7 @@
     panel.innerHTML = '<b>Você escolhe sobre a medição de uso</b><p>Podemos medir sua origem de campanha, presença recente, dias, tempo ativo estimado e áreas utilizadas para melhorar o ObraAtiva? Somente o proprietário do produto acessa esses indicadores. Não coletamos senhas, telas nem conteúdo de obras ou conversas. Você pode mudar a escolha em Privacidade de uso. Recusar não limita o aplicativo.</p><div><button type="button" data-measurement="allow">Permitir medição</button><button type="button" data-measurement="deny">Agora não</button></div>';
     host.appendChild(panel);
     panel.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => setChoice(button.dataset.measurement)));
+    if (force) panel.scrollIntoView({ block: 'center' });
   }
   async function setChoice(value) {
     if (!['allow', 'deny'].includes(value)) return;
@@ -46,13 +49,31 @@
     await tick();
   }
   function addPrivacyLink() {
-    const host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
-      || document.querySelector('.oa-public-footer') || document.querySelector('#nav');
-    if (!host || host.querySelector('[data-usage-privacy]')) return;
-    const link = document.createElement('button'); link.type = 'button'; link.dataset.usagePrivacy = '1';
-    link.className = 'oa-usage-privacy'; link.textContent = 'Privacidade de uso'; link.addEventListener('click', () => prompt(true));
-    const logout = host.querySelector('[data-account-signout], .obraativa-sidebar-signout');
-    host.insertBefore(link, logout || null);
+    let host = document.querySelector('#cloudGate .cloud-auth-card, #cloudGate .obraativa-reception-access')
+      || document.querySelector('.oa-public-footer');
+    if (!host) {
+      const side = document.querySelector('#app:not(.public-app) .side');
+      if (!side) return;
+      const rail = window.matchMedia('(min-width:761px), (orientation:landscape) and (max-height:600px) and (max-width:1024px)').matches;
+      const parent = rail ? side : side.querySelector('.nav-extra-scroll');
+      if (!parent) return; // No retrato, o controle fica dentro do menu Mais.
+      host = parent.querySelector(':scope > .oa-usage-privacy-slot');
+      if (!host) {
+        host = document.createElement('div'); host.className = 'oa-usage-privacy-slot';
+        // Separado do rodapé de saída: não herda o evento de encerrar a conta.
+        parent.insertBefore(host, rail ? parent.querySelector('.obraativa-account-session-footer') : null);
+      }
+    }
+    let link = document.querySelector('[data-usage-privacy]');
+    if (!link) {
+      link = document.createElement('button'); link.type = 'button'; link.dataset.usagePrivacy = '1';
+      link.className = 'oa-usage-privacy'; link.textContent = 'Privacidade de uso';
+      link.addEventListener('click', () => {
+        if (link.closest('.nav-extra-scroll')) window.toggleMoreNavigation?.();
+        prompt(true);
+      });
+    }
+    if (link.parentNode !== host) host.appendChild(link);
   }
   async function tick() {
     const now = Date.now(), user = currentUser();
@@ -97,9 +118,11 @@
   for (const event of ['pointerdown', 'keydown', 'scroll']) document.addEventListener(event, () => { lastInput = Date.now(); }, { passive: true, capture: event === 'scroll' });
   document.addEventListener('visibilitychange', () => { lastSample = Date.now(); if (document.visibilityState === 'visible') tick(); });
   document.addEventListener('click', (event) => {
+    window.requestAnimationFrame(addPrivacyLink);
     const link = event.target.closest?.('a[href]');
     if (choice() === 'allow' && link && !link.closest('.oa-creator-credit') && /^(https:\/\/)(wa\.me|api\.whatsapp\.com)\//.test(link.href) && document.querySelector('.oa-public-footer')) campaign('whatsapp').catch(() => {});
   }, { passive: true });
+  window.addEventListener('resize', addPrivacyLink, { passive: true });
   setInterval(tick, 5000);
   tick();
 })();
