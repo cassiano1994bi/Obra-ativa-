@@ -49,6 +49,9 @@ body:has(#cloudGate.obraativa-reception-gate){overflow:hidden;background:var(--o
 #cloudGate .obraativa-reception-access .obraativa-auth-trust{display:none!important}#cloudGate .obraativa-reception-access .cloud-message{margin:12px 0 0;border-color:#ffffff25;background:#0f2331;color:#b9d9e7}#cloudGate .obraativa-reception-access .cloud-message.error{border-color:#ff76854d;background:#2c121a;color:#ffb1b7}#cloudGate .obraativa-reception-access .cloud-message.success{border-color:#52d3794d;background:#0d2518;color:#a6ebba}
 #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps b{color:#eaf5fb}
 #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps span{color:#9db2c0}
+#cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .obraativa-reception-access{justify-content:flex-start}
+#cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .cloud-auth-card{margin:0 auto!important}
+#cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .obraativa-email-confirmation-heading h1{text-align:left}
 .obraativa-reception-support{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(520px,100%);margin:12px auto auto}.obraativa-reception-support article{display:flex;align-items:center;gap:11px;min-width:0;padding:11px 12px;border:1px solid #ffffff24;border-radius:12px;background:#091522;color:#eef5fa}.obraativa-reception-support article>span:first-child{flex:none}.obraativa-reception-support article>div{display:grid;gap:3px;min-width:0}.obraativa-reception-support b{font-size:10px}.obraativa-reception-support small{color:#8e9dac;font-size:8px;line-height:1.4}.obraativa-reception-security>span{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#123c24;color:#55e27b;font-size:19px;box-shadow:0 0 18px #20c55c25}.obraativa-reception-phone{position:relative;width:27px;height:43px;border:2px solid #91a4b5;border-radius:7px;background:linear-gradient(160deg,#0e4031,#071422)}.obraativa-reception-phone::after{position:absolute;content:'';inset:6px 3px;background:radial-gradient(circle,#41dd74 0 2px,transparent 3px)}.obraativa-reception-app p{display:flex;flex-wrap:wrap;gap:4px;margin:1px 0 0}.obraativa-reception-app p span{padding:3px 5px;border:1px solid #ffffff20;border-radius:5px;color:#aab7c4;font-size:6px}
 .obraativa-auth-step{background:#123922!important;color:#72ec94!important}.obraativa-auth-optional{border-color:#ffffff25!important;background:#0b1724!important}.obraativa-auth-optional summary{color:#d2dde6!important}.obraativa-auth-optional-grid{padding-top:8px}.obraativa-password-strength{color:#97a9b7}.obraativa-password-meter{background:#ffffff17}.obraativa-password-strength>b{color:#bdc8d1}.obraativa-password-strength li{color:#8899a6}.obraativa-password-strength li.done{color:#5ce080}
 #cloudGate.obraativa-reception-loading{background:radial-gradient(circle at 50% 40%,#25c95a22,transparent 34%),#020b13!important}#cloudGate.obraativa-reception-loading .cloud-loading{border-color:#4cdf7552;background:#07131ff2}
@@ -108,5 +111,14 @@ body:has(#cloudGate.obraativa-reception-gate){overflow:hidden;background:var(--o
   #cloudGate .obraativa-reception-shell[data-reception-mode="signup"] .obraativa-access-choices>[data-access-mode]{min-height:44px!important;padding:6px!important}
   #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps b{color:#173f55}
   #cloudGate .obraativa-reception-access .obraativa-email-confirmation-steps span{color:#617581}
+}
+/* Depois do cadastro, a confirmação é a única prioridade no celular. A área
+   comercial sai desta etapa para o título e as instruções abrirem no topo. */
+@media(max-width:760px){
+  #cloudGate.obraativa-reception-gate:has(.obraativa-reception-shell[data-reception-mode="confirmation"]){padding:0!important;overflow:hidden!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"]{grid-template-columns:1fr!important;width:100%;height:100dvh;min-height:0;overflow:hidden;border:0;border-radius:0}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .obraativa-reception-story{display:none!important}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .obraativa-reception-access{min-height:0;padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));overflow:auto}
+  #cloudGate .obraativa-reception-shell[data-reception-mode="confirmation"] .cloud-auth-card{width:min(620px,100%)!important}
 }
 @media(prefers-reduced-motion:reduce){.obraativa-reception-shell *{scroll-behavior:auto!important;transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}}

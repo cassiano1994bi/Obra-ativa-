@@ -47,9 +47,10 @@
     gate.innerHTML = `<section class="cloud-auth-card" style="position:relative">
       <button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>
       <div class="top-brand"><span>✓ CONTA CRIADA COM SUCESSO</span><strong>CONTROLE DE OBRA</strong></div>
-      <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
-      <span class="obraativa-auth-step">AÇÃO OBRIGATÓRIA PARA ENTRAR</span>
-      <h1>Abra seu e-mail agora</h1>
+      <div class="obraativa-email-confirmation-heading">
+        <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
+        <div><span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span><h1>Conta criada — verifique seu e-mail</h1></div>
+      </div>
       <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Sem essa confirmação, o aplicativo ainda não libera o primeiro acesso.</p>
       <div class="obraativa-email-confirmation-address"><small>Abra o Gmail, Outlook ou outro aplicativo deste e-mail</small><b>${safeEmail}</b></div>
       <ol class="obraativa-email-confirmation-steps">
@@ -61,7 +62,14 @@
       <button type="button" class="btn obraativa-auth-primary obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei no e-mail — entrar</button>
       <button type="button" class="cloud-link obraativa-email-confirmation-change" onclick="CloudSync.showAuth('signup')">Digitou outro e-mail? Voltar e corrigir</button>
     </section>`;
+    const resetConfirmationScroll = () => {
+      gate.scrollTop = 0;
+      gate.querySelectorAll('.obraativa-reception-access, .cloud-auth-card').forEach((element) => { element.scrollTop = 0; });
+    };
+    resetConfirmationScroll();
     schedule();
+    const frame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
+    frame(() => frame(resetConfirmationScroll));
   }
 
   function passwordToggleMarkup(visible) {
@@ -72,7 +80,7 @@
 
   function authMode(card) {
     const title = String($('h1', card)?.textContent || '').toLocaleLowerCase('pt-BR');
-    if (title.includes('confirme seu e-mail') || title.includes('abra seu e-mail agora')) return 'confirmation';
+    if (title.includes('confirme seu e-mail') || title.includes('verifique seu e-mail') || title.includes('abra seu e-mail agora')) return 'confirmation';
     if (title.includes('criar acesso')) return 'signup';
     if (title.includes('entrar')) return 'signin';
     if (title.includes('recuperar senha')) return 'recovery';
