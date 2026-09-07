@@ -1,0 +1,431 @@
+/*
+ * ObraAtiva Design System v1
+ * Camada exclusivamente visual para o aplicativo autenticado.
+ * Não altera conteúdo, dados, cálculos, permissões ou navegação.
+ */
+:root {
+  --oa-font-family: "Segoe UI Variable", "Segoe UI", Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --oa-type-page: 24px;
+  --oa-type-section: 18px;
+  --oa-type-card: 16px;
+  --oa-type-body: 14px;
+  --oa-type-control: 14px;
+  --oa-type-secondary: 12px;
+  --oa-type-value: 24px;
+  --oa-type-value-secondary: 16px;
+  --oa-navy-950: #061522;
+  --oa-navy-900: #09283a;
+  --oa-navy-800: #113b52;
+  --oa-green-700: #0f6e42;
+  --oa-green-600: #16824d;
+  --oa-blue-700: #145da0;
+  --oa-text: #102f43;
+  --oa-text-muted: #5d7181;
+  --oa-surface: #ffffff;
+  --oa-surface-soft: #f5f8fa;
+  --oa-line: #d8e3e8;
+  --oa-card-radius: 14px;
+  --oa-control-radius: 10px;
+  --oa-card-shadow: 0 7px 20px rgba(9, 40, 58, .07);
+  --oa-card-shadow-hover: 0 12px 28px rgba(9, 40, 58, .12);
+  --oa-status-green-bg: #e4f5eb;
+  --oa-status-green-fg: #0c6238;
+  --oa-status-green-line: #a9ddbd;
+  --oa-status-blue-bg: #e7f1ff;
+  --oa-status-blue-fg: #145a9c;
+  --oa-status-blue-line: #b8d5f5;
+  --oa-status-yellow-bg: #fff8dc;
+  --oa-status-yellow-fg: #725500;
+  --oa-status-yellow-line: #ead994;
+  --oa-status-orange-bg: #fff0df;
+  --oa-status-orange-fg: #914b0b;
+  --oa-status-orange-line: #efc08d;
+  --oa-status-red-bg: #fde9e9;
+  --oa-status-red-fg: #9c2525;
+  --oa-status-red-line: #efb6b6;
+  --oa-status-gray-bg: #edf1f4;
+  --oa-status-gray-fg: #4a5c69;
+  --oa-status-gray-line: #cbd5db;
+}
+
+html body #app#app:not(.public-app),
+html body:not(.public-mode):not(.auth-mode) #modal {
+  color: var(--oa-text);
+  font-family: var(--oa-font-family);
+  font-size: var(--oa-type-body);
+  line-height: 1.45;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+html body #app#app:not(.public-app) #view h1,
+html body #app#app:not(.public-app) #view .page-title,
+html body #app#app:not(.public-app) #view .site-management-hero h1,
+html body #app#app:not(.public-app) #view .my-site-hero h1,
+html body #app#app:not(.public-app) #view .co-budget-head h1,
+html body #app#app:not(.public-app) #view .owner-center-hero h1 {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-page) !important;
+  font-weight: 650 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.025em !important;
+}
+
+html body #app#app:not(.public-app) #view h2,
+html body #app#app:not(.public-app) #view .section-head h2,
+html body #app#app:not(.public-app) #view .finance-section-head h2,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog h2 {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-section) !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -.015em !important;
+}
+
+html body #app#app:not(.public-app) #view h3,
+html body #app#app:not(.public-app) #view h4,
+html body #app#app:not(.public-app) #view .card-title,
+html body #app#app:not(.public-app) #view .finance-work-title b,
+html body #app#app:not(.public-app) #view .obraativa-work-copy b,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog h3 {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-card) !important;
+  font-weight: 650 !important;
+  line-height: 1.3 !important;
+}
+
+html body #app#app:not(.public-app) #view p,
+html body #app#app:not(.public-app) #view li,
+html body #app#app:not(.public-app) #view td,
+html body #app#app:not(.public-app) #view .sub,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog p,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog li {
+  font-size: var(--oa-type-body);
+  line-height: 1.5;
+}
+
+html body #app#app:not(.public-app) #view small,
+html body #app#app:not(.public-app) #view .muted,
+html body #app#app:not(.public-app) #view .help,
+html body #app#app:not(.public-app) #view .hint,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog small {
+  font-size: var(--oa-type-secondary);
+  line-height: 1.4;
+}
+
+html body #app#app:not(.public-app) #view button,
+html body #app#app:not(.public-app) #view .btn,
+html body #app#app:not(.public-app) #view input,
+html body #app#app:not(.public-app) #view select,
+html body #app#app:not(.public-app) #view textarea,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog button,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog input,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog select,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog textarea {
+  font-family: var(--oa-font-family);
+  font-size: var(--oa-type-control);
+  font-weight: 600;
+}
+
+html body #app#app:not(.public-app) #view .btn,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn {
+  min-height: 42px;
+  padding: 9px 14px;
+  border-radius: var(--oa-control-radius);
+  box-shadow: none;
+  line-height: 1.25;
+}
+
+html body #app#app:not(.public-app) #view .btn:not(.alt):not(.danger),
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn:not(.alt):not(.danger) {
+  border-color: var(--oa-green-700);
+  background: var(--oa-green-700);
+  color: #fff;
+}
+
+html body #app#app:not(.public-app) #view .btn.alt,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn.alt {
+  border-color: #bfcfd7;
+  background: #fff;
+  color: var(--oa-navy-800);
+}
+
+html body #app#app:not(.public-app) #view .btn.danger,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn.danger {
+  border-color: #b93838;
+  background: #fff;
+  color: #a52626;
+}
+
+html body #app#app:not(.public-app) #view .btn.sm,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn.sm {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: 13px;
+}
+
+html body #app#app:not(.public-app) #view input:not([type="checkbox"]):not([type="radio"]),
+html body #app#app:not(.public-app) #view select,
+html body #app#app:not(.public-app) #view textarea,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog input:not([type="checkbox"]):not([type="radio"]),
+html body:not(.public-mode):not(.auth-mode) #modal .dialog select,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog textarea {
+  min-height: 42px;
+  border-color: #c8d6dd;
+  border-radius: var(--oa-control-radius);
+  color: var(--oa-text);
+}
+
+html body #app#app:not(.public-app) #view .card,
+html body #app#app:not(.public-app) #view .internal-work-card,
+html body #app#app:not(.public-app) #view .obraativa-panel,
+html body #app#app:not(.public-app) #view .home-insight-panel,
+html body #app#app:not(.public-app) #view .home-weather-card,
+html body #app#app:not(.public-app) #view .permission-hub-card,
+html body #app#app:not(.public-app) #view .permission-hub-stat,
+html body #app#app:not(.public-app) #view .finance-executive-summary,
+html body #app#app:not(.public-app) #view .finance-payment-summary,
+html body #app#app:not(.public-app) #view .finance-payment-center-nav,
+html body #app#app:not(.public-app) #view .finance-work-card,
+html body #app#app:not(.public-app) #view .finance-summary-card,
+html body #app#app:not(.public-app) #view .routine-item,
+html body #app#app:not(.public-app) #view .site-manager-card,
+html body #app#app:not(.public-app) #view .site-manager-row,
+html body #app#app:not(.public-app) #view .work-update-card,
+html body #app#app:not(.public-app) #view .work-phase-row,
+html body #app#app:not(.public-app) #view .co-budget-card,
+html body #app#app:not(.public-app) #view .co-budget-metric,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog {
+  border: 1px solid var(--oa-line);
+  border-radius: var(--oa-card-radius);
+  background: var(--oa-surface);
+  box-shadow: var(--oa-card-shadow);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  html body #app#app:not(.public-app) #view .card:hover,
+  html body #app#app:not(.public-app) #view .internal-work-card:hover,
+  html body #app#app:not(.public-app) #view .finance-work-card:hover,
+  html body #app#app:not(.public-app) #view .site-manager-card:hover {
+    border-color: #b9ccd4;
+    box-shadow: var(--oa-card-shadow-hover);
+  }
+}
+
+html body #app#app:not(.public-app) #view table,
+html body #app#app:not(.public-app) #view .table {
+  color: var(--oa-text);
+  font-size: var(--oa-type-body);
+  font-variant-numeric: tabular-nums;
+}
+
+html body #app#app:not(.public-app) #view th,
+html body #app#app:not(.public-app) #view .phead {
+  color: var(--oa-text-muted);
+  font-size: var(--oa-type-secondary) !important;
+  font-weight: 650 !important;
+  letter-spacing: .035em;
+}
+
+html body #app#app:not(.public-app) #view .num,
+html body #app#app:not(.public-app) #view [data-money],
+html body #app#app:not(.public-app) #view .oa-numeric,
+html body #app#app:not(.public-app) #view .finance-work-amounts b,
+html body #app#app:not(.public-app) #view .finance-expense-card strong,
+html body #app#app:not(.public-app) #view .co-budget-value,
+html body #app#app:not(.public-app) #view .co-budget-metric strong {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.015em;
+}
+
+html body #app#app:not(.public-app) #view .metric strong,
+html body #app#app:not(.public-app) #view .obraativa-metric strong,
+html body #app#app:not(.public-app) #view .finance-summary-card strong,
+html body #app#app:not(.public-app) #view .finance-hero-balance strong,
+html body #app#app:not(.public-app) #view .permission-hub-stat strong,
+html body #app#app:not(.public-app) #view .co-budget-metric strong {
+  font-size: var(--oa-type-value) !important;
+  font-weight: 750 !important;
+  line-height: 1.15 !important;
+}
+
+html body #app#app:not(.public-app) #view .finance-work-amounts b,
+html body #app#app:not(.public-app) #view .finance-expense-card strong,
+html body #app#app:not(.public-app) #view .work-tracker-summary strong,
+html body #app#app:not(.public-app) #view .co-dist-card strong {
+  font-size: var(--oa-type-value-secondary) !important;
+  font-weight: 650 !important;
+}
+
+html body #app#app:not(.public-app) #view .oa-status-token,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .oa-status-token {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 27px;
+  padding: 4px 9px !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px !important;
+  font-size: var(--oa-type-secondary) !important;
+  font-weight: 650 !important;
+  line-height: 1.2 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+}
+
+html body #app#app:not(.public-app) #view .oa-status-token::before,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog .oa-status-token::before {
+  content: attr(data-oa-status-icon);
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+html body #app#app:not(.public-app) #view [data-oa-status-tone="green"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="green"] { background:var(--oa-status-green-bg)!important;color:var(--oa-status-green-fg)!important;border-color:var(--oa-status-green-line)!important; }
+html body #app#app:not(.public-app) #view [data-oa-status-tone="blue"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="blue"] { background:var(--oa-status-blue-bg)!important;color:var(--oa-status-blue-fg)!important;border-color:var(--oa-status-blue-line)!important; }
+html body #app#app:not(.public-app) #view [data-oa-status-tone="yellow"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="yellow"] { background:var(--oa-status-yellow-bg)!important;color:var(--oa-status-yellow-fg)!important;border-color:var(--oa-status-yellow-line)!important; }
+html body #app#app:not(.public-app) #view [data-oa-status-tone="orange"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="orange"] { background:var(--oa-status-orange-bg)!important;color:var(--oa-status-orange-fg)!important;border-color:var(--oa-status-orange-line)!important; }
+html body #app#app:not(.public-app) #view [data-oa-status-tone="red"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="red"] { background:var(--oa-status-red-bg)!important;color:var(--oa-status-red-fg)!important;border-color:var(--oa-status-red-line)!important; }
+html body #app#app:not(.public-app) #view [data-oa-status-tone="gray"],
+html body:not(.public-mode):not(.auth-mode) #modal .dialog [data-oa-status-tone="gray"] { background:var(--oa-status-gray-bg)!important;color:var(--oa-status-gray-fg)!important;border-color:var(--oa-status-gray-line)!important; }
+
+html body #app#app:not(.public-app) #view .obraativa-progress,
+html body #app#app:not(.public-app) #view .work-progress,
+html body #app#app:not(.public-app) #view .finance-work-progress,
+html body #app#app:not(.public-app) #view .attendance-progress,
+html body #app#app:not(.public-app) #view .permission-hub-progress {
+  height: 8px !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #dfe7eb !important;
+  box-shadow: inset 0 1px 2px rgba(9,40,58,.08);
+}
+
+html body #app#app:not(.public-app) #view [data-oa-progress-tone] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone] > div {
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: var(--oa-blue-700) !important;
+}
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="green"] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="green"] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="green"] > div { background:var(--oa-green-600)!important; }
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="yellow"] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="yellow"] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="yellow"] > div { background:#b98500!important; }
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="orange"] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="orange"] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="orange"] > div { background:#c36817!important; }
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="red"] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="red"] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="red"] > div { background:#bc3c3c!important; }
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="gray"] > i,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="gray"] > span,
+html body #app#app:not(.public-app) #view [data-oa-progress-tone="gray"] > div { background:#7c8c97!important; }
+
+html body #app#app:not(.public-app) #view#view .oa-design-card {
+  border: 1px solid var(--oa-line) !important;
+  border-radius: var(--oa-card-radius) !important;
+  box-shadow: var(--oa-card-shadow) !important;
+}
+
+html body #app#app:not(.public-app) #view :is(button,a,input,select,textarea,summary):focus-visible,
+html body:not(.public-mode):not(.auth-mode) #modal .dialog :is(button,a,input,select,textarea,summary):focus-visible {
+  outline: 3px solid rgba(20,93,160,.32) !important;
+  outline-offset: 2px !important;
+}
+
+/* Autoridade tipográfica: supera as regras legadas injetadas depois do carregamento. */
+html body #app#app:not(.public-app) #view#view :is(h1,.page-title,.site-management-hero h1,.my-site-hero h1,.co-budget-head h1,.owner-center-hero h1) {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-page) !important;
+  font-weight: 650 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.025em !important;
+}
+html body #app#app:not(.public-app) #view#view :is(h2,.section-head h2,.finance-section-head h2),
+html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog h2 {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-section) !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+}
+html body #app#app:not(.public-app) #view#view :is(h3,h4,.card-title,.finance-work-title b,.obraativa-work-copy b),
+html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog h3 {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-card) !important;
+  font-weight: 650 !important;
+  line-height: 1.3 !important;
+}
+html body #app#app:not(.public-app) #view#view :is(p,li,td,.sub),
+html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog :is(p,li) {
+  font-size: var(--oa-type-body) !important;
+  line-height: 1.5 !important;
+}
+html body #app#app:not(.public-app) #view#view :is(small,.muted,.help,.hint),
+html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog small {
+  font-size: var(--oa-type-secondary) !important;
+  line-height: 1.4 !important;
+}
+html body #app#app:not(.public-app) #view#view :is(button,.btn,input,select,textarea),
+html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog :is(button,.btn,input,select,textarea) {
+  font-family: var(--oa-font-family) !important;
+  font-size: var(--oa-type-control) !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --oa-type-page: 22px;
+    --oa-type-section: 17px;
+    --oa-type-card: 15px;
+    --oa-type-body: 13px;
+    --oa-type-control: 13px;
+    --oa-type-secondary: 11.5px;
+    --oa-type-value: 20px;
+    --oa-type-value-secondary: 15px;
+    --oa-card-radius: 12px;
+  }
+  html body #app#app:not(.public-app) #view .btn,
+  html body #app#app:not(.public-app) #view .btn.sm,
+  html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn,
+  html body:not(.public-mode):not(.auth-mode) #modal .dialog .btn.sm {
+    min-height: 42px;
+    padding: 8px 11px;
+    font-size: var(--oa-type-control);
+  }
+  html body #app#app:not(.public-app) #view .oa-status-token,
+  html body:not(.public-mode):not(.auth-mode) #modal .dialog .oa-status-token {
+    min-height: 26px;
+    padding: 4px 8px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --oa-type-page: 21px;
+    --oa-type-section: 16px;
+    --oa-type-body: 12.5px;
+    --oa-type-control: 12.5px;
+    --oa-type-secondary: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body #app#app:not(.public-app) #view *,
+  html body:not(.public-mode):not(.auth-mode) #modal .dialog * {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}

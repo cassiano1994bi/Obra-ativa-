@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v59';
+const CACHE_VERSION = 'v60';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -16,6 +16,8 @@ const CORE_ASSETS = [
   '/public-assets/obraativa-visual-v1.css',
   '/public-assets/obraativa-home-premium-v2.css',
   '/public-assets/obraativa-workspace-premium-v1.css',
+  '/public-assets/obraativa-design-system-v1.css',
+  '/public-assets/obraativa-design-system-v1.js',
   '/public-assets/obraativa-billing-v1.css',
   '/public-assets/obraativa-billing-v1.js',
   '/public-assets/obraativa-home-v1.js',
@@ -111,6 +113,8 @@ const NETWORK_FIRST_ASSETS = new Set([
   '/public-assets/work-schedule-v1.css',
   '/public-assets/work-phase-density-v1.css',
   '/public-assets/obraativa-workspace-premium-v1.css',
+  '/public-assets/obraativa-design-system-v1.css',
+  '/public-assets/obraativa-design-system-v1.js',
   '/public-assets/responsive-ui-v3.js',
   '/public-assets/landscape-density-v1.js'
 ]);
