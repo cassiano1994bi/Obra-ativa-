@@ -3,13 +3,20 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 const code = fs.readFileSync(new URL('../public-assets/product-activity-v1.js', import.meta.url), 'utf8');
-async function fixture(permit = null, unavailable = false) {
+async function fixture(permit = null, unavailable = false, signedIn = true) {
   let time = new Date('2032-04-10T12:00:00Z').getTime(), focused = true, tick;
-  const calls = [], handlers = {}, storage = new Map();
-  if (permit) storage.set('oa-optional-measurement-v1:USUARIO_FICTICIO', permit);
+  const calls = [], handlers = {}, scripts = [], storage = new Map();
+  if (permit) {
+    storage.set('oa-optional-measurement-v1:USUARIO_FICTICIO', permit);
+    if (!signedIn) storage.set('oa-optional-measurement-v1:device-allowed', permit);
+  }
   class FakeDate extends Date { constructor(...args) { super(...(args.length ? args : [time])); } static now() { return time; } }
-  const doc = { visibilityState: 'visible', hasFocus: () => focused, querySelector: () => null, getElementById: () => null, addEventListener: (name, handler) => { handlers[name] = handler; } };
-  const cloud = { session: { user: { id: 'USUARIO_FICTICIO' }, access_token: 'TOKEN_FICTICIO' }, ready: true };
+  const scriptAnchor = { parentNode: { insertBefore: (script) => scripts.push(script) } };
+  const doc = { visibilityState: 'visible', hasFocus: () => focused, querySelector: () => null, getElementById: () => null,
+    body: { classList: { contains: () => false } }, head: { appendChild: (script) => scripts.push(script) },
+    createElement: (tagName) => ({ tagName }), getElementsByTagName: (tagName) => tagName === 'script' ? [scriptAnchor] : [],
+    addEventListener: (name, handler) => { handlers[name] = handler; } };
+  const cloud = { session: signedIn ? { user: { id: 'USUARIO_FICTICIO' }, access_token: 'TOKEN_FICTICIO' } : null, ready: true };
   const sandbox = { window: null, Date: FakeDate, document: doc, CloudSync: cloud, CLOUD_CONFIG: { url: 'https://qa.example.invalid', anonKey: 'PUBLIC_FICTICIO' }, page: 'works', crypto: { randomUUID: () => '30000000-0000-4000-8000-000000000001' },
     localStorage: { getItem: (key) => storage.get(key), setItem: (key, value) => storage.set(key, value) }, URLSearchParams,
     location: { search: '' }, AbortSignal, setInterval: (fn) => { tick = fn; },
@@ -17,7 +24,7 @@ async function fixture(permit = null, unavailable = false) {
     fetch: async (url, options) => { calls.push({ url, args: JSON.parse(options.body), options }); return { ok: !unavailable, json: async () => url.endsWith('preference') ? { enabled: true } : true }; } };
   sandbox.window = sandbox; vm.runInNewContext(code, sandbox);
   await new Promise((resolve) => setImmediate(resolve));
-  return { calls, doc, cloud, storage, sandbox, input: () => handlers.pointerdown(), focus: (value) => { focused = value; }, advance: async (ms = 5000) => { time += ms; await tick(); } };
+  return { calls, doc, cloud, scripts, storage, sandbox, input: () => handlers.pointerdown(), focus: (value) => { focused = value; }, advance: async (ms = 5000) => { time += ms; await tick(); } };
 }
 test('não mede antes de escolher e não altera a autenticação', async () => {
   const f = await fixture(); await f.advance(60000);
@@ -46,4 +53,21 @@ test('erros da medição usam espera progressiva e nunca encerram a sessão', as
   const f = await fixture('allow', true), count = f.calls.length;
   for (let i = 0; i < 12; i++) await f.advance();
   assert.equal(f.calls.length, count); assert.equal(f.cloud.ready, true); assert.ok(f.cloud.session);
+});
+test('Pixel da Meta registra PageView somente após autorização e apenas na entrada pública', async () => {
+  const withoutConsent = await fixture(null, false, false);
+  assert.equal(withoutConsent.scripts.length, 0);
+  assert.equal(withoutConsent.sandbox.fbq, undefined);
+
+  const publicAllowed = await fixture('allow', false, false);
+  assert.equal(publicAllowed.scripts.length, 1);
+  assert.equal(publicAllowed.scripts[0].src, 'https://connect.facebook.net/en_US/fbevents.js');
+  assert.deepEqual(Array.from(publicAllowed.sandbox.fbq.queue, (entry) => Array.from(entry)), [
+    ['init', '1591172095715887'],
+    ['track', 'PageView']
+  ]);
+
+  const signedIn = await fixture('allow');
+  assert.equal(signedIn.scripts.length, 0);
+  assert.equal(signedIn.sandbox.fbq, undefined);
 });

@@ -29,7 +29,7 @@ test('design system global: tokens, semântica, isolamento e segurança', async 
   assert.doesNotMatch(js,/\bfetch\s*\(|localStorage|sessionStorage|CloudSync|\bdb\b|innerHTML\s*=|textContent\s*=/);
   assert.ok(html.includes(cssAsset));
   assert.ok(html.includes(jsAsset));
-  assert.match(worker,/CACHE_VERSION = 'v60'/);
+  assert.match(worker,/CACHE_VERSION = 'v61'/);
   assert.ok(worker.includes('/'+cssAsset));
   assert.ok(worker.includes('/'+jsAsset));
   const manifest=JSON.parse(manifestText);

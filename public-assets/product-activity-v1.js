@@ -2,9 +2,12 @@
   'use strict';
   const KEY = 'oa-optional-measurement-v1:';
   const DEVICE_ALLOW_KEY = KEY + 'device-allowed';
+  const META_PIXEL_ID = '1591172095715887';
+  const META_PIXEL_URL = 'https://connect.facebook.net/en_US/fbevents.js';
   const MODULES = new Set(['home', 'works', 'planning', 'team', 'attendance', 'payments', 'financial', 'vehicles', 'reports', 'assistant', 'permissions', 'reminders', 'budgets']);
   let identity = '', session = '', lastInput = Date.now(), lastSample = Date.now(), seconds = 0;
   let lastSend = 0, retryAt = 0, linkRetryAt = 0, configured = false, enabled = false, busy = false, linked = false, publicSent = false, dismissed = false;
+  let metaPixelStarted = false;
   const currentUser = () => window.CloudSync?.session?.user?.id || 'visitor';
   const signedInApp = () => Boolean(window.CloudSync?.session?.user?.id
     && !document.body?.classList?.contains?.('auth-mode') && !document.body?.classList?.contains?.('public-mode'));
@@ -22,6 +25,32 @@
     return false;
   };
   const choice = () => deviceAllowed() ? 'allow' : dismissed ? 'deny' : null;
+  function startMetaPixel() {
+    if (metaPixelStarted || choice() !== 'allow' || signedInApp()) return;
+    metaPixelStarted = true;
+    if (typeof window.fbq !== 'function') {
+      const fbq = window.fbq = function(...args) {
+        if (fbq.callMethod) fbq.callMethod(...args);
+        else fbq.queue.push(args);
+      };
+      if (!window._fbq) window._fbq = fbq;
+      fbq.push = fbq;
+      fbq.loaded = true;
+      fbq.version = '2.0';
+      fbq.queue = [];
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = META_PIXEL_URL;
+      const firstScript = document.getElementsByTagName('script')[0];
+      if (firstScript?.parentNode) firstScript.parentNode.insertBefore(script, firstScript);
+      else document.head?.appendChild(script);
+    }
+    window.fbq('init', META_PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+  function revokeMetaPixel() {
+    if (typeof window.fbq === 'function') window.fbq('consent', 'revoke');
+  }
   const token = () => window.CloudSync?.session?.access_token;
   const moduleName = () => { const value = typeof page !== 'undefined' ? page : 'home'; return MODULES.has(value) ? value : 'home'; };
   async function rpc(name, args, keepalive = false) {
@@ -49,7 +78,7 @@
     const panel = document.createElement('aside');
     panel.id = 'oaMeasurementChoice'; panel.className = 'oa-measurement-choice';
     panel.setAttribute('aria-label', 'Medição opcional de uso');
-    panel.innerHTML = '<b>Você escolhe sobre a medição de uso</b><p>Podemos medir sua origem de campanha, presença recente, dias, tempo ativo estimado e áreas utilizadas para melhorar o ObraAtiva? Somente o proprietário do produto acessa esses indicadores. Não coletamos senhas, telas nem conteúdo de obras ou conversas. Você pode mudar a escolha em Privacidade de uso. Recusar não limita o aplicativo.</p><div><button type="button" data-measurement="allow">Permitir medição</button><button type="button" data-measurement="deny">Agora não</button></div>';
+    panel.innerHTML = '<b>Você escolhe sobre a medição de uso</b><p>Podemos medir sua origem de campanha, presença recente, dias, tempo ativo estimado e áreas utilizadas para melhorar o ObraAtiva? Quando você permite, o Pixel da Meta também registra a visita para mostrar o resultado dos anúncios no Gerenciador de Anúncios. Não coletamos senhas, telas nem conteúdo de obras ou conversas. Você pode mudar a escolha em Privacidade de uso. Recusar não limita o aplicativo.</p><div><button type="button" data-measurement="allow">Permitir medição</button><button type="button" data-measurement="deny">Agora não</button></div>';
     host.appendChild(panel);
     panel.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => setChoice(button.dataset.measurement)));
     if (force) panel.scrollIntoView({ block: 'center' });
@@ -70,7 +99,10 @@
     configured = false; enabled = false; retryAt = 0; seconds = 0; linked = false; linkRetryAt = 0; publicSent = false;
     session = window.crypto?.randomUUID?.() || ''; lastSend = 0;
     document.getElementById('oaMeasurementChoice')?.remove();
-    if (value === 'deny') campaign('forget').catch(() => {});
+    if (value === 'deny') {
+      revokeMetaPixel();
+      campaign('forget').catch(() => {});
+    }
     await tick();
   }
   function addPrivacyLink() {
@@ -105,6 +137,7 @@
       document.getElementById('oaMeasurementChoice')?.remove();
     }
     addPrivacyLink(); prompt();
+    startMetaPixel();
     const active = document.visibilityState === 'visible' && document.hasFocus() && now - lastInput < 60000;
     if (choice() === 'allow' && active && configured && enabled && window.CloudSync?.ready) seconds = Math.min(60, seconds + Math.min(5, Math.max(0, (now - lastSample) / 1000)));
     lastSample = now;

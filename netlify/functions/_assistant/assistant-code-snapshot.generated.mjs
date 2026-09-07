@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-07T03:34:40.744Z",
-  "codeHash": "17440d02a955aa72ac653ca7b9a10d308490185b2477bc90cc8e959ba950b382",
+  "generatedAt": "2026-09-07T04:45:43.864Z",
+  "codeHash": "a90e319f0a3798c4f01ff481df0e39923dfd85f0f7475e8d222d5d79e16250ec",
   "coverage": {
     "included": [
       "aplicação web",
@@ -28,8 +28,8 @@ export default Object.freeze({
   },
   "summary": {
     "fileCount": 153,
-    "totalBytes": 5399907,
-    "totalLines": 26575,
+    "totalBytes": 5401178,
+    "totalLines": 26608,
     "findingCount": 194,
     "severityCounts": {
       "critical": 0,
@@ -232,7 +232,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 1187322,
       "lines": 3144,
-      "sha256": "444c2bf8e44b64e2899160d436bf6e71e986abafa3a7d4842ea15bf4fec69f08",
+      "sha256": "237d4482d2b7001d56963fd793e2618f850f8ae3477de4f36e68b88e3b82cb70",
       "functions": 832,
       "fetches": 2,
       "domWrites": 257,
@@ -1264,10 +1264,10 @@ export default Object.freeze({
     {
       "path": "public-assets/product-activity-v1.js",
       "scope": "application",
-      "bytes": 10140,
-      "lines": 157,
-      "sha256": "983c0dbcf1bbd9cfdb3919022491625a6b5db14f9bd5b577797f33a33d47ff11",
-      "functions": 7,
+      "bytes": 11411,
+      "lines": 190,
+      "sha256": "b3416749346f5f2116d20c53873f833c7ed96572eca1a2870413c6379fb8df29",
+      "functions": 9,
       "fetches": 2,
       "domWrites": 1,
       "inlineHandlers": 0
@@ -1563,7 +1563,7 @@ export default Object.freeze({
       "scope": "application",
       "bytes": 9322,
       "lines": 232,
-      "sha256": "8fcce292f9570fc5374f7f2fb62730b6f3e007eecf9e4906faaca419e40205b8",
+      "sha256": "75c4e3b0f5a76d458a4f39bac3d6a9172b05701c2b6991b8775df4dd71fefe9d",
       "functions": 6,
       "fetches": 3,
       "domWrites": 0,
@@ -2176,7 +2176,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-676F1E5A1A5E",
+      "id": "QF-8CCD632956FC",
       "recurrenceKey": "d963fbbd056f6f47cbed252c",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -2186,7 +2186,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "public-assets/product-activity-v1.js",
-      "line": 12,
+      "line": 15,
       "evidence": "catch {}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2194,7 +2194,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-8ED42B097DA8",
+      "id": "QF-E1E3DCA09D22",
       "recurrenceKey": "c75ce50438c9b4640981cb23",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -2204,7 +2204,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "public-assets/product-activity-v1.js",
-      "line": 30,
+      "line": 59,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
