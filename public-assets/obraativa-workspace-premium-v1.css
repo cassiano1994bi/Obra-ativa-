@@ -316,6 +316,10 @@ html body #app#app:not(.public-app) #view .obraativa-home-premium :is(.obraativa
 @media (min-width:1181px) {
   html body #app#app:not(.public-app) #view .obraativa-home-premium:has(> .home-insights) > .obraativa-schedule-panel { grid-column: 1 / span 7 !important; align-self: start; }
   html body #app#app:not(.public-app) #view .obraativa-home-premium:has(> .obraativa-schedule-panel) > .home-insights { grid-column: 8 / -1 !important; grid-template-columns: minmax(0,1fr) !important; align-self: start; }
+  /* Sem escala no dia, não deixe a altura dos avisos abrir um vazio na coluna
+     esquerda: a rotina vira uma faixa e os dois resumos ocupam a linha seguinte. */
+  html body #app#app:not(.public-app) #view .obraativa-home-premium > .obraativa-schedule-panel:has(.obraativa-schedule-empty) { grid-column: 1 / -1 !important; }
+  html body #app#app:not(.public-app) #view .obraativa-home-premium > .obraativa-schedule-panel:has(.obraativa-schedule-empty) ~ .home-insights { grid-column: 1 / -1 !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
   html body #app#app:not(.public-app) #view .obraativa-schedule-row { grid-template-columns: 42px minmax(0,1fr) 80px !important; gap: 8px 12px; }
   html body #app#app:not(.public-app) #view .obraativa-schedule-lead { grid-column: 2 / -1; display: flex; align-items: baseline; gap: 8px; }
   html body #app#app:not(.public-app) #view .obraativa-schedule-lead small { font-size: 9px !important; }
@@ -470,4 +474,157 @@ body:has(#app:not(.public-app)) .finance-executive-recent .finance-executive-emp
   body:has(#app:not(.public-app)) .finance-executive-metrics article { padding:9px; }
   body:has(#app:not(.public-app)) .finance-executive-metrics b { font-size:15px; }
   body:has(#app:not(.public-app)) .finance-executive-recent { grid-template-columns:1fr; }
+}
+
+/* Correções estritamente visuais para o aplicativo Android em modo horizontal.
+   A classe responsive-landscape-density é aplicada somente em dispositivos móveis
+   ou tablets de toque; computador e demais módulos continuam inalterados. */
+body.responsive-landscape-density #view[data-landscape-page="planning"] .toolbar :is(input[type="date"],select) {
+  min-height:40px !important;
+  height:40px !important;
+  padding:7px 10px !important;
+  font-size:12px !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="planning"] > .card > .section-head > div:last-child {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:6px !important;
+  flex-wrap:wrap !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="planning"] #planCount {
+  margin-right:2px !important;
+  font-size:11px !important;
+  white-space:nowrap !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="planning"] > .card > .section-head .btn {
+  min-height:40px !important;
+  height:40px !important;
+  padding:7px 10px !important;
+  font-size:11px !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="planning"] .wc-phase-select {
+  width:100% !important;
+  max-width:150px !important;
+  min-height:38px !important;
+  height:38px !important;
+  padding:5px 26px 5px 8px !important;
+  font-size:11px !important;
+  line-height:1.2 !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="planning"] table :is(th,td):last-child {
+  width:174px !important;
+}
+
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence {
+  grid-template-columns:minmax(250px,1.35fr) repeat(4,minmax(120px,1fr)) !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div {
+  min-height:70px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:8px !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div:nth-child(5n + 1):not(.phead) {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  grid-template-rows:auto auto !important;
+  align-items:center !important;
+  gap:2px 8px !important;
+  width:100% !important;
+  min-width:0 !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div:nth-child(5n + 1):not(.phead) > br {
+  display:none !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div:nth-child(5n + 1):not(.phead) > b {
+  grid-column:1 !important;
+  grid-row:1 !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div:nth-child(5n + 1):not(.phead) > small {
+  grid-column:1 !important;
+  grid-row:2 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence > div:nth-child(5n + 1):not(.phead) > .btn {
+  grid-column:2 !important;
+  grid-row:1 / 3 !important;
+  align-self:center !important;
+  min-height:40px !important;
+  margin:0 !important;
+  padding:7px 9px !important;
+  font-size:10px !important;
+  white-space:nowrap !important;
+}
+body.responsive-landscape-density #view[data-landscape-page="attendance"] .presence .pchoice {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:40px !important;
+  margin:0 !important;
+  padding:7px 6px !important;
+  font-size:11px !important;
+  white-space:nowrap !important;
+}
+
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table {
+  min-width:980px !important;
+  table-layout:fixed !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td).num {
+  white-space:nowrap !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):first-child {
+  width:255px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):nth-child(2) {
+  width:118px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):nth-child(3) {
+  width:125px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):nth-child(4) {
+  width:120px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):nth-child(5) {
+  width:132px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-table .table :is(th,td):nth-child(6) {
+  width:210px !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-action {
+  min-width:210px !important;
+  white-space:nowrap !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-action .btn {
+  display:inline-flex !important;
+  width:auto !important;
+  min-width:0 !important;
+  min-height:40px !important;
+  margin:0 !important;
+  padding:7px 9px !important;
+  font-size:10px !important;
+  vertical-align:middle !important;
+  white-space:nowrap !important;
+}
+html body.responsive-v3-device.responsive-landscape-density #app:not(.public-app) #view[data-landscape-page="financial"] .finance-clean-action .finance-value-edit-button {
+  margin-left:6px !important;
+}
+
+/* Auditoria Android horizontal: o rótulo administrativo é o único item que
+   ainda chega sem o invólucro dos demais atalhos e não pode ser cortado. */
+html body.responsive-v3-tablet #app#app:not(.public-app) > .side #nav button[onclick*="permissions"],
+html body.responsive-v3-landscape-phone #app#app:not(.public-app) > .side #nav button[onclick*="permissions"] {
+  font-size:9px !important;
+  line-height:1.15 !important;
+  letter-spacing:-.025em !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+  white-space:normal !important;
 }

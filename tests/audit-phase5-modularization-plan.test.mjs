@@ -14,13 +14,13 @@ test('plan inventory matches the current monolith', () => {
   const externalScripts = [...source.matchAll(/<script[^>]+\bsrc\s*=/gi)];
   assert.equal(styles.length, 97);
   assert.equal(inlineScripts.length, 16);
-  assert.equal(externalScripts.length, 47);
-  assert.equal((source.match(/\son[a-z]+=/gi) || []).length, 803);
+  assert.equal(externalScripts.length, 50);
+  assert.equal((source.match(/\son[a-z]+=/gi) || []).length, 798);
   assert.match(plan, /aproximadamente 1,15 MB/i);
   assert.match(plan, /CSS escrito diretamente no cabeçalho: 20 blocos/i);
   assert.match(plan, /CSS adicional criado em tempo de execução: 77 blocos/i);
   assert.match(plan, /15 blocos funcionais e um bloco de abertura/i);
-  assert.match(plan, /Eventos HTML[^\n]+803 ocorrências/i);
+  assert.match(plan, /Eventos HTML[^\n]+798 ocorrências/i);
 });
 
 test('plan protects load order, global handlers, data and rollback', () => {

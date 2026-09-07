@@ -59,7 +59,8 @@ test('Home e módulos: cinco tamanhos, navegação, preferências e sessão fict
         assert.equal(layout.overflow,false,`${device}/${module}: overflow ${layout.scroll}/${layout.width}`);
         if (module==='home') {
           const cards=await page.locator('.home-shortcut:visible').count();
-          assert.equal(cards,4);
+          const cardLabels=await page.locator('.home-shortcut:visible').evaluateAll(elements=>elements.map(element=>element.textContent.replace(/\s+/g,' ').trim()));
+          assert.equal(cards,4,`${device}: quantidade padrão de atalhos (${cardLabels.join(' | ')})`);
           const fits=await page.evaluate(()=>[...document.querySelectorAll('.home-shortcut:not([hidden])')].every(el=>el.scrollWidth<=el.clientWidth+2&&el.scrollHeight<=el.clientHeight+2));
           assert.ok(fits,`${device}: conteúdo do atalho dentro do cartão`);
           const order=await page.locator('.obraativa-home-premium > *').evaluateAll(els=>els.map(el=>el.className));
@@ -75,6 +76,29 @@ test('Home e módulos: cinco tamanhos, navegação, preferências e sessão fict
       }
     }
     await page.setViewportSize({width:1440,height:900});
+    await page.evaluate(()=>{db.distributions=[];db.attendance=[];go('home')});
+    await page.waitForTimeout(100);
+    const emptyHomeLayout=await page.evaluate(()=>{
+      const schedule=document.querySelector('.obraativa-schedule-panel');
+      const insights=document.querySelector('.home-insights');
+      const scheduleRect=schedule.getBoundingClientRect();
+      const insightsRect=insights.getBoundingClientRect();
+      return {
+        scheduleLeft:Math.round(scheduleRect.left),
+        scheduleRight:Math.round(scheduleRect.right),
+        scheduleBottom:Math.round(scheduleRect.bottom),
+        insightsLeft:Math.round(insightsRect.left),
+        insightsRight:Math.round(insightsRect.right),
+        insightsTop:Math.round(insightsRect.top),
+        insightColumns:getComputedStyle(insights).gridTemplateColumns.split(' ').length
+      };
+    });
+    assert.equal(emptyHomeLayout.scheduleLeft,emptyHomeLayout.insightsLeft,'Home vazia alinha rotina e avisos pela esquerda');
+    assert.equal(emptyHomeLayout.scheduleRight,emptyHomeLayout.insightsRight,'Home vazia usa a largura inteira sem buraco lateral');
+    assert.ok(emptyHomeLayout.insightsTop>=emptyHomeLayout.scheduleBottom,'Avisos começam logo abaixo da rotina vazia');
+    assert.equal(emptyHomeLayout.insightColumns,2,'Avisos usam duas colunas na tela grande');
+    await fs.mkdir(path.join(root,'tmp/premium-workspace-qa'),{recursive:true});
+    await page.screenshot({path:path.join(root,'tmp/premium-workspace-qa/home-empty-no-gap.png'),fullPage:true});
     for(const module of ['works','planning','attendance','payments']) {
       await page.evaluate(()=>go('home'));
       await page.locator(`.home-shortcut[onclick="go('${module}')"]`).click();
@@ -146,6 +170,13 @@ test('Home moderna: registros preenchidos, clima completo, números zero e contr
       if(width===1024 || width===844) {
         const heights=await page.locator('.obraativa-metric').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
         assert.ok(heights.every(height=>height<130),'Clima não estica os cartões de indicadores em telas menores');
+      }
+      if(width===1440) {
+        const desktopColumns=await page.evaluate(()=>({
+          schedule:getComputedStyle(document.querySelector('.obraativa-schedule-panel')).gridColumn,
+          insights:getComputedStyle(document.querySelector('.home-insights')).gridColumn
+        }));
+        assert.notEqual(desktopColumns.schedule,desktopColumns.insights,'Home preenchida preserva a divisão operacional em duas colunas');
       }
       if(width===667) {
         const title=page.locator('.home-shortcut').filter({hasText:'Pagamentos'}).locator('b');

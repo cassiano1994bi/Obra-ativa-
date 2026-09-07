@@ -112,6 +112,15 @@
     next.workPhases ??= [];
     let phase = input.id ? find(next, 'workPhases', input.id, ctx) : null;
     if (phase && phase.workId !== workId) fail('A fase não pertence a esta obra.');
+    const parentPhaseId = text(input.parentPhaseId);
+    if (parentPhaseId) {
+      const parent = find(next, 'workPhases', parentPhaseId, ctx);
+      if (parent.workId !== workId) fail('A fase principal não pertence a esta obra.');
+      if (parent.id === phase?.id) fail('Uma etapa não pode ser ligada a ela mesma.');
+      if (parent.parentPhaseId) fail('Para manter simples, use somente um nível de etapas.');
+      if (phase && next.workPhases.some((item) => item.parentPhaseId === phase.id)) fail('Uma fase que já possui etapas não pode virar subetapa.');
+    }
+    data.parentPhaseId = parentPhaseId;
     const before = phase ? copy(phase) : null;
     if (phase) Object.assign(phase, data);
     else { phase = { id: ctx.id(), workId, createdAt: ctx.now, order: list(next.workPhases).filter((p) => p.workId === workId).length + 1, showPublic: false, showOwner: false, ...data }; next.workPhases.push(phase); }

@@ -34,6 +34,9 @@ test('cache is versioned, resilient and excludes private or unsafe requests', ()
   assert.match(swSource, /startsWith\('\/downloads\/'\)/);
   assert.match(swSource, /staleWhileRevalidate/);
   assert.match(swSource, /networkFirstNavigation/);
+  assert.match(swSource, /function assetCacheKey\(url\)[\s\S]*?url\.pathname[\s\S]*?url\.search/);
+  assert.match(swSource, /staleWhileRevalidate\(request, url, event\)[\s\S]*?assetCacheKey\(url\)/);
+  assert.match(swSource, /networkFirstVersionedAsset\(request, url\)[\s\S]*?assetCacheKey\(url\)/);
 });
 
 test('celular busca primeiro a versão atual dos controles de obra', () => {

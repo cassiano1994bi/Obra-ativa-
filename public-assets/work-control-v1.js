@@ -16,7 +16,10 @@
       readOnly: current.role === 'viewer' || current.permissionProfile === 'visualizador' || window.AccessControl?.isReadOnly?.() || window.ObraAtivaBilling?.canWrite() === false || false };
   }
   function editable(area = 'works') { const c = ctx(); return !!(c.companyId && !c.readOnly && c.modules.includes(area)); }
-  function enabled() { const id = ctx().companyId; return !!(id && (window.ObraAtivaWorkSync?.ready(id) || window.ObraAtivaWorkSync?.error(id))); }
+  // A leitura da tela aprimorada não depende da primeira resposta da nuvem.
+  // Assim, uma conexão lenta não faz porcentagens e controles de fase sumirem.
+  // As gravações continuam protegidas por commit(), que exige sync pronto.
+  function enabled() { return !!(ctx().companyId && window.ObraAtivaWorkSync); }
   function ledger() {
     const rows = [];
     if (typeof financeAttendanceLaborRows === 'function') for (const r of financeAttendanceLaborRows()) {
@@ -260,6 +263,27 @@
       commit(next, 'Distribuição em lote salva', workById(planningWorkId)?.name || 'Obra', 'planning'); render();
     } catch (error) { message(error.message, true); }
   };
+  function savePhaseSchedule(workId, phaseId, values = {}) {
+    if (!editable()) throw new Error('Seu perfil permite somente consultar as fases.');
+    const phase = phaseId ? WorkTrackingService.phase(phaseId) : null;
+    if (phaseId && (!phase || phase.workId !== workId)) throw new Error('A fase não foi encontrada nesta obra.');
+    const name = String(values.name ?? phase?.name ?? '').trim();
+    if (!phase && C.list(db.workPhases).some((item) => item.workId === workId && item.parentPhaseId === values.parentPhaseId && String(item.name || '').trim().toLocaleLowerCase('pt-BR') === name.toLocaleLowerCase('pt-BR'))) {
+      throw new Error('Já existe uma etapa com esse nome nesta fase.');
+    }
+    const result = C.savePhase(db, workId, {
+      ...(phase || {}),
+      name,
+      parentPhaseId: values.parentPhaseId ?? phase?.parentPhaseId ?? '',
+      plannedStart: values.plannedStart ?? phase?.plannedStart ?? '',
+      plannedEnd: values.plannedEnd ?? phase?.plannedEnd ?? '',
+      percent: phase?.percent ?? 0,
+      status: phase?.status || 'Programada'
+    }, ctx());
+    const saved = result.state.workPhases.find((item) => item.id === result.phaseId);
+    commit(result.state, phase ? 'Prazo da fase atualizado' : 'Etapa da fase cadastrada', `${workById(workId)?.name || 'Obra'} · ${saved?.name || name}`);
+    return saved;
+  }
   document.addEventListener('click', e => {
     const target = e.target.closest?.('[data-wc-action]'); if (!target) return;
     e.preventDefault(); e.stopPropagation();
@@ -276,6 +300,6 @@
     if (e.target.closest?.('[data-wc-action]') && ['Enter', ' '].includes(e.key)) e.stopPropagation();
   }, true);
   document.addEventListener('obraativa:work-sync-conflict', () => message(window.ObraAtivaWorkSync.error(ctx().companyId), true));
-  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx });
+  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx, canEdit: editable, savePhaseSchedule });
   Object.assign(window, { openInternalWorkModal, openOfficeWorkModal, openInternalWorkPhaseModal, openWorkPhaseModal, saveBulkDistribution });
 })();
