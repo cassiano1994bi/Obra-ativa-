@@ -29,7 +29,7 @@ test('design system global: tokens, semântica, isolamento e segurança', async 
   assert.doesNotMatch(js,/\bfetch\s*\(|localStorage|sessionStorage|CloudSync|\bdb\b|innerHTML\s*=|textContent\s*=/);
   assert.ok(html.includes(cssAsset));
   assert.ok(html.includes(jsAsset));
-  assert.match(worker,/CACHE_VERSION = 'v61'/);
+  assert.match(worker,/CACHE_VERSION = 'v63'/);
   assert.ok(worker.includes('/'+cssAsset));
   assert.ok(worker.includes('/'+jsAsset));
   const manifest=JSON.parse(manifestText);
@@ -84,7 +84,7 @@ test('telas, modais e seis formatos preservam dados, controles e responsividade'
     await page.waitForTimeout(100);
     const progress=page.locator('#view [data-oa-progress-tone]');
     assert.ok(await progress.count()>0,'progresso recebe estado visual consistente');
-    await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+    await page.evaluate(()=>{openWorkTracker('OBRA-TESTE');window.ObraAtivaWorkHub?.openTab('phases')});
     await page.waitForTimeout(100);
     assert.ok(await page.locator('#view .ws-state.oa-status-token').count()>=6,'estados das fases usam o mesmo componente semântico');
     const cardRadii=await page.locator('#view .oa-design-card:visible').evaluateAll(elements=>elements.map(element=>parseFloat(getComputedStyle(element).borderRadius)));

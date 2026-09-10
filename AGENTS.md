@@ -21,6 +21,14 @@ Leia este arquivo completamente antes de analisar, editar, testar ou publicar qu
 - Antes de qualquer publicação, faça uma verificação explícita de que: (1) os dados das empresas permanecem intocados; (2) nenhum dado real foi copiado para o código; (3) nenhum arquivo de teste será publicado; e (4) somente os arquivos autorizados serão enviados.
 - Se uma alteração exigir mexer em outra função, dado ou regra fora do pedido, pare e peça autorização antes de continuar.
 
+## Versionamento e publicação pelo GitHub
+
+- Preferência explícita do proprietário em 10/09/2026: usar o repositório GitHub existente como referência de histórico e registrar nele as atualizações autorizadas antes da publicação online.
+- Conferir a versão remota e comparar as alterações antes do envio, preservando trabalho existente. Não forçar atualizações nem substituir versões remotas divergentes.
+- O GitHub guarda o histórico do código; a Netlify continua hospedando o aplicativo e o Supabase mantém os dados. Não mudar essa arquitetura por causa desta preferência.
+- Se não for possível enviar ao GitHub, informar o impedimento antes de usar outro caminho de publicação. Nunca incluir credenciais, dados de contas, arquivos privados ou pacotes de teste na publicação pública.
+- Essa preferência não autoriza refatorações, mudanças de funcionalidades ou publicação automática sem aprovação da atualização.
+
 ## Entrega obrigatória
 
 Ao finalizar, informe claramente:

@@ -41,16 +41,18 @@ try{
  assert.equal(loaded.ready,true);
  assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/Mão de obra:.*11,50/);
   await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
-  assert.match(await page.locator('.clean-work-head h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
-  assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
-  assert.match(await page.locator('[data-wc-phase="FASE-TESTE-0"] .wc-phase-info').textContent(),/100% pronto/,'Percentual da fase permanece visível');
+   assert.match(await page.locator('.oa-work-hub-identity h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
+   assert.equal(await page.locator('.oa-work-hub-tab').count(),5,'Central da Obra inclui empreitas sem remover as áreas anteriores');
+   assert.doesNotMatch(await page.locator('.oa-work-hub-tabs').textContent(),/Fotos/i,'Aba Fotos foi removida');
+   assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
+   await page.getByRole('tab',{name:/Fases da obra/}).click();
+   assert.match(await page.locator('[data-wc-phase="FASE-TESTE-0"] .wc-phase-info').textContent(),/100% pronto/,'Percentual da fase permanece visível');
  await page.locator('[data-work-phase-action=new-phase]').click();
  assert.equal(await page.locator('#wc-form [name]').count(),2);
  await page.locator('#wc-form [name=name]').fill('ETAPA FICTÍCIA INTEGRADA');await page.locator('#wc-form [type=submit]').click();
  assert.equal(await page.evaluate(()=>db.workPhases.length),7);
- await page.locator('.work-phase-folder-preview').first().click();assert.equal(await page.locator('.work-tracker-gallery').count(),1);
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
- await page.locator('[data-work-phase-action=add-photo]').first().click();assert.equal(await page.locator('#workPhasePhotoForm').count(),1);await page.locator('[data-phase-photo-cancel]').click();
+  assert.equal(await page.locator('.work-phase-folder-preview,.work-phase-folder-empty,[data-work-phase-action=add-photo],[data-work-phase-action=open-folder]').count(),0,'Galeria e inclusão de fotos foram removidas da Central da Obra');
+  assert.equal(await page.evaluate(()=>db.workMedia.length),1,'Registro de foto anterior continua preservado sem aparecer na Central');
  await page.locator('[data-wc-action=progress][data-phase="FASE-TESTE-1"]').click();
  await page.locator('[name=percent]').fill('61');await page.locator('#wc-form [type=submit]').click();
  assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).percent),61);
@@ -67,9 +69,10 @@ try{
   assert.ok((await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"] option').allTextContents()).includes('Estrutura FICTÍCIA'),'Fases da obra permanecem disponíveis na Escala diária');
  await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"]').selectOption(suggestion);
  await page.evaluate(()=>saveBulkDistribution());
- assert.equal(await page.evaluate(()=>db.distributions.find(d=>d.employeeId==='PESSOA-TESTE-A').phaseId),suggestion);
- await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
- assert.match(await page.locator('[data-wc-phase="'+suggestion+'"] .wc-phase-labor').textContent(),/11,50/);
+  assert.equal(await page.evaluate(()=>db.distributions.find(d=>d.employeeId==='PESSOA-TESTE-A').phaseId),suggestion);
+  await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+  await page.getByRole('tab',{name:/Fases da obra/}).click();
+  assert.match(await page.locator('[data-wc-phase="'+suggestion+'"] .wc-phase-labor').textContent(),/11,50/);
  const deleteId=await page.evaluate(()=>db.workPhases.find(p=>p.name==='ETAPA FICTÍCIA INTEGRADA').id);const oldPhotos=await page.evaluate(()=>db.workMedia.length);
  page.once('dialog',dialog=>dialog.accept());await page.evaluate(id=>deleteWorkPhase('OBRA-TESTE',id),deleteId);
  assert.equal(await page.evaluate(()=>db.workPhases.length),7);assert.equal(await page.evaluate(()=>db.workMedia.length),oldPhotos);assert.equal(await page.evaluate(()=>db.workUpdates.at(-1).kind),'Fase excluída');
@@ -83,23 +86,24 @@ try{
  await page.waitForFunction(()=>!document.querySelector('#obraativa-action-feedback.is-visible'));
  for(const [label,width,height] of [['desktop',1440,900],['tablet',1024,768],['phone',844,390],['small',667,375],['portrait',390,844]]){
    await page.setViewportSize({width,height});await page.evaluate(()=>go('works'));
-   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: valor da obra sem overflow`);
-   assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/11,50/,`${label}: custo da obra visível`);
-   await page.screenshot({path:path.join(root,`tmp/work-control-qa/work-total-${label}.png`),fullPage:true});
-   await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
-   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: overflow no app completo`);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: valor da obra sem overflow`);
+    assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/11,50/,`${label}: custo da obra visível`);
+    await page.screenshot({path:path.join(root,`tmp/work-control-qa/work-total-${label}.png`),fullPage:true});
+    await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
+    await page.getByRole('tab',{name:/Fases da obra/}).click();
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${label}: overflow no app completo`);
    if(label==='desktop'){
      const desktop=await page.evaluate(()=>({mobile:document.body.classList.contains('responsive-v3-landscape-phone'),progressMinHeight:getComputedStyle(document.querySelector('.wc-phase-info .wc-button')).minHeight}));
      assert.equal(desktop.mobile,false,'desktop não recebe regra exclusiva de celular');
      assert.equal(desktop.progressMinHeight,'44px','controle do computador mantém o tamanho existente');
    }
    if(label==='phone'||label==='small'){
-     const mobile=await page.evaluate(()=>({mobile:document.body.classList.contains('responsive-v3-landscape-phone'),info:getComputedStyle(document.querySelector('.wc-phase-info')).display,labor:getComputedStyle(document.querySelector('.wc-phase-labor')).display,progressMinHeight:getComputedStyle(document.querySelector('.wc-phase-info .wc-button')).minHeight,addMinHeight:getComputedStyle(document.querySelector('.simple-phase-add-photo')).minHeight}));
+      const mobile=await page.evaluate(()=>({mobile:document.body.classList.contains('responsive-v3-landscape-phone'),info:getComputedStyle(document.querySelector('.wc-phase-info')).display,labor:getComputedStyle(document.querySelector('.wc-phase-labor')).display,progressMinHeight:getComputedStyle(document.querySelector('.wc-phase-info .wc-button')).minHeight,photoControls:document.querySelectorAll('.simple-phase-add-photo,[data-work-phase-action=add-photo]').length}));
      assert.equal(mobile.mobile,true,`${label}: modo celular horizontal ativo`);
      assert.equal(mobile.info,'grid',`${label}: percentual visível`);
      assert.equal(mobile.labor,'flex',`${label}: valor da fase visível`);
      assert.equal(mobile.progressMinHeight,'29px',`${label}: percentual compacto`);
-     assert.equal(mobile.addMinHeight,'28px',`${label}: cartão compacto`);
+      assert.equal(mobile.photoControls,0,`${label}: nenhum controle de foto`);
    }
    await page.screenshot({path:path.join(root,`tmp/work-control-qa/full-${label}.png`),fullPage:true});
    for(const form of ['create','progress','suggestions']){
@@ -129,5 +133,5 @@ try{
       await page.screenshot({path:path.join(root,`tmp/work-control-qa/planning-${label}.png`),fullPage:true});
     }
   }
- assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, fases/fotos/progresso/escala e cinco dispositivos; nenhuma conta ou rede real.');
+  assert.deepEqual(errors,[]);console.log('WORK_CONTROL_FULL_APP_OK: fonte completa com todos os módulos, persistência em memória, Central da Obra sem fotos, fases/progresso/escala e cinco dispositivos; nenhuma conta ou rede real.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}

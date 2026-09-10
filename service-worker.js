@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v61';
+const CACHE_VERSION = 'v63';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -42,6 +42,11 @@ const OPTIONAL_ASSETS = [
   '/public-assets/work-control-sync-v1.js',
   '/public-assets/work-control-v1.js',
   '/public-assets/work-control-v1.css',
+  '/public-assets/work-hub-v1.js',
+  '/public-assets/work-hub-v1.css',
+  '/public-assets/work-cost-core-v1.js',
+  '/public-assets/work-costs-v1.js',
+  '/public-assets/work-costs-v1.css',
   '/public-assets/work-schedule-core-v1.js',
   '/public-assets/work-schedule-v1.js',
   '/public-assets/work-schedule-v1.css',
@@ -63,6 +68,7 @@ const OPTIONAL_ASSETS = [
   '/public-assets/owner-center-v1.js',
   '/public-assets/owner-center-v1.css',
   '/public-assets/product-activity-v1.js',
+  '/public-assets/meta-pixel-v1.js',
   '/public-assets/assistant-avatar-v1.png',
   '/public-assets/assistant-actions-core-v1.js',
   '/public-assets/assistant-capability-registry-v1.js',
@@ -108,6 +114,11 @@ const NETWORK_FIRST_ASSETS = new Set([
   '/public-assets/obraativa-social-auth-v1.js',
   '/public-assets/work-control-v1.js',
   '/public-assets/work-control-v1.css',
+  '/public-assets/work-hub-v1.js',
+  '/public-assets/work-hub-v1.css',
+  '/public-assets/work-cost-core-v1.js',
+  '/public-assets/work-costs-v1.js',
+  '/public-assets/work-costs-v1.css',
   '/public-assets/work-schedule-core-v1.js',
   '/public-assets/work-schedule-v1.js',
   '/public-assets/work-schedule-v1.css',

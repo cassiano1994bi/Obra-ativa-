@@ -161,15 +161,30 @@
       if (person.status && person.status !== 'Ativo') fail('Escolha apenas funcionários ativos.');
       if (selected.has(person.id)) fail('Funcionário repetido na distribuição.');
       if (item.phaseId) { const phase = find(next, 'workPhases', item.phaseId, ctx); if (phase.workId !== workId) fail('A fase não pertence à obra selecionada.'); }
-      selected.set(person.id, item.phaseId || '');
+      const previous = list(next.distributions).find((row) => row.employeeId === person.id && row.date === assignmentDate);
+      const contractId = item.contractId === undefined ? (previous?.workId === workId ? previous.contractId || '' : '') : text(item.contractId);
+      if (contractId && !list(work.control?.empreitas).some((row) => row.id === contractId)) fail('A empreita não pertence à obra selecionada.');
+      selected.set(person.id, { phaseId: item.phaseId || '', contractId });
     }
     next.distributions ??= [];
     const before = copy(next.distributions.filter((d) => d.date === assignmentDate));
-    for (const [employeeId, phaseId] of selected) {
+    for (const [employeeId, selection] of selected) {
+      const { phaseId, contractId } = selection;
       const matches = next.distributions.filter((d) => d.employeeId === employeeId && d.date === assignmentDate);
       if (matches.length > 1) fail('Há distribuições duplicadas nesta data. Revise antes de alterar.');
-      if (matches.length) Object.assign(matches[0], { workId, phaseId, updatedAt: ctx.now });
-      else next.distributions.push({ id: ctx.id(), employeeId, workId, phaseId, date: assignmentDate, createdAt: ctx.now });
+      const recorded = list(next.attendance).filter((a) => a.employeeId === employeeId && a.date === assignmentDate);
+      const mode = contractId ? 'contract' : 'daily';
+      for (const attendance of recorded) {
+        const oldContract = attendance.contractId || matches[0]?.contractId || '';
+        if ((contractId || oldContract) && (oldContract !== contractId || (attendance.workId && attendance.workId !== workId))) {
+          context(ctx, 'attendance');
+          attendance.statusHistory ??= [];
+          attendance.statusHistory.push({ at: ctx.now, action: 'Contratação da presença atualizada pela escala', previousContractId: oldContract, contractId, previousWorkId: attendance.workId, workId });
+        }
+        if (contractId || oldContract) Object.assign(attendance, { workId, contractId, paymentMode: mode, phaseId });
+      }
+      if (matches.length) Object.assign(matches[0], { workId, phaseId, contractId, paymentMode: mode, updatedAt: ctx.now });
+      else next.distributions.push({ id: ctx.id(), employeeId, workId, phaseId, contractId, paymentMode: mode, date: assignmentDate, createdAt: ctx.now });
     }
     next.distributions = next.distributions.filter((d) => !(d.date === assignmentDate && d.workId === workId && !selected.has(d.employeeId)));
     const after = next.distributions.filter((d) => d.date === assignmentDate);
@@ -218,19 +233,62 @@
   const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, value));
   const unconfirmedLegacy = (p) => p.controlVersion !== 1 && number(p.percent) === 0 && p.status === 'Não iniciada' && !p.startDate && !p.updatedAt;
   function progress(phases) {
+    // A fase principal já representa o serviço inteiro. Subetapas são seu
+    // detalhamento: cadastrá-las não altera o peso nem o avanço informado da obra.
+    const ids = new Set(phases.map((p) => p.id));
+    phases = phases.filter((p) => !p.parentPhaseId || !ids.has(p.parentPhaseId));
     const valid = phases.filter((p) => !unconfirmedLegacy(p) && number(p.percent) != null && number(p.percent) >= 0 && number(p.percent) <= 100);
     const totalWeight = phases.reduce((sum, p) => sum + (number(p.weight) > 0 ? Number(p.weight) : 1), 0);
     const measuredWeight = valid.reduce((sum, p) => sum + (number(p.weight) > 0 ? Number(p.weight) : 1), 0);
     return { value: !phases.length || valid.length !== phases.length ? null : round(valid.reduce((sum, p) => sum + Number(p.percent) * (number(p.weight) > 0 ? Number(p.weight) : 1), 0) / totalWeight),
       coverage: totalWeight ? round(measuredWeight / totalWeight * 100) : 0,
-      method: new Set(phases.map((p) => number(p.weight) > 0 ? Number(p.weight) : 1)).size > 1 ? 'Média ponderada pelos pesos informados das fases.' : 'Média simples das fases; cada fase tem o mesmo peso. Percentual aproximado.' };
+      method: new Set(phases.map((p) => number(p.weight) > 0 ? Number(p.weight) : 1)).size > 1 ? 'Média ponderada das fases principais. Subetapas não contam novamente.' : 'Média das fases principais. Subetapas detalham a fase, sem contar novamente.' };
+  }
+  function workProgress(state, workId) {
+    const phases = list(state.workPhases).filter(p => p.workId === workId), calculated = progress(phases);
+    const review = list(state.works).find(work => work.id === workId)?.control?.phaseRemovalReview;
+    if (!review) return calculated;
+    // Excluir muda o escopo, não executa serviço. Preserva a última medição até
+    // o usuário conferir as fases restantes; nenhuma fase ganha percentual.
+    return { ...calculated, value: phases.length ? number(review.heldPercent) : null,
+      coverage: number(review.heldCoverage) ?? calculated.coverage, needsReview: true,
+      calculatedValue: calculated.value, method: 'Avanço anterior preservado após exclusão de fase. Confira o escopo restante.' };
+  }
+  function deletePhase(state, workId, phaseId, ctx) {
+    context(ctx); const work = find(state, 'works', workId, ctx), phase = find(state, 'workPhases', phaseId, ctx);
+    if (phase.workId !== workId) fail('A fase não pertence a esta obra.');
+    if (work.archived || work.status === 'Finalizada') fail('Reabra a obra antes de alterar suas fases.');
+    if (list(state.workPhases).some(p => p.workId === workId && p.parentPhaseId === phaseId)) fail('Esta fase tem subetapas. Confira as subetapas antes de excluir a fase principal.');
+    const previous = workProgress(state, workId), next = copy(state), savedWork = find(next, 'works', workId, ctx);
+    next.workPhases = next.workPhases.filter(p => p.id !== phaseId);
+    next.workPhases.filter(p => p.workId === workId).sort((a, b) => (number(a.order) ?? 0) - (number(b.order) ?? 0)).forEach((p, index) => { p.order = index + 1; });
+    // Mantém os lançamentos e o vínculo histórico dos eventos de controle.
+    for (const row of list(next.workUpdates)) if (row.workId === workId && row.phaseId === phaseId && !row.controlEvent) row.phaseId = '';
+    for (const row of list(next.workMedia)) if (row.workId === workId && row.phaseId === phaseId) row.phaseId = '';
+    const calculated = progress(next.workPhases.filter(p => p.workId === workId));
+    savedWork.control = { ...(savedWork.control || {}), version: 1 };
+    if (previous.needsReview || previous.value !== calculated.value || previous.coverage !== calculated.coverage) {
+      savedWork.control.phaseRemovalReview = { heldPercent: previous.value, heldCoverage: previous.coverage, removedPhaseId: phaseId, recordedAt: ctx.now };
+    }
+    event(next, workId, 'Fase excluída', { phaseId, before: copy(phase), scopeChange: true, previousProgress: previous.value,
+      description: `${phase.name}. Exclusão não é serviço concluído. Percentuais das outras fases, custos e histórico preservados.` }, ctx);
+    return next;
+  }
+  function reviewPhaseRemoval(state, workId, ctx) {
+    context(ctx); const work = find(state, 'works', workId, ctx);
+    if (work.archived || work.status === 'Finalizada') fail('Reabra a obra antes de revisar as fases.');
+    if (!work.control?.phaseRemovalReview) return state;
+    const previous = workProgress(state, workId), next = copy(state), updated = find(next, 'works', workId, ctx);
+    delete updated.control.phaseRemovalReview;
+    event(next, workId, 'Escopo da obra conferido', { scopeChange: true, previousProgress: previous.value, reviewedProgress: workProgress(next, workId).value,
+      description: 'Usuário conferiu as fases restantes. Recalcular o escopo não registra execução de serviço nem altera percentuais das fases.' }, ctx);
+    return next;
   }
   function score(value, explanation) {
     const note = value == null ? null : Math.round(clamp(value));
     return { value: note, status: note == null ? 'Dados insuficientes' : note < 40 ? 'Crítico' : note < 70 ? 'Atenção' : 'Saudável', explanation };
   }
-  function indicators(phases, financial, today) {
-    const physical = progress(phases);
+  function indicators(phases, financial, today, physical = progress(phases)) {
     const planned = phases.filter((p) => day(p.plannedStart) && day(p.plannedEnd));
     const weight = (p) => number(p.weight) > 0 ? Number(p.weight) : 1;
     const plannedValue = planned.length && planned.length === phases.length ? planned.reduce((sum, p) => sum + clamp(elapsed(p.plannedStart, today) / Math.max(1, elapsed(p.plannedStart, p.plannedEnd)) * 100) * weight(p), 0) / planned.reduce((sum, p) => sum + weight(p), 0) : null;
@@ -260,6 +318,7 @@
   }
   function forecast(state, workId, phases, physical, finance, today) {
     const unavailable = (reason) => ({ endDate: null, dailyProgress: null, remainingDays: null, projectedCost: null, confidence: 'Baixa', reason, sample: 0 });
+    if (physical.needsReview) return unavailable('Confira as fases restantes após a exclusão antes de projetar o andamento.');
     if (physical.value == null || physical.value <= 0 || physical.value >= 100) return unavailable(physical.value === 100 ? 'As fases informadas estão concluídas.' : 'Registre o percentual de todas as fases e atualizações datadas.');
     let updates = list(state.workUpdates).filter((e) => e.workId === workId && e.controlEvent && e.kind === 'Andamento atualizado' && e.createdAt && e.date <= today).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     const correction = updates.findLastIndex((e) => e.correction || number(e.delta) < 0);
@@ -287,13 +346,14 @@
   }
   function overview(state, workId, ledger, ctx) {
     const work = find(state, 'works', workId, ctx), phases = list(state.workPhases).filter((p) => p.workId === workId).sort((a, b) => (number(a.order) ?? 0) - (number(b.order) ?? 0));
-    const physical = progress(phases), canFinance = list(ctx.modules).includes('financial'), finance = canFinance ? financialSummary(state, workId, ledger, ctx) : null;
-    const health = indicators(phases, finance, ctx.today), prediction = forecast(state, workId, phases, physical, finance, ctx.today);
+    const physical = workProgress(state, workId), canFinance = list(ctx.modules).includes('financial'), finance = canFinance ? financialSummary(state, workId, ledger, ctx) : null;
+    const health = indicators(phases, finance, ctx.today, physical), prediction = forecast(state, workId, phases, physical, finance, ctx.today);
     const active = phases.filter((p) => ['Em andamento', 'Atrasada'].includes(p.status)), late = phases.filter((p) => p.status !== 'Concluída' && (p.status === 'Atrasada' || (day(p.plannedEnd) && p.plannedEnd < ctx.today)));
     const team = list(state.distributions).filter((d) => d.workId === workId && d.date === ctx.today);
     const targetEnd = Object.hasOwn(work.control?.plan || {}, 'plannedEnd') ? work.control.plan.plannedEnd : work.control?.baseline?.plannedEnd;
     const deadlineOverdue = day(targetEnd) && targetEnd < ctx.today && physical.value !== 100 && !work.archived && work.status !== 'Finalizada';
     const alerts = [];
+    if (physical.needsReview) alerts.push('Fase excluída: avanço anterior preservado. Confira as fases restantes, pois exclusão não é serviço concluído.');
     if (late.length) alerts.push(`${late.length} fase(s) com atraso.`);
     if (deadlineOverdue) alerts.push(`O prazo global informado (${targetEnd}) foi ultrapassado.`);
     if (day(targetEnd) && prediction.endDate && prediction.endDate > targetEnd) alerts.push('O ritmo observado indica término após o prazo global informado.');
@@ -321,7 +381,7 @@
       if (p.status === 'Concluída' && day(p.endDate)) events.push({ id: `phase:${p.id}:end`, kind: 'Andamento', title: 'Fase concluída', at: p.endDate, detail: p.name });
       if (p.status !== 'Concluída' && day(p.plannedEnd) && p.plannedEnd < ctx.today) events.push({ id: `phase:${p.id}:late`, kind: 'Prazos', title: 'Prazo ultrapassado (calculado)', at: addDays(p.plannedEnd, 1), detail: `${p.name}. Término previsto: ${p.plannedEnd}.` });
     }
-    if (phases.length && phases.every((p) => p.status === 'Concluída' && day(p.endDate))) events.push({ id: `work:${workId}:finished`, kind: 'Andamento', title: 'Todas as fases concluídas', at: phases.map((p) => p.endDate).sort().at(-1), detail: 'Data do último término real registrado. Não altera o arquivamento da obra.' });
+    if (!workProgress(state, workId).needsReview && phases.length && phases.every((p) => p.status === 'Concluída' && day(p.endDate))) events.push({ id: `work:${workId}:finished`, kind: 'Andamento', title: 'Todas as fases concluídas', at: phases.map((p) => p.endDate).sort().at(-1), detail: 'Data do último término real registrado. Não altera o arquivamento da obra.' });
     if (list(ctx.modules).includes('financial')) ledgerFor(ledger, workId).rows.forEach((e) => events.push({ id: `ledger:${e.identity || e.source + ':' + e.id}`, kind: 'Financeiro', title: e.kind === 'receipt' ? 'Recebimento' : 'Custo registrado', at: e.date, value: e.value, detail: e.label || '' }));
     const seen = new Set();
     return events.filter((e) => e.at && !seen.has(e.id) && seen.add(e.id) && (filter === 'all' || e.kind === filter)).sort((a, b) => b.at.localeCompare(a.at));
@@ -359,7 +419,7 @@
   }
   function benchmark(state, ledger, ctx) {
     const models = radar(state, ledger, ctx);
-    const complete = models.filter((m) => m.phases.length && m.phases.every((p) => p.status === 'Concluída' && day(p.endDate)));
+    const complete = models.filter((m) => !m.physical.needsReview && m.phases.length && m.phases.every((p) => p.status === 'Concluída' && day(p.endDate)));
     const durations = complete.filter((m) => day(m.work.control?.baseline?.startedAt) && !m.work.control.baseline.approximateStart)
       .map((m) => ({ workId: m.work.id, name: m.work.name, days: elapsed(m.work.control.baseline.startedAt, m.phases.map((p) => p.endDate).sort().at(-1)) + 1 })).filter((m) => m.days > 0);
     const results = complete.filter((m) => m.finance?.contract > 0 && m.work.control?.baseline && !m.finance.costs.missingHistory && m.finance.costs.total > 0)
@@ -371,5 +431,5 @@
       slowestPhase: select(phases, 'meanDays'), laborPhase: select(phases.filter((p) => p.meanLabor != null), 'meanLabor'), durations, results, costs };
   }
   return Object.freeze({ list, number, round, day, date, context, find, event, saveWork, statuses, templates, savePhase, addTemplate, updateProgress, schedulePhases, ledgerFor, reconcile, costSummary,
-    progress, unconfirmedLegacy, indicators, financialSummary, forecast, overview, timeline, historical, radar, benchmark });
+    progress, workProgress, deletePhase, reviewPhaseRemoval, unconfirmedLegacy, indicators, financialSummary, forecast, overview, timeline, historical, radar, benchmark });
 });

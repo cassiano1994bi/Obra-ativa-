@@ -22,14 +22,14 @@
   function status(phase, today) {
     const percent = clamp(phase?.percent), start = day(phase?.plannedStart) ? phase.plannedStart : '', end = day(phase?.plannedEnd) ? phase.plannedEnd : '';
     const complete = percent >= 100 || phase?.status === 'Concluída';
-    const remainingDays = end && day(today) ? daysBetween(today, end) : null;
+    const remainingDays = !complete && end && day(today) ? daysBetween(today, end) : null;
     const durationDays = start && end ? daysBetween(start, end) + 1 : null;
     let label = 'Sem prazo', tone = 'missing';
     if (complete) { label = 'Concluída'; tone = 'complete'; }
     else if (remainingDays != null && remainingDays < 0) { label = 'Atrasada'; tone = 'late'; }
     else if (remainingDays != null && remainingDays <= 3) { label = 'Atenção'; tone = 'attention'; }
     else if (start && end) { label = 'No prazo'; tone = 'on-time'; }
-    const remainingLabel = remainingDays == null ? 'Prazo não definido' : remainingDays < 0 ? `${Math.abs(remainingDays)} dia${Math.abs(remainingDays) === 1 ? '' : 's'} de atraso` : remainingDays === 0 ? 'Termina hoje' : `${remainingDays} dia${remainingDays === 1 ? '' : 's'} restante${remainingDays === 1 ? '' : 's'}`;
+    const remainingLabel = complete ? 'Etapa concluída' : remainingDays == null ? 'Prazo não definido' : remainingDays < 0 ? `${Math.abs(remainingDays)} dia${Math.abs(remainingDays) === 1 ? '' : 's'} de atraso` : remainingDays === 0 ? 'Termina hoje' : `${remainingDays} dia${remainingDays === 1 ? '' : 's'} restante${remainingDays === 1 ? '' : 's'}`;
     return { label, tone, complete, percent, plannedStart: start, plannedEnd: end, remainingDays, remainingLabel, durationDays };
   }
 

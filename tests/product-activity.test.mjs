@@ -54,20 +54,3 @@ test('erros da medição usam espera progressiva e nunca encerram a sessão', as
   for (let i = 0; i < 12; i++) await f.advance();
   assert.equal(f.calls.length, count); assert.equal(f.cloud.ready, true); assert.ok(f.cloud.session);
 });
-test('Pixel da Meta registra PageView somente após autorização e apenas na entrada pública', async () => {
-  const withoutConsent = await fixture(null, false, false);
-  assert.equal(withoutConsent.scripts.length, 0);
-  assert.equal(withoutConsent.sandbox.fbq, undefined);
-
-  const publicAllowed = await fixture('allow', false, false);
-  assert.equal(publicAllowed.scripts.length, 1);
-  assert.equal(publicAllowed.scripts[0].src, 'https://connect.facebook.net/en_US/fbevents.js');
-  assert.deepEqual(Array.from(publicAllowed.sandbox.fbq.queue, (entry) => Array.from(entry)), [
-    ['init', '1591172095715887'],
-    ['track', 'PageView']
-  ]);
-
-  const signedIn = await fixture('allow');
-  assert.equal(signedIn.scripts.length, 0);
-  assert.equal(signedIn.sandbox.fbq, undefined);
-});

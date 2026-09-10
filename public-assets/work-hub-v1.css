@@ -1,0 +1,838 @@
+.oa-work-hub {
+  container: workHub / inline-size;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  color: #173f55;
+}
+
+.oa-work-hub-head {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  overflow: hidden;
+  border: 1px solid #183f5f;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(43, 196, 130, .24), transparent 30%),
+    linear-gradient(135deg, #082b43 0%, #104966 100%);
+  color: #fff;
+  box-shadow: 0 14px 34px rgba(8, 43, 67, .18);
+}
+
+.oa-work-hub-head-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+}
+
+.oa-work-hub-back,
+.oa-work-hub-edit {
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .09);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.oa-work-hub-back:hover,
+.oa-work-hub-edit:hover {
+  background: rgba(255, 255, 255, .16);
+}
+
+.oa-work-hub-back:focus-visible,
+.oa-work-hub-edit:focus-visible,
+.oa-work-hub-tab:focus-visible,
+.oa-work-hub-actions button:focus-visible {
+  outline: 3px solid #70dbab;
+  outline-offset: 2px;
+}
+
+.oa-work-hub-identity {
+  min-width: 0;
+}
+
+.oa-work-hub-identity > small {
+  display: block;
+  color: #7fe2b5;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+
+.oa-work-hub-identity h1 {
+  margin: 4px 0 7px;
+  overflow-wrap: anywhere;
+  color: #fff;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.08;
+}
+
+.oa-work-hub-identity p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0;
+  color: #d6e8ef;
+  font-size: 12px;
+}
+
+.oa-work-hub-status {
+  padding: 4px 8px;
+  border: 1px solid rgba(112, 219, 171, .35);
+  border-radius: 999px;
+  background: rgba(42, 177, 116, .16);
+  color: #a9f0ce;
+  font-weight: 850;
+}
+
+.oa-work-hub-progress {
+  display: grid;
+  gap: 7px;
+}
+
+.oa-work-hub-progress > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #d7e7ed;
+  font-size: 11px;
+}
+
+.oa-work-hub-progress > span strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+.oa-work-hub-progress > i {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .15);
+}
+
+.oa-work-hub-progress > i > b {
+  display: block;
+  width: var(--oa-work-progress, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #24b978, #75e5b0);
+}
+
+.oa-work-hub-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid #dbe7e2;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 7px 20px rgba(23, 63, 85, .07);
+}
+
+.oa-work-hub-tab {
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #60766f;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.oa-work-hub-tab small {
+  display: none;
+}
+
+.oa-work-hub-tab.active {
+  border-color: #a8d8c2;
+  background: linear-gradient(145deg, #e9f8f0, #f5fcf8);
+  color: #176849;
+  box-shadow: inset 0 0 0 1px rgba(40, 145, 98, .05);
+}
+
+.oa-work-hub-content,
+.oa-work-hub-summary,
+.oa-work-hub-schedule,
+.oa-work-hub-financial,
+.oa-work-hub-phases {
+  min-width: 0;
+}
+
+.oa-work-hub-summary,
+.oa-work-hub-schedule,
+.oa-work-hub-financial {
+  display: grid;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid #dce8e3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(23, 63, 85, .06);
+}
+
+.oa-work-hub-section-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.oa-work-hub-section-title > div:first-child {
+  min-width: 0;
+}
+
+.oa-work-hub-section-title small {
+  display: block;
+  color: #27815e;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.oa-work-hub-section-title h2 {
+  margin: 3px 0 0;
+  color: #173f55;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.oa-work-hub-section-title p {
+  margin: 4px 0 0;
+  color: #687d76;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.oa-work-hub-section-title > span {
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: #f0f7f4;
+  color: #537269;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.oa-work-hub-kpis,
+.oa-work-hub-finance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.oa-work-hub-kpis article,
+.oa-work-hub-finance-grid article {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid #dfeae5;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #fff, #f7fbf9);
+}
+
+.oa-work-hub-kpis small,
+.oa-work-hub-finance-grid small {
+  display: block;
+  color: #70827c;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.oa-work-hub-kpis b,
+.oa-work-hub-finance-grid b {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  color: #164e3c;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.oa-work-hub-kpis span,
+.oa-work-hub-finance-grid span {
+  display: block;
+  margin-top: 5px;
+  color: #71837d;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.oa-work-hub-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.oa-work-hub-actions button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 1px 9px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid #dce8e3;
+  border-radius: 11px;
+  background: #fff;
+  color: #204b3b;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.oa-work-hub-actions button:hover {
+  border-color: #9dceb8;
+  background: #f4fbf7;
+}
+
+.oa-work-hub-actions button > span {
+  display: grid;
+  grid-row: 1 / 3;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #eaf7f0;
+  color: #19734f;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.oa-work-hub-actions button b {
+  font-size: 12px;
+}
+
+.oa-work-hub-actions button small {
+  color: #778a83;
+  font-size: 10px;
+}
+
+.oa-work-hub-alerts,
+.oa-work-hub-ok,
+.oa-work-hub-simple-note,
+.oa-work-hub-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid #eadcb5;
+  border-radius: 10px;
+  background: #fffaf0;
+  color: #765d23;
+  font-size: 11px;
+}
+
+.oa-work-hub-alerts > span::before {
+  content: "•";
+  margin-right: 6px;
+}
+
+.oa-work-hub-ok {
+  border-color: #cce7da;
+  background: #f3fbf7;
+  color: #267052;
+}
+
+.oa-work-hub-date {
+  display: grid;
+  gap: 4px;
+  min-width: 158px;
+  color: #637871;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.oa-work-hub-date input {
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 9px;
+  border: 1px solid #cfded7;
+  border-radius: 9px;
+  background: #fff;
+  color: #244f40;
+  font: inherit;
+  font-size: 12px;
+}
+
+.oa-work-hub-schedule-bar,
+.oa-work-hub-finance-actions,
+.oa-work-hub-finance-explain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.oa-work-hub-schedule-bar > span {
+  color: #46655a;
+  font-size: 12px;
+}
+
+.oa-work-hub-schedule-bar > span b {
+  color: #176849;
+  font-size: 17px;
+}
+
+.oa-work-hub-schedule-bar > div,
+.oa-work-hub-finance-actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.oa-work-hub-team-table {
+  border: 1px solid #dfe9e5;
+  border-radius: 12px;
+}
+
+.oa-work-hub-team-table .table {
+  min-width: 660px;
+}
+
+.oa-work-hub-team-table th {
+  background: #f2f8f5;
+  color: #62776f;
+  font-size: 10px;
+}
+
+.oa-work-hub-team-table td {
+  vertical-align: middle;
+}
+
+.oa-work-hub-team-table td > small {
+  display: block;
+  margin-top: 3px;
+  color: #758780;
+  font-size: 10px;
+}
+
+.oa-work-hub-team-table tr.selected td {
+  background: #f5fbf8;
+}
+
+.oa-work-hub-team-table input[type="checkbox"] {
+  width: 19px;
+  height: 19px;
+  accent-color: #23875f;
+}
+
+.oa-work-hub-team-table select {
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 9px;
+  border: 1px solid #cfded7;
+  border-radius: 8px;
+  background: #fff;
+  color: #244f40;
+  font: inherit;
+  font-size: 11px;
+}
+
+.oa-work-hub-availability {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #eef4f1;
+  color: #60766e;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.oa-work-hub-availability.here {
+  background: #e4f7ed;
+  color: #19714e;
+}
+
+.oa-work-hub-availability.other {
+  background: #fff3da;
+  color: #86601d;
+}
+
+.oa-work-hub-footnote {
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: #f4f8f6;
+  color: #60766e;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.oa-work-hub-simple-note {
+  margin-bottom: 12px;
+  border-color: #cfe5da;
+  background: #f5fbf8;
+  color: #486a5e;
+}
+
+.oa-work-hub-phases .work-phase-folder-grid {
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)) !important;
+  gap: 12px;
+}
+
+.oa-work-hub-phases .oa-work-hub-phase-card {
+  min-height: 0;
+  padding: 14px;
+  cursor: default;
+}
+
+.oa-work-hub-phases .oa-work-hub-phase-card:hover,
+.oa-work-hub-phases .oa-work-hub-phase-card:focus-within {
+  transform: none;
+}
+
+.oa-work-hub-phases .oa-work-hub-phase-card .work-phase-folder-top h3 {
+  font-size: 15px;
+  line-height: 1.28;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.oa-work-hub-phases .oa-work-hub-phase-card .work-phase-folder-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #e9f7f0;
+  color: #19714e;
+  font-size: 16px;
+}
+
+.oa-work-hub-finance-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.oa-work-hub-finance-grid article.positive b {
+  color: #187047;
+}
+
+.oa-work-hub-finance-grid article.negative b {
+  color: #ad3f49;
+}
+
+.oa-work-hub-finance-explain {
+  justify-content: flex-start;
+  padding: 10px 12px;
+  border: 1px solid #dbe8e2;
+  border-radius: 10px;
+  background: #f7faf8;
+  color: #526e63;
+  font-size: 11px;
+}
+
+.oa-work-hub-finance-explain span + span {
+  padding-left: 10px;
+  border-left: 1px solid #cfded7;
+}
+
+.oa-work-hub-history {
+  border: 1px solid #dce8e3;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.oa-work-hub-history > summary {
+  padding: 11px 13px;
+  color: #2d604d;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.oa-work-hub-history > div {
+  border-top: 1px solid #e5eee9;
+}
+
+.oa-work-hub-history p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 9px 12px;
+  border-bottom: 1px solid #edf2ef;
+}
+
+.oa-work-hub-history p:last-child {
+  border-bottom: 0;
+}
+
+.oa-work-hub-history p small {
+  display: block;
+  margin-top: 2px;
+  color: #7b8c86;
+  font-size: 10px;
+}
+
+.oa-work-hub-history strong.in { color: #177149; }
+.oa-work-hub-history strong.out { color: #a9474d; }
+.oa-work-hub-empty { margin: 0; padding: 16px; color: #6c8179; text-align: center; }
+
+@container workHub (max-width: 820px) {
+  .oa-work-hub-head { padding: 14px; }
+  .oa-work-hub-head-main { grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; }
+  .oa-work-hub-back span { display: none; }
+  .oa-work-hub-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .oa-work-hub-finance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .oa-work-hub-team-table { overflow: visible; border: 0; }
+  .oa-work-hub-team-table .table { display: block; min-width: 0; }
+  .oa-work-hub-team-table thead { display: none; }
+  .oa-work-hub-team-table tbody { display: grid; gap: 8px; }
+  .oa-work-hub-team-table tr { display: grid; grid-template-columns: 56px minmax(150px, .8fr) minmax(150px, 1fr); gap: 6px 10px; padding: 10px; border: 1px solid #dfe9e5; border-radius: 11px; background: #fff; }
+  .oa-work-hub-team-table td { display: block; padding: 0 !important; border: 0 !important; }
+  .oa-work-hub-team-table td:first-child { grid-row: 1 / 3; display: grid; place-items: center; }
+  .oa-work-hub-team-table td:nth-child(4) { grid-column: 2 / 4; }
+  .oa-work-hub-team-table td::before { content: attr(data-label); display: block; margin-bottom: 3px; color: #7b8d86; font-size: 8px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+  .oa-work-hub-team-table td:first-child::before { display: none; }
+}
+
+@container workHub (max-width: 620px) {
+  .oa-work-hub { gap: 10px; }
+  .oa-work-hub-head { gap: 10px; padding: 12px; border-radius: 14px; }
+  .oa-work-hub-head-main { grid-template-columns: 38px minmax(0, 1fr) auto; }
+  .oa-work-hub-back { width: 38px; min-height: 38px; padding: 6px; }
+  .oa-work-hub-edit { min-height: 38px; padding: 6px 8px; font-size: 10px; }
+  .oa-work-hub-identity > small { font-size: 8px; }
+  .oa-work-hub-identity h1 { margin: 2px 0 4px; font-size: 20px; }
+  .oa-work-hub-identity p { font-size: 10px; }
+  .oa-work-hub-status { padding: 3px 6px; }
+  .oa-work-hub-tabs { display: flex; gap: 5px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
+  .oa-work-hub-tabs::-webkit-scrollbar { display: none; }
+  .oa-work-hub-tab { flex: 1 0 max-content; min-height: 44px; padding: 6px 10px; font-size: 11px; }
+  .oa-work-hub-summary,
+  .oa-work-hub-schedule,
+  .oa-work-hub-financial { gap: 10px; padding: 12px; border-radius: 13px; }
+  .oa-work-hub-section-title { align-items: stretch; }
+  .oa-work-hub-section-title h2 { font-size: 16px; }
+  .oa-work-hub-section-title p { font-size: 11px; }
+  .oa-work-hub-kpis { gap: 6px; }
+  .oa-work-hub-kpis article,
+  .oa-work-hub-finance-grid article { padding: 9px; }
+  .oa-work-hub-kpis b,
+  .oa-work-hub-finance-grid b { margin-top: 4px; font-size: 15px; }
+  .oa-work-hub-actions { grid-template-columns: 1fr; gap: 6px; }
+  .oa-work-hub-actions button { min-height: 50px; }
+  .oa-work-hub-finance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .oa-work-hub-date { min-width: 135px; }
+  .oa-work-hub-schedule-bar { align-items: stretch; flex-direction: column; }
+  .oa-work-hub-schedule-bar > div { display: grid; grid-template-columns: 1fr 1fr; }
+  .oa-work-hub-schedule-bar .btn { min-width: 0; min-height: 42px; white-space: normal; }
+  .oa-work-hub-team-table tr { grid-template-columns: 42px minmax(0, 1fr); }
+  .oa-work-hub-team-table td:first-child { grid-row: 1 / 4; }
+  .oa-work-hub-team-table td:nth-child(4) { grid-column: 2; }
+  .oa-work-hub-phases .work-phase-folder-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
+  .oa-work-hub-phases .oa-work-hub-phase-card { padding: 10px; }
+  .oa-work-hub-finance-explain { align-items: flex-start; flex-direction: column; }
+  .oa-work-hub-finance-explain span + span { padding-top: 6px; padding-left: 0; border-top: 1px solid #cfded7; border-left: 0; }
+}
+
+@container workHub (max-width: 410px) {
+  .oa-work-hub-head-main { grid-template-columns: 36px minmax(0, 1fr); }
+  .oa-work-hub-edit { grid-column: 2; justify-self: start; }
+  .oa-work-hub-identity p > span:not(.oa-work-hub-status) { display: none; }
+  .oa-work-hub-section-title { display: grid; }
+  .oa-work-hub-date { width: 100%; }
+  .oa-work-hub-finance-grid { grid-template-columns: 1fr; }
+  .oa-work-hub-schedule-bar > div { grid-template-columns: 1fr; }
+  .oa-work-hub-phases .work-phase-folder-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+  .oa-work-hub-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .oa-work-hub-tab {
+    min-width: 0;
+  }
+
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-phases .work-phase-folder-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oa-work-hub * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Auditoria da Central: leitura, hierarquia e espaço. Escopo deliberadamente
+   restrito à obra aberta; não muda Home, Financeiro geral nem outros módulos. */
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-head { padding:14px 18px; gap:10px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-identity h1 { font-size:26px; line-height:1.2; margin:3px 0 5px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-identity>small { display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:11px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-identity .oa-work-hub-status { font-size:12px; padding:3px 7px; letter-spacing:0; text-transform:none; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-summary { padding:14px; gap:12px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-progress>span { font-size:13px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-tab { min-height:44px; font-size:14px; padding:9px 10px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-section-title { flex-wrap:wrap; gap:12px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-section-title h2 { font-size:21px; line-height:1.3; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-section-title p,
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-section-title>span { font-size:13px; line-height:1.5; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-kpis small,
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid small { font-size:12px; line-height:1.35; font-weight:800; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-kpis article>span,
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid article>span { font-size:12px; line-height:1.45; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-kpis b,
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid b { font-size:23px; font-weight:850; line-height:1.3; overflow-wrap:anywhere; }
+.oa-work-hub-next-step { display:flex; align-items:center; gap:14px; justify-content:space-between; padding:13px 15px; border:1px solid #bcded0; border-radius:12px; background:#eef8f3; font-size:14px; line-height:1.5; }
+.oa-work-hub-next-step b { display:block; color:#13543e; }
+.oa-work-hub-next-step .btn { flex-shrink:0; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-actions { gap:8px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-actions button { display:grid; grid-template-columns:30px 1fr; grid-template-rows:auto auto; gap:2px 8px; min-height:60px; padding:10px 12px; text-align:left; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-actions button>span { grid-row:1/3; align-self:center; font-size:20px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-actions button>b { font-size:14px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-actions button>small { font-size:12px; line-height:1.35; }
+.oa-work-hub-draft-status { margin:0; padding:9px 12px; border-radius:9px; color:#426252; background:#f1f7f4; font-size:13px; line-height:1.45; }
+.oa-work-hub-draft-status.pending { background:#fff5de; color:#715113; border:1px solid #ecd397; }
+.oa-work-hub-secondary-actions { display:flex; flex-wrap:wrap; gap:8px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-date span,
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-availability { font-size:13px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-footnote { font-size:13px; line-height:1.55; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .work-phase-folder-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr))!important; gap:12px!important; align-items:stretch; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-phase-card { padding:15px!important; min-width:0; }
+html body #app#app:not(.public-app) #view .oa-work-hub .work-phase-folder-top { align-items:flex-start; gap:9px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .work-phase-folder-top>div { flex:1; min-width:0; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .work-phase-folder-top h3 { font-size:17px!important; line-height:1.4!important; white-space:normal!important; overflow:visible!important; text-overflow:clip!important; overflow-wrap:anywhere; }
+html body #app#app:not(.public-app) #view .oa-work-hub .wc-phase-info { margin:12px 0 0; }
+html body #app#app:not(.public-app) #view .oa-work-hub .wc-phase-info button { min-height:44px; font-size:16px!important; }
+html body #app#app:not(.public-app) #view .oa-work-hub .wc-phase-labor { padding:8px 0; }
+html body #app#app:not(.public-app) #view .oa-work-hub .wc-phase-labor span { font-size:13px!important; }
+html body #app#app:not(.public-app) #view .oa-work-hub .wc-phase-labor b { font-size:18px!important; font-weight:850!important; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-summary { margin:10px 0 14px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-summary small { font-size:12px!important; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .ws-summary b { display:block!important; font-size:15px!important; line-height:1.4; overflow-wrap:anywhere; white-space:normal!important; overflow:visible!important; text-overflow:clip!important; -webkit-line-clamp:unset!important; max-height:none!important; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-summary span { font-size:12px!important; line-height:1.45; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-phase-main { display:grid; grid-template-columns:1fr; gap:7px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-state { justify-self:start; font-size:13px!important; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-deadline { font-size:14px!important; line-height:1.5; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-deadline span,
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-parent-note { font-size:12px!important; line-height:1.5; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-phase-actions { display:flex; flex-wrap:wrap; gap:8px; }
+html body #app#app:not(.public-app) #view .oa-work-hub .ws-action { flex:1 1 110px; min-height:42px; font-size:13px!important; line-height:1.35; white-space:normal; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+.oa-work-hub-cost-composition { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.oa-work-hub-cost-composition article { display:grid; gap:5px; padding:12px; background:#f4f8f8; border:1px solid #dce7e6; border-radius:10px; min-width:0; }
+.oa-work-hub-cost-composition small { font-size:12px; color:#496b72; font-weight:800; line-height:1.4; }
+.oa-work-hub-cost-composition b { font-size:20px; color:#174753; font-weight:850; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.oa-work-hub-cost-composition span { font-size:12px; color:#587276; line-height:1.45; }
+html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-explain { font-size:13px; line-height:1.5; }
+@media (max-width:1100px) {
+  .oa-work-hub-cost-composition { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid>article:last-child { grid-column:1/-1; }
+}
+@media (max-width:900px) and (orientation:landscape) {
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .work-phase-folder-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-identity h1 { font-size:21px; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-head { padding:10px 12px; gap:7px; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-head-main { gap:8px; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-tab { font-size:13px; padding:8px; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-phase-card { padding:12px!important; }
+}
+@media (max-width:650px) {
+  .oa-work-hub-next-step { flex-wrap:wrap; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-kpis b,
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-finance-grid b { font-size:20px; }
+  html body #app#app:not(.public-app) #view .oa-work-hub .oa-work-hub-identity h1 { font-size:21px; }
+}
+@media (max-width:480px) and (orientation:portrait) {
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .work-phase-folder-grid { grid-template-columns:1fr!important; }
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-hub-tabs { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; overflow:visible; gap:5px; }
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-hub-tab { min-width:0; padding:7px 5px; white-space:nowrap; }
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-hub-tab small { white-space:nowrap; }
+}
+
+/* Consulta por quinzena, exclusivamente no Financeiro da obra aberta.
+   Os números acumulados e os outros módulos mantêm a apresentação anterior. */
+.oa-work-cost-view { display:flex; width:fit-content; max-width:100%; gap:4px; padding:4px; border:1px solid #cbded7; border-radius:12px; background:#eef4f1; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-cost-view button { min-height:44px; padding:9px 18px; border:0; border-radius:8px; background:transparent; color:#476558; font:inherit; font-size:15px; font-weight:750; cursor:pointer; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-cost-view button[aria-pressed="true"] { background:#163d48; color:#fff; box-shadow:0 2px 5px #122f3a14; }
+.oa-work-cost-view button:focus-visible, .oa-work-period button:focus-visible, .oa-work-period summary:focus-visible { outline:3px solid #168960; outline-offset:3px; }
+.oa-work-period { display:grid; gap:14px; min-width:0; }
+.oa-work-period-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period h3 { margin:0; color:#173e49; font-size:18px; font-weight:800; line-height:1.4; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period p { margin:4px 0 0; font-size:13px; line-height:1.5; color:#4e6a65; }
+.oa-work-period-status { padding:6px 10px; border:1px solid #c7e4d5; border-radius:8px; color:#24684d; background:#f0f9f4; font-size:13px; font-weight:700; }
+.oa-work-period-navigation { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:12px; padding:12px; border:1px solid #dce7e3; border-radius:12px; background:#f7faf8; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period button { min-height:44px; padding:9px 13px; font-size:14px; line-height:1.4; white-space:normal; }
+.oa-work-period-dates { display:grid; gap:4px; min-width:0; text-align:center; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-dates b { color:#183e49; font-size:17px; font-weight:850; font-variant-numeric:tabular-nums; line-height:1.4; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-dates small { color:#536e66; font-size:12px; line-height:1.45; }
+.oa-work-period-current { justify-self:start; }
+.oa-work-period-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.oa-work-period-metrics article { display:flex; flex-direction:column; justify-content:center; min-width:0; gap:6px; padding:16px; border:1px solid #d9e6e1; border-radius:12px; background:#f5f9f7; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-metrics small { color:#48655e; font-size:12px; font-weight:800; line-height:1.4; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-metrics b { color:#143f49; font-size:23px; font-weight:850; line-height:1.3; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-metrics span { color:#536f65; font-size:12px; line-height:1.45; }
+.oa-work-period-costs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-metrics b,
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-costs b { white-space:nowrap; overflow-wrap:normal; }
+.oa-work-period-metrics .oa-work-period-result.positive { border-color:#badccb; background:#eff9f2; box-shadow:inset 0 3px #36a569; }
+.oa-work-period-metrics .oa-work-period-result.negative { border-color:#e6c2c5; background:#fff3f3; box-shadow:inset 0 3px #bd505d; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-result.positive b,
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-received b,
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-list strong.oa-work-period-in { color:#187047; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-result.negative b,
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-result.negative small { color:#ad3f49; }
+.oa-work-period-notice { padding:11px 13px; border:1px solid #eadcae; background:#fff9e9; border-radius:10px; }
+.oa-work-period-details { min-width:0; border:1px solid #d4e4db; border-radius:12px; background:#fff; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-details>summary { cursor:pointer; padding:14px; min-height:48px; color:#1c5943; font-size:15px; font-weight:800; line-height:1.45; }
+.oa-work-period-details>summary span { margin-left:9px; color:#5c7468; font-size:13px; font-weight:500; }
+.oa-work-period-detail-body { display:grid; gap:22px; border-top:1px solid #e0eae5; padding:16px; }
+.oa-work-period-detail-body>section { min-width:0; }
+.oa-work-period-list { display:grid; margin:10px 0 0; padding:0; list-style:none; }
+.oa-work-period-list>li { display:flex; align-items:center; justify-content:space-between; gap:10px 18px; min-width:0; padding:12px 0; border-bottom:1px solid #e6eee9; }
+.oa-work-period-list>li:last-child { border-bottom:0; }
+.oa-work-period-list>li>div { flex:1; min-width:0; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-list b { display:block; color:#254e45; font-size:15px; font-weight:750; line-height:1.4; overflow-wrap:anywhere; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-list small { display:block; margin-top:4px; color:#526d62; font-size:13px; line-height:1.55; overflow-wrap:anywhere; }
+html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-list strong { color:#173f49; font-size:18px; font-weight:850; line-height:1.4; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.oa-work-period-empty { color:#5a7168; font-size:14px; line-height:1.5; }
+.oa-work-period-note { padding:0 2px; }
+.oa-work-period-commitment { border-top:1px solid #e0e8e4; padding-top:10px; }
+@container workHub (max-width:650px) {
+  .oa-work-period-navigation { grid-template-columns:1fr 1fr; gap:10px; }
+  .oa-work-period-dates { grid-column:1/-1; grid-row:1; }
+  .oa-work-period-metrics article { padding:12px; }
+  .oa-work-period-metrics, .oa-work-period-costs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .oa-work-period-result, .oa-work-period-costs>article:last-child { grid-column:1/-1; }
+  .oa-work-period-details>summary span { display:block; margin:4px 0 0; }
+}
+@media (max-width:650px) {
+  html body #app#app:not(.public-app) #view#view .oa-work-hub .oa-work-period-metrics b { font-size:20px; }
+}
+@container workHub (max-width:440px) {
+  .oa-work-cost-view { width:100%; }
+  .oa-work-cost-view button { flex:1; }
+  .oa-work-period-metrics, .oa-work-period-costs { grid-template-columns:1fr; }
+  .oa-work-period-metrics article, .oa-work-period-costs article { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; }
+  .oa-work-period-metrics article b, .oa-work-period-costs article b { grid-column:2; grid-row:1/3; align-self:center; }
+  .oa-work-period-metrics article span, .oa-work-period-costs article span { grid-column:1; }
+  .oa-work-period-detail-body { padding:12px; }
+  .oa-work-period-list>li { display:grid; gap:5px; }
+}
+.oa-work-phase-review { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px; padding:14px 16px; border:1px solid #d5c795; border-radius:12px; background:#fffcf0; color:#655122 }
+.oa-work-phase-review p { flex:1 1 260px; margin:0; font-size:14px; line-height:1.6 }

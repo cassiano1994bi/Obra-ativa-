@@ -1,4 +1,5 @@
-:root{--oa-night:#020b18;--oa-night-2:#061322;--oa-surface:#081828;--oa-card:#0b1d2e;--oa-line:#183249;--oa-green:#2bd466;--oa-green-2:#58ed38;--oa-blue:#1677ff;--oa-text:#f4f8fc;--oa-muted:#8da1b4}
+/* Tema público isolado: os tokens homônimos do painel claro não podem escurecer Entrar, títulos ou links. */
+body:has(.oa-public-site),.oa-public-site{--oa-night:#020b18;--oa-night-2:#061322;--oa-surface:#081828;--oa-card:#0b1d2e;--oa-line:#183249;--oa-green:#2bd466;--oa-green-2:#58ed38;--oa-blue:#1677ff;--oa-text:#f4f8fc;--oa-muted:#8da1b4}
 body:has(.oa-public-site){margin:0;background:var(--oa-night);color:var(--oa-text)}
 .oa-public-site{min-height:100vh;overflow:hidden;background:var(--oa-night);color:var(--oa-text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 .oa-public-site *{box-sizing:border-box}.oa-public-site a{color:inherit}.oa-public-shell{width:min(1420px,calc(100% - 64px));margin:auto}.oa-public-nav{position:sticky;z-index:50;top:0;border-bottom:1px solid #173047;background:#030c18f2;backdrop-filter:blur(18px)}

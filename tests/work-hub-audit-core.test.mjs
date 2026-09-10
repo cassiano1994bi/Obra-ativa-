@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const W = require('../public-assets/work-control-core-v1.js');
+const S = require('../public-assets/work-schedule-core-v1.js');
+const C = require('../public-assets/work-cost-core-v1.js');
+let seq = 0;
+const ctx = { companyId: 'EMPRESA-FICTICIA-AUDITORIA', userId: 'USUARIO-FICTICIO-AUDITORIA', userName: 'GESTOR FICTICIO', now: '2031-01-15T12:00:00Z', today: '2031-01-15', id: () => `ID-FICTICIO-${++seq}`, modules: ['works', 'financial', 'planning', 'attendance'], readOnly: false };
+const parent = { id: 'FASE-FICTICIA', percent: 50, status: 'Em andamento', controlVersion: 1, weight: 1 };
+const child = { id: 'SUBFASE-FICTICIA', parentPhaseId: parent.id, percent: 0, status: 'Não iniciada', controlVersion: 1, weight: 1 };
+assert.equal(W.progress([parent]).value, 50);
+assert.equal(W.progress([parent, child]).value, 50, 'subetapa não conta a fase novamente');
+assert.equal(W.progress([{ ...parent, weight: 3 }, { id: 'FASE-FICTICIA-B', percent: 100, controlVersion: 1, weight: 1 }, child]).value, 62.5, 'preserva pesos das fases principais');
+assert.equal(parent.percent, 50, 'não reescreve percentual cadastrado');
+for (const end of ['2031-01-10', '2031-02-10']) {
+  const status = S.status({ ...parent, percent: 100, plannedStart: '2031-01-01', plannedEnd: end }, ctx.today);
+  assert.equal(status.remainingDays, null);
+  assert.equal(status.remainingLabel, 'Etapa concluída');
+}
+const state = { companyId: ctx.companyId, works: [{ id: 'OBRA-FICTICIA' }], receivables: [{ id: 'CONTRATO-FICTICIO', workId: 'OBRA-FICTICIA', total: 2347, startDate: '2031-01-01', notes: 'PRESERVAR FICTICIO' }], receipts: [{ id: 'RECEBIMENTO-FICTICIO', workId: 'OBRA-FICTICIA', value: 113 }], workClosings: [{ id: 'FECHAMENTO-FICTICIO', workId: 'OBRA-FICTICIA', value: 99 }], workUpdates: [] };
+const original = JSON.stringify(state);
+const changed = C.saveClientContract(state, 'OBRA-FICTICIA', { total: 2519, operationId: 'OP-FICTICIA' }, ctx);
+assert.equal(C.clientContract(changed, 'OBRA-FICTICIA').value, 2519, 'não soma recebimentos ao total informado');
+assert.equal(changed.receivables.length, 1);
+assert.equal(changed.receivables[0].notes, 'PRESERVAR FICTICIO');
+assert.deepEqual(changed.receipts, state.receipts);
+assert.deepEqual(changed.workClosings, state.workClosings);
+assert.equal(JSON.stringify(state), original);
+assert.equal(C.saveClientContract(changed, 'OBRA-FICTICIA', { total: 2519, operationId: 'OP-FICTICIA' }, ctx).workUpdates.length, 1);
+assert.throws(() => C.saveClientContract(state, 'OBRA-FICTICIA', { total: 1, operationId: 'OP-NEGADA-FICTICIA' }, { ...ctx, readOnly: true }), /acesso/);
+for (const value of [-1, 'abc', 1.111]) assert.throws(() => C.saveClientContract(state, 'OBRA-FICTICIA', { total: value, operationId: 'OP-INVALIDA-FICTICIA' }, ctx), /valor total/);
+console.log('AUDIT_CORE_OK: percentuais preservados, sem pai/filho em dobro, conclusão sem atraso corrente e contrato total sem inflação; dados FICTÍCIOS.');

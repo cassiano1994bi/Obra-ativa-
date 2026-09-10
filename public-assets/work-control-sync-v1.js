@@ -25,7 +25,7 @@
       const payload = JSON.parse(options.body), companyId = payload.p_company_id;
       if (conflicts.has(companyId)) throw new Error(conflicts.get(companyId));
       const data = payload.p_data?.db || {};
-      const controlled = (data.works || []).some((w) => w.control?.version === 1) || (data.workUpdates || []).some((e) => e.controlEvent) || (data.distributions || []).some((d) => d.phaseId);
+      const controlled = (data.works || []).some((w) => w.control?.version === 1 || w.control?.empreitas?.length) || (data.otherExpenses || []).some((e) => ['extra', 'contractPayment'].includes(e.costType)) || (data.workUpdates || []).some((e) => e.controlEvent) || (data.distributions || []).some((d) => d.phaseId || d.contractId);
       if (!revisions.has(companyId)) {
         if (controlled) throw new Error('A proteção de salvamento das obras ainda precisa ser ativada. A alteração está preservada neste aparelho.');
         return original(path, options, token);

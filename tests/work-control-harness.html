@@ -12,6 +12,8 @@ window.AccessControl={allowedModules:()=>['works','planning','financial','attend
 const CloudSync={session:{user:{id:'USUARIO-TESTE',user_metadata:{full_name:'GESTOR FICTÍCIO'}}},schedule(){},async request(path,options){if(path.startsWith('/rest/v1/company_app_state?'))return[{work_control_revision:1}];if(path.includes('read_work_control_history'))return[];throw new Error('REDE NÃO PERMITIDA NA PRÉVIA FICTÍCIA');}};
 let db={companyId:'EMPRESA-TESTE',settings:{},works:[{id:'OBRA-TESTE',name:'OBRA FICTÍCIA — Centro de treinamento',status:'Em andamento',createdAt:'2030-11-01T12:00:00Z',control:{version:1,baseline:{entry:'new',asOfDate:'2030-11-01',priorCost:0,priorReceived:0,contractValue:1711,budgetValue:977}}},{id:'LEGADO-TESTE',name:'OBRA FICTÍCIA — Registro anterior',status:'Em andamento',legacyData:'PRESERVAR'}],employees:[{id:'PESSOA-TESTE-A',name:'FUNCIONÁRIO FICTÍCIO A',daily:17,startDate:'2030-01-01',status:'Ativo',rateHistory:[{date:'2031-01-14',value:23}]},{id:'PESSOA-TESTE-B',name:'FUNCIONÁRIO FICTÍCIO B',daily:19,startDate:'2030-01-01',status:'Ativo'}],workPhases:[],workUpdates:[],workMedia:[{id:'FOTO-TESTE',workId:'OBRA-TESTE',phaseId:'FASE-TESTE-0',caption:'FOTO FICTÍCIA',createdAt:'2031-01-02T12:00:00Z'}],distributions:[{id:'DIST-TESTE-A',employeeId:'PESSOA-TESTE-A',workId:'OBRA-TESTE',date:'2031-01-15',phaseId:'FASE-TESTE-1'}],attendance:[{id:'PRESENCA-TESTE-A',employeeId:'PESSOA-TESTE-A',date:'2031-01-15',status:'Meio período',workId:'OBRA-TESTE'},{id:'PRESENCA-TESTE-A-COPIA',employeeId:'PESSOA-TESTE-A',date:'2031-01-15',status:'Meio período',workId:'OBRA-TESTE'},{id:'FALTA-TESTE',employeeId:'PESSOA-TESTE-B',date:'2031-01-15',status:'Faltou',workId:'OBRA-TESTE'}],receipts:[{id:'REC-TESTE',workId:'OBRA-TESTE',date:'2031-01-14',value:113}],workClosings:[{workId:'OBRA-TESTE',receipts:[{id:'REC-TESTE',date:'2031-01-14',value:113}]}],otherExpenses:[{id:'DESPESA-TESTE',workId:'OBRA-TESTE',date:'2031-01-15',value:31,category:'Material',description:'MATERIAL FICTÍCIO'}],payments:[{id:'PGTO-TESTE',workId:'OBRA-TESTE',value:11.5}],audit:[]};
 ['Preparação FICTÍCIA','Estrutura FICTÍCIA','Instalação elétrica FICTÍCIA com nome longo','Impermeabilização FICTÍCIA','Revestimentos FICTÍCIOS','Entrega FICTÍCIA'].forEach((name,i)=>db.workPhases.push({id:'FASE-TESTE-'+i,workId:'OBRA-TESTE',name,order:i+1,percent:i===0?100:i===1?40:0,status:i===0?'Concluída':i===1?'Em andamento':'Programada',plannedStart:'2031-01-01',plannedEnd:'2031-03-01',startDate:i<2?'2031-01-01':'',endDate:i===0?'2031-01-09':'',weight:1,plannedPersonDays:7,createdAt:'2030-12-01T12:00:00Z'}));
+// Coleções vazias do aplicativo real; somente dados fictícios são injetados nos testes.
+for(const key of ['receivables','clients','workClients','receivableDiscounts','advances','discounts','licenses','vehicles','fuel','maintenance','tow','reports','cycles','workPermissions']) db[key]??=[];
 let persisted=0,legacyPhotos=0,legacyDeletes=0,legacyMoves=0,legacyPhotoUploads=0;
 const emp=(id)=>db.employees.find(e=>e.id===id),workById=(id)=>db.works.find(w=>w.id===id),workPhasesFor=(id)=>db.workPhases.filter(p=>p.workId===id),workMediaFor=(id,phase)=>db.workMedia.filter(m=>m.workId===id&&(!phase||m.phaseId===phase));
 const WorkTrackingService={phase:id=>db.workPhases.find(p=>p.id===id),persist(){persisted++}};
@@ -34,9 +36,16 @@ async function boot(){
   const selected=['distributionFor','dailyAt','attendancePresenceValue'].map(name=>lines.filter(line=>line.startsWith('function '+name+'(')).at(-1));
   const from=source.indexOf('const FINANCE_UNASSIGNED_WORK='),to=source.indexOf('\nlaborCostRows=function',from);
   const script=document.createElement('script');script.textContent=selected.join('\n')+'\n'+source.slice(from,to)+'\n'+lines.find(l=>l.startsWith('function simplePhaseFolderCard('))+'\n'+lines.filter(l=>l.startsWith('workTrackerPhaseList=function(work)')).at(-1);document.head.append(script);
-  for(const file of ['work-control-core-v1.js','work-control-sync-v1.js','work-control-v1.js']){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../public-assets/'+file;s.onload=resolve;s.onerror=reject;document.head.append(s)})}
+  const hubPreview=new URLSearchParams(location.search).get('hub')==='1';
+  const scripts=['work-control-core-v1.js','work-control-sync-v1.js','work-control-v1.js'];
+  if(hubPreview){
+    document.querySelector('.test-layout').id='app';
+    for(const file of ['work-schedule-v1.css','work-hub-v1.css','work-costs-v1.css']){await new Promise((resolve,reject)=>{const link=document.createElement('link');link.rel='stylesheet';link.href='../public-assets/'+file;link.onload=resolve;link.onerror=reject;document.head.append(link)})}
+    scripts.push('work-schedule-core-v1.js','work-schedule-v1.js','work-hub-v1.js','work-cost-core-v1.js','work-costs-v1.js');
+  }
+  for(const file of scripts){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../public-assets/'+file;s.onload=resolve;s.onerror=reject;document.head.append(s)})}
   await CloudSync.request('/rest/v1/company_app_state?company_id=eq.EMPRESA-TESTE&select=data');
-  openWorkTracker('OBRA-TESTE');document.documentElement.dataset.ready='1';
+  openWorkTracker('OBRA-TESTE');if(hubPreview){activeWorkTrackerTab='summary';render()}document.documentElement.dataset.ready='1';
 }
 boot().catch(e=>{$('#view').textContent=e.stack;document.documentElement.dataset.error=e.message});
 </script></body></html>

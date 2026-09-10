@@ -1,0 +1,129 @@
+/* Somente empreitas/custos da Central da Obra. Não altera formulários de outros módulos. */
+.oa-cost-client-forecast { display:grid; gap:12px; padding:16px; border:1px solid #d4e4e7; border-radius:12px; background:#f8fbfc; min-width:0; margin-top:14px }
+.oa-cost-client-forecast>header { display:flex; align-items:start; justify-content:space-between; flex-wrap:wrap; gap:12px }
+.oa-cost-client-forecast>header>div { flex:1 1 260px; min-width:0 }
+.oa-cost-client-forecast h3 { margin:0 0 6px; color:#163f55; font-size:18px; line-height:1.4 }
+.oa-cost-client-forecast p { margin:0; color:#536e7b; font-size:13px; line-height:1.6 }
+.oa-cost-client-forecast .oa-work-hub-cost-composition { grid-template-columns:repeat(2,minmax(0,1fr)); margin:0 }
+.oa-cost-client-forecast .oa-cost-history { margin:0 }
+.oa-cost-forecast-actions { display:flex; flex-wrap:wrap; gap:8px; padding-top:6px }
+.oa-cost-client-agreement>div { flex-wrap:wrap }
+@container workHub (max-width:440px) {
+  .oa-cost-client-forecast .oa-work-hub-cost-composition { grid-template-columns:1fr }
+  .oa-cost-client-forecast { padding:12px }
+}
+.oa-cost-contracts,.oa-cost-contract-list { display:grid; gap:16px; min-width:0 }
+.oa-cost-contract-list { grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); align-items:start }
+.oa-cost-contract { padding:18px; border:1px solid #d6e5e8; border-radius:16px; background:#fff; box-shadow:0 5px 18px #153d5009; min-width:0 }
+.oa-cost-contract header { display:flex; justify-content:space-between; align-items:start; gap:10px }
+.oa-cost-contract header>div { min-width:0 }
+.oa-cost-contract h3 { margin:4px 0 6px; font-size:19px; line-height:1.3; overflow-wrap:anywhere; color:#103d55 }
+.oa-cost-contract header p,.oa-cost-contract-mode { margin:4px 0 12px; color:#486879; font-size:14px }
+.oa-cost-contract-mode span { display:block; font-size:12px; margin-top:5px }
+.oa-cost-contract header small { color:#476978; font-size:13px; font-weight:700 }
+.oa-cost-status { border-radius:7px; background:#e7f7ef; color:#145a40; padding:5px 8px; font-size:12px; font-weight:800; white-space:nowrap }
+.oa-cost-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; min-width:0 }
+.oa-cost-summary article { display:grid; align-content:start; gap:6px; border:1px solid #dce8e9; border-radius:10px; padding:13px; background:#f5faf9; min-width:0 }
+.oa-cost-summary small { color:#53707d; font-size:11px; font-weight:800; letter-spacing:.025em }
+.oa-cost-summary b { font-size:clamp(18px,1.7vw,24px); font-weight:850; color:#123f54; overflow-wrap:anywhere; font-variant-numeric:tabular-nums }
+.oa-cost-contract .oa-cost-summary { gap:7px }
+.oa-cost-contract .oa-cost-summary article { padding:10px }
+.oa-cost-contract .oa-cost-summary b { font-size:18px }
+.oa-cost-contract footer { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; padding:0; border:0; background:transparent }
+.oa-cost-empty { padding:28px; border:1px dashed #abcac4; border-radius:14px; background:#f5faf8; color:#234f5e }
+.oa-cost-empty h3 { margin:0 0 8px; font-size:20px }
+.oa-cost-empty p { margin:0; line-height:1.6 }
+.oa-cost-history,.oa-cost-phase-breakdown { margin-top:12px; border:1px solid #d9e7e7; border-radius:12px; overflow:hidden; background:#fff; min-width:0 }
+.oa-cost-history summary,.oa-cost-phase-breakdown summary { padding:14px; color:#1a5360; font-size:14px; font-weight:800; cursor:pointer; background:#f5f9f8 }
+.oa-cost-history>div { display:flex; align-items:start; gap:12px; justify-content:space-between; padding:12px 14px; border-top:1px solid #e4eeee; min-width:0 }
+.oa-cost-history>div>span { min-width:0; display:grid; gap:5px; overflow-wrap:anywhere }
+.oa-cost-history>div>strong { flex-shrink:0; color:#143f54; font-size:16px; font-variant-numeric:tabular-nums }
+.oa-cost-history small { font-size:12px; line-height:1.5; color:#56727e }
+.oa-cost-history>p { padding:10px 14px; color:#56727e }
+.oa-cost-phase-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)); gap:12px; padding:12px }
+.oa-cost-phase-list article { padding:14px; border:1px solid #dde9ea; border-radius:10px; min-width:0 }
+.oa-cost-phase-list h3 { margin:0 0 12px; font-size:16px; line-height:1.4; color:#143f54; overflow-wrap:anywhere }
+.oa-cost-phase-list dl { margin:0; display:grid; gap:8px }
+.oa-cost-phase-list dl>div { display:flex; gap:12px; justify-content:space-between; font-size:13px }
+.oa-cost-phase-list dt { color:#4d6b78 }
+.oa-cost-phase-list dd { margin:0; font-weight:800; white-space:nowrap; color:#143f54; font-variant-numeric:tabular-nums }
+.oa-cost-phase-total { border-top:1px solid #dce8e9; padding-top:10px }
+.oa-cost-schedule { display:grid; gap:5px; margin-top:9px; min-width:0 }
+.oa-cost-schedule span { color:#526c79; font-size:12px; font-weight:750 }
+.oa-cost-schedule select { min-width:0; max-width:100%; width:100%; min-height:40px; border:1px solid #b9d2d6; border-radius:8px; padding:7px; background:#f5faf8; color:#163e51; font:inherit; font-size:13px }
+.oa-work-hub-contract-value { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; background:#edf7f2; border:1px solid #cfdfdb; padding:12px 15px; border-radius:12px; margin:0; color:#194e42 }
+.oa-work-hub-contract-value strong { font-size:20px; font-weight:850 }
+html body #app#app:not(.public-app) #view .oa-work-hub-finance-grid article>b { font-size:22px; font-weight:850; line-height:1.3; font-variant-numeric:tabular-nums }
+html body #app#app:not(.public-app) #view .oa-work-hub-finance-grid article>span { font-size:12px; line-height:1.5 }
+html body #app#app:not(.public-app) #view .oa-work-hub-tabs { grid-template-columns:repeat(5,minmax(0,1fr)) }
+html body #modal #dialog:has(.oa-cost-dialog) { width:min(740px,calc(100vw - 28px)); max-width:740px; max-height:calc(100dvh - 24px); margin:auto; padding:22px; overflow:auto; box-sizing:border-box }
+html body #modal:has(.oa-cost-dialog) { z-index:1000; overflow:hidden }
+.oa-cost-dialog,.oa-cost-dialog * { box-sizing:border-box }
+.oa-cost-dialog { min-width:0; color:#173f54 }
+.oa-cost-dialog header small { color:#57727d; font-size:13px; overflow-wrap:anywhere }
+.oa-cost-dialog h2 { font-size:24px; line-height:1.2; margin:6px 0 20px }
+.oa-cost-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; min-width:0 }
+.oa-cost-field { display:grid; gap:6px; min-width:0; margin:0; font-size:14px; font-weight:750; color:#274e5e; align-content:start }
+.oa-cost-dialog .oa-cost-field input,.oa-cost-dialog .oa-cost-field select { display:block; width:100%; max-width:100%; min-width:0; min-height:44px; margin:0; border:1px solid #b9ced6; border-radius:9px; background:white; color:#163d50; padding:10px; font:inherit; font-size:16px; font-weight:500; box-shadow:none }
+html body #modal #dialog #oaCostForm .oa-cost-field input,html body #modal #dialog #oaCostForm .oa-cost-field select { min-height:44px!important; font-size:16px!important; line-height:1.4; }
+.oa-cost-dialog input:focus,.oa-cost-dialog select:focus { outline:3px solid #22ad7950; outline-offset:1px; border-color:#20846b }
+.oa-cost-fields [hidden],#oaCostError[hidden] { display:none!important }
+.oa-cost-fields>[data-cost-meters] { display:contents }
+.oa-cost-fields>[data-cost-fixed],.oa-cost-fields>[data-cost-responsible],.oa-cost-fields>[data-cost-custom] { min-width:0 }
+.oa-cost-total,.oa-cost-form-summary,.oa-cost-proof-field,.oa-cost-hint { grid-column:1/-1 }
+.oa-cost-total,.oa-cost-form-summary { padding:13px; border:1px solid #cce5d8; border-radius:10px; background:#edf8f2; font-size:20px; font-weight:800; color:#15563e }
+.oa-cost-form-summary { display:grid; gap:6px; font-size:17px }
+.oa-cost-form-summary span { color:#486d5c; font-size:13px; font-weight:500 }
+.oa-cost-hint { margin:0; color:#506c79; font-size:13px; line-height:1.6 }
+.oa-cost-proof-field { border:1px dashed #b9cece; border-radius:10px; padding:12px; color:#395f6c }
+.oa-cost-proof-field summary { cursor:pointer; font-size:14px; font-weight:700 }
+.oa-cost-proof-field .oa-cost-field { margin-top:12px }
+.oa-cost-proof-field small { display:block; font-size:12px; margin-top:8px }
+.oa-cost-dialog form>footer { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; padding:16px 0 0; margin:16px 0 0; border-top:1px solid #dce8e7; background:#fff }
+.oa-cost-dialog footer button { min-height:44px; font-size:15px; font-weight:750 }
+#oaCostError { border:1px solid #e9bcbc; border-radius:9px; background:#fff0f0; padding:12px; color:#9e2828; font-size:14px; line-height:1.5 }
+.oa-cost-proof { display:block; max-width:100%; max-height:70dvh; object-fit:contain; margin:12px auto }
+@container workHub (max-width:640px) {
+  .oa-cost-contract-list { grid-template-columns:1fr }
+  .oa-cost-summary article { padding:10px }
+  .oa-cost-summary b { font-size:18px }
+  html body #app#app:not(.public-app) #view .oa-work-hub-tabs { grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px }
+  html body #app#app:not(.public-app) #view .oa-work-hub-tab { padding:10px 4px; min-width:0 }
+  html body #app#app:not(.public-app) #view .oa-work-hub-tab>span { display:none }
+  html body #app#app:not(.public-app) #view .oa-work-hub-tab>small { display:block; font-size:12px }
+}
+@container workHub (max-width:880px) {
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table { overflow:visible; min-width:0; width:100% }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table .table { display:block; min-width:0!important; width:100%; table-layout:fixed }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table thead { display:none }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table tbody { display:grid; gap:8px; min-width:0; width:100% }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table tr { display:grid; grid-template-columns:44px minmax(0,.8fr) minmax(0,1fr); gap:8px; min-width:0; max-width:100%; padding:10px; border:1px solid #dce8e7; border-radius:10px }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table td { display:block; min-width:0; max-width:100%; padding:0!important; border:0!important; overflow-wrap:anywhere }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table td:first-child { grid-row:1/3; display:grid; place-items:center }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table td:nth-child(4) { grid-column:2/4 }
+  html body #app#app:not(.public-app) #view .oa-work-hub-team-table select { box-sizing:border-box; min-width:0!important; width:100%!important; max-width:100%!important }
+}
+@media (max-width:520px) {
+  .oa-cost-fields { grid-template-columns:1fr }
+  .oa-cost-dialog h2 { font-size:22px }
+  .oa-cost-contract .oa-cost-summary b { font-size:16px }
+}
+@media (orientation:landscape) and (max-height:520px) {
+  html body #modal #dialog:has(.oa-cost-dialog) { max-height:calc(100dvh - 12px); padding:16px; width:min(740px,calc(100vw - 24px)) }
+  .oa-cost-dialog h2 { font-size:21px; margin-bottom:14px }
+  .oa-cost-fields { gap:10px 14px }
+}
+
+.oa-cost-all-contracts>p { margin:0 0 8px; color:#3d646c; font-size:13px; font-weight:700; }
+.oa-cost-all-contracts>.oa-cost-summary article { padding:10px 12px; background:#f3f7f6; }
+.oa-cost-all-contracts>.oa-cost-summary b { font-size:21px; }
+.oa-cost-mode-hint { display:block; margin-top:7px; padding:8px; border-radius:8px; background:#fff5de; color:#715113; font-size:12px; line-height:1.5; }
+html body #app#app:not(.public-app) #view .oa-cost-contract .oa-cost-summary small { font-size:12px; line-height:1.35; }
+html body #app#app:not(.public-app) #view .oa-cost-contract .oa-cost-summary b { font-size:20px; }
+html body #modal #dialog .oa-cost-total[hidden] { display:none!important; }
+@media (max-width:480px) and (orientation:portrait) {
+  html body #app#app:not(.public-app) #view#view .oa-cost-summary { grid-template-columns:1fr!important; gap:7px; }
+  html body #app#app:not(.public-app) #view#view .oa-cost-summary article { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; }
+  html body #app#app:not(.public-app) #view#view .oa-cost-summary article small { flex:1; min-width:0; max-width:44%; font-size:12px; }
+  html body #app#app:not(.public-app) #view#view .oa-cost-summary article b { white-space:nowrap; font-size:20px; overflow-wrap:normal; }
+}

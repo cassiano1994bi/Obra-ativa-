@@ -2,12 +2,9 @@
   'use strict';
   const KEY = 'oa-optional-measurement-v1:';
   const DEVICE_ALLOW_KEY = KEY + 'device-allowed';
-  const META_PIXEL_ID = '1591172095715887';
-  const META_PIXEL_URL = 'https://connect.facebook.net/en_US/fbevents.js';
   const MODULES = new Set(['home', 'works', 'planning', 'team', 'attendance', 'payments', 'financial', 'vehicles', 'reports', 'assistant', 'permissions', 'reminders', 'budgets']);
   let identity = '', session = '', lastInput = Date.now(), lastSample = Date.now(), seconds = 0;
   let lastSend = 0, retryAt = 0, linkRetryAt = 0, configured = false, enabled = false, busy = false, linked = false, publicSent = false, dismissed = false;
-  let metaPixelStarted = false;
   const currentUser = () => window.CloudSync?.session?.user?.id || 'visitor';
   const signedInApp = () => Boolean(window.CloudSync?.session?.user?.id
     && !document.body?.classList?.contains?.('auth-mode') && !document.body?.classList?.contains?.('public-mode'));
@@ -25,32 +22,6 @@
     return false;
   };
   const choice = () => deviceAllowed() ? 'allow' : dismissed ? 'deny' : null;
-  function startMetaPixel() {
-    if (metaPixelStarted || choice() !== 'allow' || signedInApp()) return;
-    metaPixelStarted = true;
-    if (typeof window.fbq !== 'function') {
-      const fbq = window.fbq = function(...args) {
-        if (fbq.callMethod) fbq.callMethod(...args);
-        else fbq.queue.push(args);
-      };
-      if (!window._fbq) window._fbq = fbq;
-      fbq.push = fbq;
-      fbq.loaded = true;
-      fbq.version = '2.0';
-      fbq.queue = [];
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = META_PIXEL_URL;
-      const firstScript = document.getElementsByTagName('script')[0];
-      if (firstScript?.parentNode) firstScript.parentNode.insertBefore(script, firstScript);
-      else document.head?.appendChild(script);
-    }
-    window.fbq('init', META_PIXEL_ID);
-    window.fbq('track', 'PageView');
-  }
-  function revokeMetaPixel() {
-    if (typeof window.fbq === 'function') window.fbq('consent', 'revoke');
-  }
   const token = () => window.CloudSync?.session?.access_token;
   const moduleName = () => { const value = typeof page !== 'undefined' ? page : 'home'; return MODULES.has(value) ? value : 'home'; };
   async function rpc(name, args, keepalive = false) {
@@ -100,7 +71,7 @@
     session = window.crypto?.randomUUID?.() || ''; lastSend = 0;
     document.getElementById('oaMeasurementChoice')?.remove();
     if (value === 'deny') {
-      revokeMetaPixel();
+      window.ObraAtivaMetaPixel?.revoke();
       campaign('forget').catch(() => {});
     }
     await tick();
@@ -137,7 +108,7 @@
       document.getElementById('oaMeasurementChoice')?.remove();
     }
     addPrivacyLink(); prompt();
-    startMetaPixel();
+    window.ObraAtivaMetaPixel?.pageView();
     const active = document.visibilityState === 'visible' && document.hasFocus() && now - lastInput < 60000;
     if (choice() === 'allow' && active && configured && enabled && window.CloudSync?.ready) seconds = Math.min(60, seconds + Math.min(5, Math.max(0, (now - lastSample) / 1000)));
     lastSample = now;
@@ -179,7 +150,7 @@
   for (const event of ['pointerdown', 'keydown', 'scroll']) document.addEventListener(event, () => { lastInput = Date.now(); }, { passive: true, capture: event === 'scroll' });
   document.addEventListener('visibilitychange', () => { lastSample = Date.now(); if (document.visibilityState === 'visible') tick(); });
   document.addEventListener('click', (event) => {
-    window.requestAnimationFrame(addPrivacyLink);
+    window.requestAnimationFrame(() => { addPrivacyLink(); window.ObraAtivaMetaPixel?.pageView(); });
     const link = event.target.closest?.('a[href]');
     if (choice() === 'allow' && link && !link.closest('.oa-creator-credit') && /^(https:\/\/)(wa\.me|api\.whatsapp\.com)\//.test(link.href) && document.querySelector('.oa-public-footer')) campaign('whatsapp').catch(() => {});
   }, { passive: true });

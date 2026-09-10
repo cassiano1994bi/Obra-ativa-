@@ -3,8 +3,8 @@
 export default Object.freeze({
   "version": 2,
   "scannerVersion": "quality-scanner-v1",
-  "generatedAt": "2026-09-07T04:45:43.864Z",
-  "codeHash": "a90e319f0a3798c4f01ff481df0e39923dfd85f0f7475e8d222d5d79e16250ec",
+  "generatedAt": "2026-09-10T04:17:24.788Z",
+  "codeHash": "35ea3971b2ca02c73bf89f5bf20f6e3ebcdd57a8c3f83141e3f8772e8a738f62",
   "coverage": {
     "included": [
       "aplicação web",
@@ -27,9 +27,9 @@ export default Object.freeze({
     ]
   },
   "summary": {
-    "fileCount": 153,
-    "totalBytes": 5401178,
-    "totalLines": 26608,
+    "fileCount": 160,
+    "totalBytes": 5599625,
+    "totalLines": 29386,
     "findingCount": 194,
     "severityCounts": {
       "critical": 0,
@@ -219,9 +219,9 @@ export default Object.freeze({
     {
       "path": "exclusao-de-conta.html",
       "scope": "application",
-      "bytes": 3093,
-      "lines": 34,
-      "sha256": "8a9681a331e6968a331f6ea1c0c30bc7d91adaeaf147e678ba951feb8530a0fa",
+      "bytes": 3186,
+      "lines": 35,
+      "sha256": "a804292ba5d075022bb2bbeef2f34fd50f9f366b4bb2d4762ed6ce56d6d5ca32",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -230,9 +230,9 @@ export default Object.freeze({
     {
       "path": "index.html",
       "scope": "application",
-      "bytes": 1187322,
-      "lines": 3144,
-      "sha256": "237d4482d2b7001d56963fd793e2618f850f8ae3477de4f36e68b88e3b82cb70",
+      "bytes": 1189983,
+      "lines": 3183,
+      "sha256": "04ca65669c4875766a22cba41551ad730092c621bcc038e2c6004fb5a8ac5926",
       "functions": 832,
       "fetches": 2,
       "domWrites": 257,
@@ -252,9 +252,9 @@ export default Object.freeze({
     {
       "path": "netlify.toml",
       "scope": "application",
-      "bytes": 1862,
+      "bytes": 1970,
       "lines": 40,
-      "sha256": "a7ec6f158b32ae402528f3c97dea5783bd136293ba1391c39cf5e0a568c740bf",
+      "sha256": "8b41464d359ace62b3908c09453a6c5304ee8d5e8833edad9d58f68a7177fa5b",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -648,9 +648,9 @@ export default Object.freeze({
     {
       "path": "privacidade.html",
       "scope": "application",
-      "bytes": 3690,
-      "lines": 57,
-      "sha256": "f4f1196068334f06215908a2193d241e7332170a2c0d565459b52b38047579db",
+      "bytes": 3783,
+      "lines": 58,
+      "sha256": "fb0d14e951e0f7ebffcd57f4d1bf8126183a370132cb47b96ab9b7817c920e34",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -965,6 +965,17 @@ export default Object.freeze({
       "inlineHandlers": 0
     },
     {
+      "path": "public-assets/meta-pixel-v1.js",
+      "scope": "application",
+      "bytes": 6529,
+      "lines": 165,
+      "sha256": "1881e9370afdd331d44aa068fd942ebf474399ebdd7e6af144223da444cefdf3",
+      "functions": 13,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
       "path": "public-assets/mobile-control-standards-v1.js",
       "scope": "application",
       "bytes": 6484,
@@ -1044,9 +1055,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-design-system-v1.css",
       "scope": "application",
-      "bytes": 18536,
-      "lines": 432,
-      "sha256": "ad15e69868b7352aacb522a7f342afe5306b7c05af95e2448b4ee96419b145b9",
+      "bytes": 33042,
+      "lines": 681,
+      "sha256": "8b16ffc9f37e9a188f78066197f579ab1ea02a67e58902c937d7718f87f507fd",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1077,9 +1088,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-home-v1.js",
       "scope": "application",
-      "bytes": 26502,
-      "lines": 428,
-      "sha256": "3667877e93fc4f29a2c8a61de32b77846caf03fad3984839fc3a82b279b7037d",
+      "bytes": 26989,
+      "lines": 430,
+      "sha256": "a0e24ecf4facde37774e6950fdd7da9a8d15b45e97304782e2ffd5a5759fa544",
       "functions": 28,
       "fetches": 0,
       "domWrites": 11,
@@ -1110,9 +1121,9 @@ export default Object.freeze({
     {
       "path": "public-assets/obraativa-product-site-v2.css",
       "scope": "application",
-      "bytes": 18220,
-      "lines": 31,
-      "sha256": "9ac5dec9854cd8952034fedf9d7364b93ab58d35677945f86fae1fb46c66223c",
+      "bytes": 18370,
+      "lines": 32,
+      "sha256": "bea8aba5deda159a01b3cc78fc407adfd33e8111cdd8796288e84612bf621000",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1264,10 +1275,10 @@ export default Object.freeze({
     {
       "path": "public-assets/product-activity-v1.js",
       "scope": "application",
-      "bytes": 11411,
-      "lines": 190,
-      "sha256": "b3416749346f5f2116d20c53873f833c7ed96572eca1a2870413c6379fb8df29",
-      "functions": 9,
+      "bytes": 10363,
+      "lines": 161,
+      "sha256": "8a33b55f5e79394e6f0b5a45ca5ce7308259615a9dd06bbf60c0e27c8f6c4c4c",
+      "functions": 7,
       "fetches": 2,
       "domWrites": 1,
       "inlineHandlers": 0
@@ -1374,10 +1385,10 @@ export default Object.freeze({
     {
       "path": "public-assets/work-control-core-v1.js",
       "scope": "application",
-      "bytes": 36812,
-      "lines": 376,
-      "sha256": "f3b63427ac28402315e05f69de923ba067e7c8cad1b6c6cbb3c1f18ab0c8bb4c",
-      "functions": 28,
+      "bytes": 42448,
+      "lines": 436,
+      "sha256": "249831f2498dfc34a024c530ed3546e46501b649569e0b7b0184aaf543b85346",
+      "functions": 31,
       "fetches": 0,
       "domWrites": 0,
       "inlineHandlers": 0
@@ -1385,9 +1396,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-control-sync-v1.js",
       "scope": "application",
-      "bytes": 3264,
+      "bytes": 3405,
       "lines": 51,
-      "sha256": "8d1ce310ddd4ae8e17d728d5c759aaa5a4d0c6d6f39a281cf0a5b506e52b1870",
+      "sha256": "795bb2c72b24c669506db7618843b51f2c6b2dba77a742d917b8ef15eb2183e8",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1407,13 +1418,68 @@ export default Object.freeze({
     {
       "path": "public-assets/work-control-v1.js",
       "scope": "application",
-      "bytes": 22847,
-      "lines": 306,
-      "sha256": "5186dff7aee6857ad5867ed677773e067f064a0197040ccad200bfbe071f9c56",
-      "functions": 17,
+      "bytes": 24476,
+      "lines": 320,
+      "sha256": "a307bf1095961f5fadfc712f7d9d3c3fb960da7b90ee0c0b7d60b0cd1367cb3d",
+      "functions": 19,
       "fetches": 0,
       "domWrites": 10,
       "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/work-cost-core-v1.js",
+      "scope": "application",
+      "bytes": 27998,
+      "lines": 334,
+      "sha256": "1aa5f694bdd92a2f4da33013986532f5828648fc2adc79c4d6c074c92eb659a9",
+      "functions": 24,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/work-costs-v1.css",
+      "scope": "application",
+      "bytes": 12417,
+      "lines": 130,
+      "sha256": "4cc065d22fe5175fd44c9ca97cb69cf8f41195a9555a1baa65f0990521f92de3",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/work-costs-v1.js",
+      "scope": "application",
+      "bytes": 38489,
+      "lines": 286,
+      "sha256": "a7a950c1a73685a1dc615433c9cdcb6e59fa7210564102a15fadded0b1cfc73c",
+      "functions": 20,
+      "fetches": 0,
+      "domWrites": 7,
+      "inlineHandlers": 2
+    },
+    {
+      "path": "public-assets/work-hub-v1.css",
+      "scope": "application",
+      "bytes": 33176,
+      "lines": 839,
+      "sha256": "7ac968feb3eb2df7eadde281d196fe9c3240df4abf59c4e61b04ba41a3bf0757",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
+    },
+    {
+      "path": "public-assets/work-hub-v1.js",
+      "scope": "application",
+      "bytes": 45779,
+      "lines": 591,
+      "sha256": "13dd6228a297dbc949b3f58998f5fcb54dc1dca5d31990d9fb399c097d941ff0",
+      "functions": 48,
+      "fetches": 0,
+      "domWrites": 4,
+      "inlineHandlers": 19
     },
     {
       "path": "public-assets/work-phase-density-v1.css",
@@ -1429,9 +1495,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-schedule-core-v1.js",
       "scope": "application",
-      "bytes": 4897,
+      "bytes": 4942,
       "lines": 76,
-      "sha256": "cef39122a758114f47db5376b8bf26870370f9e69b5e50aa78be4a782d4e1ead",
+      "sha256": "7bfe993378a48f61c0b164ce7cb62aa4c9b28620edd042910ae1e5cb28b7e901",
       "functions": 5,
       "fetches": 0,
       "domWrites": 0,
@@ -1451,9 +1517,9 @@ export default Object.freeze({
     {
       "path": "public-assets/work-schedule-v1.js",
       "scope": "application",
-      "bytes": 9349,
-      "lines": 117,
-      "sha256": "93f730f9fc8b938fcafe83a3a2e704da978252fe85dae46467e53ef1be5cedb9",
+      "bytes": 9976,
+      "lines": 126,
+      "sha256": "0ff96b6d2102cd99fc3405c5085b1ab7903b2d3c9fae1c62c88ec79ca589d5cd",
       "functions": 6,
       "fetches": 0,
       "domWrites": 4,
@@ -1550,9 +1616,9 @@ export default Object.freeze({
     {
       "path": "scripts/release/public-files.json",
       "scope": "application",
-      "bytes": 7147,
-      "lines": 162,
-      "sha256": "254f835170cf3b6514b35993dc242f8e3cf558ffc4216f5b194fd1e6a4dc0f04",
+      "bytes": 7377,
+      "lines": 168,
+      "sha256": "b3a3a1cc7804bc2e3ac366f6ab3078a47e96c9ce5d1563cd198993fa2f4b5a88",
       "functions": 0,
       "fetches": 0,
       "domWrites": 0,
@@ -1561,9 +1627,9 @@ export default Object.freeze({
     {
       "path": "service-worker.js",
       "scope": "application",
-      "bytes": 9322,
-      "lines": 232,
-      "sha256": "75c4e3b0f5a76d458a4f39bac3d6a9172b05701c2b6991b8775df4dd71fefe9d",
+      "bytes": 9733,
+      "lines": 243,
+      "sha256": "e05bf32c494fb4d988aaada2f728d348be7ec9b653fc3cdde279de38165d8125",
       "functions": 6,
       "fetches": 3,
       "domWrites": 0,
@@ -1722,6 +1788,17 @@ export default Object.freeze({
       "fetches": 0,
       "domWrites": 0,
       "inlineHandlers": 0
+    },
+    {
+      "path": "supabase/migrations/202609091200_work_costs_guard.sql",
+      "scope": "application",
+      "bytes": 8290,
+      "lines": 69,
+      "sha256": "88b4ff91ce6b24f93d0cfdb8fc8dbf5bc1f334a64639ec05f97ff20a78372037",
+      "functions": 0,
+      "fetches": 0,
+      "domWrites": 0,
+      "inlineHandlers": 0
     }
   ],
   "findings": [
@@ -1744,7 +1821,7 @@ export default Object.freeze({
       "validationPlan": "Testar entradas com caracteres especiais e executar revisão visual em todos os tamanhos suportados."
     },
     {
-      "id": "QF-9F2838552FB8",
+      "id": "QF-099C87234338",
       "recurrenceKey": "ac0e6c051110aef1669afd57",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -1754,7 +1831,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "index.html",
-      "line": 429,
+      "line": 431,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -1762,7 +1839,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-9460FBC0993A",
+      "id": "QF-F60FB3B65CDB",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1772,7 +1849,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 470,
+      "line": 472,
       "evidence": "catch(e){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1780,7 +1857,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-EDE676809463",
+      "id": "QF-173EA37C6C69",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1790,7 +1867,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 1153,
+      "line": 1166,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1798,7 +1875,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-885026A05388",
+      "id": "QF-A0ABC71DE42E",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1808,7 +1885,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2443,
+      "line": 2474,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -1816,7 +1893,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-B1AD30931131",
+      "id": "QF-C44C415964F6",
       "recurrenceKey": "a099810c833740e60cb945ae",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -1826,7 +1903,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "index.html",
-      "line": 2446,
+      "line": 2477,
       "evidence": "catch(error){}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2176,7 +2253,7 @@ export default Object.freeze({
       "validationPlan": "Simular rede lenta/offline e confirmar que a tela recupera o controle sem perder dados."
     },
     {
-      "id": "QF-8CCD632956FC",
+      "id": "QF-676F1E5A1A5E",
       "recurrenceKey": "d963fbbd056f6f47cbed252c",
       "ruleId": "reliability.empty-catch",
       "severity": "medium",
@@ -2186,7 +2263,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Erro possivelmente ignorado sem registro",
       "file": "public-assets/product-activity-v1.js",
-      "line": 15,
+      "line": 12,
       "evidence": "catch {}",
       "probableCause": "A exceção foi silenciada para manter o fluxo da tela.",
       "impact": "Falhas podem ficar invisíveis e produzir estado inconsistente.",
@@ -2194,7 +2271,7 @@ export default Object.freeze({
       "validationPlan": "Forçar a falha no caminho isolado e conferir feedback, log sanitizado e recuperação."
     },
     {
-      "id": "QF-E1E3DCA09D22",
+      "id": "QF-8ED42B097DA8",
       "recurrenceKey": "c75ce50438c9b4640981cb23",
       "ruleId": "reliability.fetch-without-abort",
       "severity": "medium",
@@ -2204,7 +2281,7 @@ export default Object.freeze({
       "scope": "application",
       "title": "Requisições sem cancelamento explícito no mesmo módulo",
       "file": "public-assets/product-activity-v1.js",
-      "line": 59,
+      "line": 30,
       "evidence": "2 chamada(s) fetch; AbortController não localizado",
       "probableCause": "A função depende apenas do término natural da rede.",
       "impact": "Uma conexão lenta pode deixar a interface aguardando ou manter trabalho desnecessário.",
@@ -2637,7 +2714,7 @@ export default Object.freeze({
       "title": "Arquivo muito grande para manutenção segura",
       "file": "index.html",
       "line": 1,
-      "evidence": "1187322 bytes e 3144 linhas",
+      "evidence": "1189983 bytes e 3183 linhas",
       "probableCause": "Muitas responsabilidades ou dependências foram concentradas no mesmo arquivo.",
       "impact": "Mudanças pequenas podem causar regressões difíceis de isolar.",
       "recommendation": "Dividir em módulos preservando contratos e testes de regressão.",

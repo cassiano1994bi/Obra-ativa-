@@ -144,7 +144,8 @@
   function metricsMarkup(model) {
     const cards = [];
     if (model.access?.attendance !== false) cards.push(`<article class="obraativa-metric"><span class="obraativa-metric-icon">${iconArt('team')}</span><div><small>Equipe hoje</small><strong>${model.teamToday}</strong><span>presenças confirmadas</span></div></article>`);
-    if (model.access?.financial !== false) cards.push(`<article class="obraativa-metric green ${model.balance < 0 ? 'negative' : ''}"><span class="obraativa-metric-icon">${iconArt('financial')}</span><div><small>Financeiro</small><strong>${localMoney(model.balance)}</strong><span>saldo das obras</span></div></article>`);
+    // Semântica exclusivamente visual; saldo e demais cálculos continuam vindo do mesmo modelo.
+    if (model.access?.financial !== false) cards.push(`<article class="obraativa-metric green ${model.balance < 0 ? 'negative' : ''}" data-oa-finance-tone="${model.balance < 0 ? 'negative' : model.balance > 0 ? 'positive' : 'neutral'}"><span class="obraativa-metric-icon">${iconArt('financial')}</span><div><small>Financeiro</small><strong>${localMoney(model.balance)}</strong><span>saldo das obras</span></div></article>`);
     return cards.length ? `<section class="obraativa-metrics" data-count="${cards.length}" aria-label="Resumo da operação">${cards.join('')}</section>` : '';
   }
 
@@ -168,9 +169,10 @@
     return rows || '<p class="obraativa-empty">Nenhuma obra ativa cadastrada.</p>';
   }
 
-  function barMarkup(label, value, maximum, green = false) {
+  function barMarkup(label, value, maximum, green = false, tone = 'forecast') {
     const width = maximum > 0 ? Math.max(2, Math.min(100, Math.abs(value) / maximum * 100)) : 0;
-    return `<div class="obraativa-bar-row ${green ? 'green' : ''}"><span>${escapeHtml(label)}</span><div class="obraativa-bar-track"><i style="--obraativa-bar:${width}%;width:${width}%"></i></div><b>${localMoney(value)}</b></div>`;
+    // A cor identifica entrada, custo ou previsão; escala, valor e rótulo do gráfico são preservados.
+    return `<div class="obraativa-bar-row ${green ? 'green' : ''}" data-oa-finance-bar="${tone}"><span>${escapeHtml(label)}</span><div class="obraativa-bar-track"><i style="--obraativa-bar:${width}%;width:${width}%"></i></div><b>${localMoney(value)}</b></div>`;
   }
 
   function financePanelMarkup(model) {
@@ -178,7 +180,7 @@
       return '<p class="obraativa-empty obraativa-finance-empty">Ainda não há dados financeiros suficientes para gerar este gráfico.</p>';
     }
     const maximum = Math.max(Math.abs(model.received), Math.abs(model.labor), Math.abs(model.expected), 1);
-    return `<div class="obraativa-finance-body"><div class="obraativa-finance-total"><article><small>SALDO ATUAL</small><b>${localMoney(model.balance)}</b></article><article><small>PREVISTO A RECEBER</small><b>${localMoney(model.expected)}</b></article></div><div class="obraativa-bars">${barMarkup('Entradas', model.received, maximum)}${barMarkup('Mão de obra', model.labor, maximum, true)}${barMarkup('Previsto', model.expected, maximum)}</div></div>`;
+    return `<div class="obraativa-finance-body"><div class="obraativa-finance-total"><article data-oa-finance-tone="${model.balance < 0 ? 'negative' : model.balance > 0 ? 'positive' : 'neutral'}"><small>SALDO ATUAL</small><b>${localMoney(model.balance)}</b></article><article><small>PREVISTO A RECEBER</small><b>${localMoney(model.expected)}</b></article></div><div class="obraativa-bars">${barMarkup('Entradas', model.received, maximum, false, 'income')}${barMarkup('Mão de obra', model.labor, maximum, true, 'expense')}${barMarkup('Previsto', model.expected, maximum)}</div></div>`;
   }
 
   function overviewMarkup(model) {

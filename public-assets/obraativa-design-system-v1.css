@@ -4,6 +4,33 @@
  * Não altera conteúdo, dados, cálculos, permissões ou navegação.
  */
 :root {
+  /* Paleta solicitada: a amostra abaixo aplica estes papéis somente na Home e no menu. */
+  --oa-palette-navy: #0f2d4a;
+  --oa-palette-green: #16a34a;
+  --oa-palette-canvas: #f3f4f6;
+  --oa-palette-gray: #9ca3af;
+  --oa-palette-white: #ffffff;
+  --oa-palette-warning: #f59e0b;
+  --oa-palette-danger: #ef4444;
+  --oa-palette-info: #2563eb;
+  /* Variações acessíveis: cinza médio e verde puro não servem como texto pequeno sobre branco. */
+  --oa-palette-muted: #5b6472;
+  --oa-palette-on-dark: #e2e8f0;
+  --oa-palette-navy-soft: #edf2f7;
+  --oa-palette-navy-hover: #1b4164;
+  --oa-palette-line: #dce2e9;
+  --oa-palette-green-ink: #166534;
+  --oa-palette-green-soft: #f0fdf4;
+  --oa-palette-green-line: #bbf7d0;
+  --oa-palette-danger-ink: #b91c1c;
+  --oa-palette-danger-soft: #fef2f2;
+  --oa-palette-danger-line: #fecaca;
+  --oa-palette-warning-ink: #92400e;
+  --oa-palette-warning-soft: #fffbeb;
+  --oa-palette-warning-line: #fde68a;
+  --oa-palette-info-soft: #eff6ff;
+  --oa-palette-info-line: #bfdbfe;
+  --oa-palette-on-green: #061522;
   --oa-font-family: "Segoe UI Variable", "Segoe UI", Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --oa-type-page: 24px;
   --oa-type-section: 18px;
@@ -428,4 +455,226 @@ html body:not(.public-mode):not(.auth-mode) #modal#modal .dialog :is(button,.btn
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
+}
+
+/*
+ * Amostra navy/verde — apenas Home e menu lateral.
+ * Mantém os tokens antigos das demais telas, a geometria responsiva e toda a navegação.
+ * Novas telas devem adotar estes papéis progressivamente após a revisão da amostra.
+ */
+html body #app#app:not(.public-app) > .side {
+  background: var(--oa-palette-navy) !important;
+  border-color: var(--oa-palette-navy) !important;
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) .side .brand-text span { color: var(--oa-palette-white) !important; }
+html body #app#app:not(.public-app) .side .brand-text b { color: var(--oa-palette-green) !important; }
+html body #app#app:not(.public-app) .side .brand-text small { color: var(--oa-palette-on-dark) !important; }
+/* No celular em pé o mesmo menu vira barra inferior; não pode herdar a superfície branca antiga. */
+html body #app#app:not(.public-app) .side #nav {
+  background: var(--oa-palette-navy) !important;
+  border-color: var(--oa-palette-navy-hover) !important;
+}
+html body #app#app:not(.public-app) .side #nav button {
+  background: transparent !important;
+  color: var(--oa-palette-on-dark) !important;
+}
+html body #app#app:not(.public-app) .side #nav button:hover {
+  background: var(--oa-palette-navy-hover) !important;
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) .side #nav button.active {
+  background: var(--oa-palette-green) !important;
+  border-color: var(--oa-palette-green) !important;
+  color: var(--oa-palette-on-green) !important;
+  box-shadow: inset 3px 0 var(--oa-palette-green-line) !important;
+}
+html body #app#app:not(.public-app) .side #nav button:focus-visible {
+  outline-color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) .side .obraativa-account-session-footer {
+  border-color: var(--oa-palette-navy-hover) !important;
+}
+html body #app#app:not(.public-app) .side .obraativa-account-session-footer button {
+  color: var(--oa-palette-on-dark) !important;
+}
+
+/* Os aliases locais reaproveitam os componentes compartilhados sem recolorir outros módulos. */
+html body #app#app:not(.public-app) #view#view:has(.obraativa-home-premium) {
+  --oa-text: var(--oa-palette-navy);
+  --oa-text-muted: var(--oa-palette-muted);
+  --oa-surface: var(--oa-palette-white);
+  --oa-surface-soft: var(--oa-palette-canvas);
+  --oa-line: var(--oa-palette-line);
+  --oa-blue-700: var(--oa-palette-info);
+  --oa-green-600: var(--oa-palette-green);
+  --oa-green-700: var(--oa-palette-green-ink);
+  --oa-status-green-bg: var(--oa-palette-green-soft);
+  --oa-status-green-fg: var(--oa-palette-green-ink);
+  --oa-status-green-line: var(--oa-palette-green-line);
+  --oa-status-blue-bg: var(--oa-palette-info-soft);
+  --oa-status-blue-fg: var(--oa-palette-info);
+  --oa-status-blue-line: var(--oa-palette-info-line);
+  --oa-status-yellow-bg: var(--oa-palette-warning-soft);
+  --oa-status-yellow-fg: var(--oa-palette-warning-ink);
+  --oa-status-yellow-line: var(--oa-palette-warning-line);
+  --oa-status-orange-bg: var(--oa-palette-warning-soft);
+  --oa-status-orange-fg: var(--oa-palette-warning-ink);
+  --oa-status-orange-line: var(--oa-palette-warning-line);
+  --oa-status-red-bg: var(--oa-palette-danger-soft);
+  --oa-status-red-fg: var(--oa-palette-danger-ink);
+  --oa-status-red-line: var(--oa-palette-danger-line);
+  --oa-status-gray-bg: var(--oa-palette-canvas);
+  --oa-status-gray-fg: var(--oa-palette-muted);
+  --oa-status-gray-line: var(--oa-palette-line);
+  background: var(--oa-palette-canvas) !important;
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) .main:has(.obraativa-home-premium) {
+  background: var(--oa-palette-canvas) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium {
+  --obra-home-navy: var(--oa-palette-navy);
+  --obra-home-blue: var(--oa-palette-info);
+  --obra-home-green: var(--oa-palette-green);
+  --obra-home-ink: var(--oa-palette-navy);
+  --obra-home-muted: var(--oa-palette-muted);
+  --obra-home-line: var(--oa-palette-line);
+  --obra-home-soft: var(--oa-palette-canvas);
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium > .home-operational-head {
+  background: var(--oa-palette-navy) !important;
+  border-color: var(--oa-palette-navy) !important;
+  box-shadow: inset 3px 0 var(--oa-palette-green), var(--oa-card-shadow) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-operational-head h1 {
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-operational-head :is(p,.obraativa-home-user-name,.obraativa-home-date) {
+  color: var(--oa-palette-on-dark) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-pay-chip {
+  background: var(--oa-palette-navy-hover) !important;
+  border-color: var(--oa-palette-navy-hover) !important;
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-pay-chip small,
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-pay-chip::before {
+  color: var(--oa-palette-on-dark) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-shortcut-editor-button {
+  background: var(--oa-palette-navy) !important;
+  border-color: var(--oa-palette-gray) !important;
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.home-shortcut,.obraativa-metric,.obraativa-panel,.home-insight-panel,.home-weather-card) {
+  background: var(--oa-palette-white) !important;
+  border-color: var(--oa-palette-line) !important;
+  color: var(--oa-palette-navy) !important;
+  box-shadow: var(--oa-card-shadow) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.home-shortcut b,.obraativa-work-copy b,.obraativa-schedule-copy b,.obraativa-schedule-lead b,.home-attention-item b,.home-activity-item b,.obraativa-work-chevron) {
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.home-shortcut small,.obraativa-metric small,.obraativa-metric > div > span,.obraativa-work-copy small,.obraativa-schedule-copy small,.obraativa-schedule-lead small,.obraativa-schedule-meta span,.home-attention-item small,.home-activity-item small,.home-activity-time,.obraativa-empty,.home-attention-empty,.home-activity-empty) {
+  color: var(--oa-palette-muted) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-shortcut:hover {
+  background: var(--oa-palette-navy-soft) !important;
+  border-color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.obraativa-metric strong,.obraativa-finance-total b) {
+  color: var(--oa-palette-navy) !important;
+  font-size: var(--oa-type-value) !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-schedule-meta strong {
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-panel-head {
+  background: var(--oa-palette-navy) !important;
+  border-color: var(--oa-palette-navy) !important;
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-panel-head h2 {
+  color: var(--oa-palette-white) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-panel-head :is(p,.obraativa-section-kicker) {
+  color: var(--oa-palette-on-dark) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-insight-head {
+  background: var(--oa-palette-navy-soft) !important;
+  border-color: var(--oa-palette-line) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-insight-head h2 {
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-insight-head p {
+  color: var(--oa-palette-muted) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.obraativa-panel-link,.obraativa-work-open,.home-insight-link,.home-weather-button) {
+  background: var(--oa-palette-white) !important;
+  border-color: var(--oa-palette-navy) !important;
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.obraativa-panel-link,.obraativa-work-open,.home-insight-link,.home-weather-button):hover {
+  background: var(--oa-palette-navy-soft) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-schedule-panel .obraativa-panel-link {
+  background: var(--oa-palette-green) !important;
+  border-color: var(--oa-palette-green) !important;
+  color: var(--oa-palette-on-green) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-work-tags span {
+  background: var(--oa-palette-navy-soft) !important;
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-work-percent { color: var(--oa-palette-info) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-work-progress:has([data-oa-progress-tone="green"]) .obraativa-work-percent { color: var(--oa-palette-green-ink) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-work-progress:has([data-oa-progress-tone="gray"]) .obraativa-work-percent { color: var(--oa-palette-muted) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-progress-tone="gray"] > i { background: var(--oa-palette-gray) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-progress-tone="yellow"] > i,
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-progress-tone="orange"] > i { background: var(--oa-palette-warning) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-progress-tone="red"] > i { background: var(--oa-palette-danger) !important; }
+
+/* Previsão é neutra; saldo usa o sinal existente e o custo nunca recebe a cor de receita. */
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-finance-total article {
+  background: var(--oa-palette-canvas) !important;
+  border-color: var(--oa-palette-line) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-finance-total small {
+  color: var(--oa-palette-muted) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-finance-tone="positive"] :is(b,strong) { color: var(--oa-palette-green-ink) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-finance-tone="negative"] :is(b,strong) { color: var(--oa-palette-danger-ink) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-bar-row :is(span,b) { color: var(--oa-palette-navy) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .obraativa-bar-row .obraativa-bar-track { background: var(--oa-palette-canvas) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-finance-bar="income"] i { background: var(--oa-palette-green) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-finance-bar="expense"] i { background: var(--oa-palette-danger) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium [data-oa-finance-bar="forecast"] i { background: var(--oa-palette-info) !important; }
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-attention-dot {
+  background: var(--oa-palette-warning) !important;
+  box-shadow: 0 0 0 4px var(--oa-palette-warning-soft) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-attention-dot.expected {
+  background: var(--oa-palette-info) !important;
+  box-shadow: 0 0 0 4px var(--oa-palette-info-soft) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-attention-item:hover {
+  background: var(--oa-palette-navy-soft) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-weather-card :is(b,strong,h3) {
+  color: var(--oa-palette-navy) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-weather-card :is(small,p,em,.home-weather-meta,.home-weather-range,.home-weather-credit),
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium .home-weather-card::after {
+  color: var(--oa-palette-muted) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(button,a,input,select,textarea,summary):focus-visible {
+  outline-color: var(--oa-palette-info) !important;
+}
+html body #app#app:not(.public-app) #view#view .obraativa-home-premium :is(.home-operational-head,.obraativa-panel-head) :is(button,a):focus-visible {
+  outline-color: var(--oa-palette-white) !important;
 }

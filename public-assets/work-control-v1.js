@@ -23,7 +23,7 @@
   function ledger() {
     const rows = [];
     if (typeof financeAttendanceLaborRows === 'function') for (const r of financeAttendanceLaborRows()) {
-      if (!r.confirmed || r.unassigned) continue;
+      if (!r.confirmed || r.unassigned || r.paymentMode === 'contract') continue;
       const planned = distributionFor(r.employee.id, r.assignment.date), phaseId = r.attendance?.phaseId || (planned?.workId === r.work.id ? planned.phaseId : '') || '';
       rows.push({ id: `${r.employee.id}|${r.assignment.date}`, source: 'attendance', identity: `attendance:${r.employee.id}|${r.assignment.date}`,
         workId: r.work.id, phaseId, employeeId: r.employee.id, date: r.assignment.date, kind: 'labor', units: r.units,
@@ -35,7 +35,7 @@
       for (const r of C.list(db[key])) {
         if (key === 'licenses' && r.status !== 'Pago') continue;
         const category = String(r.category || '').toLowerCase();
-        rows.push({ ...r, source: key, kind: category.includes('materia') ? 'material' : category.includes('terceir') || category.includes('servi') ? 'service' : kind,
+        rows.push({ ...r, source: key, kind: r.costType === 'contractPayment' ? 'contract' : category.includes('materia') ? 'material' : category.includes('terceir') || category.includes('servi') ? 'service' : kind,
           value: r[amount] ?? r.amount ?? r.total, label: r.description || r.note || r.notes || key,
           identity: r.sourceType && r.sourceId ? `${r.sourceType}:${r.sourceId}` : `${key}:${r.id}` });
       }
@@ -50,7 +50,7 @@
   function message(text, error = false) {
     let target = document.getElementById('wc-message');
     if (!target) { target = document.createElement('div'); target.id = 'wc-message'; target.setAttribute('role', 'status'); (document.querySelector('#dialog form') || document.getElementById('view'))?.prepend(target); }
-    target.className = `wc-message ${error ? 'error' : ''}`; target.textContent = plainText(text);
+    target.className = `wc-message ${error ? 'error' : ''}`; target.textContent = String(text ?? '');
     target.setAttribute('role', error ? 'alert' : 'status');
     if (error) target.scrollIntoView({ block: 'nearest' });
   }
@@ -84,10 +84,18 @@
     const work = id ? workById(id) : null;
     if (id && !work) return;
     dialog(work ? 'Editar obra' : 'Nova obra', input('name', 'Nome da obra', work?.name || '', 'text', 'required maxlength="160"'), (data) => {
+      confirmSimilarName(db.works, data.get('name'), id, 'obra');
       const result = C.saveWork(db, { id, name: data.get('name') }, ctx());
       commit(result.state, id ? 'Obra atualizada' : 'Obra cadastrada', data.get('name'));
       closeModal(); openWorkTracker(result.workId);
     }, 'Salvar obra');
+  }
+  function confirmSimilarName(rows, name, id, kind) {
+    const normalized = value => String(value || '').trim().replace(/\s+/g, ' ').toLocaleLowerCase('pt-BR');
+    if (C.list(rows).some(row => row.id !== id && normalized(row.name) === normalized(name)) &&
+        !window.confirm(`Já existe uma ${kind} com esse nome. Deseja manter as duas? Nenhum registro existente será alterado.`)) {
+      throw new Error('Nada foi salvo. Confira o cadastro existente ou escolha outro nome.');
+    }
   }
   function phaseValues(phase, name, percent) {
     if (percent === '' || percent == null) throw new Error('Informe o percentual entre 0 e 100.');
@@ -104,6 +112,7 @@
       (progressOnly ? '' : input('name', 'Nome da fase', p.name, 'text', 'required maxlength="160"')) +
       input('percent', 'Quanto está pronto? (%)', p.percent ?? 0, 'number', 'required min="0" max="100" step="0.1"', '0% = não começou · 50% = metade · 100% = concluída.'),
       (data) => {
+        if (!progressOnly) confirmSimilarName(workPhasesFor(workId), data.get('name'), id, 'fase');
         const result = C.savePhase(db, workId, phaseValues(p, progressOnly ? p.name : data.get('name'), data.get('percent')), ctx());
         commit(result.state, 'Fase atualizada', result.state.workPhases.find(item => item.id === result.phaseId).name);
         closeModal(); render();
@@ -158,7 +167,8 @@
     internalWorkGridCard = function (work) {
       const html = previousInternalWorkGridCard(work);
       if (!enabled() || !ctx().modules.includes('financial')) return html;
-      const labor = typeof workClosingCost === 'function' ? workClosingCost(work.id) : null;
+      const costs = window.ObraAtivaWorkCosts?.snapshot(work.id);
+      const labor = costs ? costs.labor + costs.contractPaid : typeof workClosingCost === 'function' ? workClosingCost(work.id) : null;
       if (!Number.isFinite(Number(labor))) return html;
       const container = document.createElement('div'); container.innerHTML = html;
       const status = container.querySelector('.internal-work-status');
@@ -180,7 +190,7 @@
     const costs = new Map(), phaseIds = new Set(phases.map(p => p.id));
     let unassigned = 0;
     if (canSeeCosts) for (const row of C.ledgerFor(ledger(), work.id).rows) {
-      if (row.kind !== 'labor' || !(row.units > 0)) continue;
+      if (!(row.kind === 'labor' && row.units > 0) && row.costType !== 'contractPayment') continue;
       if (phaseIds.has(row.phaseId)) costs.set(row.phaseId, (costs.get(row.phaseId) || 0) + row.value);
       else unassigned += row.value;
     }
@@ -203,9 +213,11 @@
       const button = info.querySelector('button');
       if (button) button.setAttribute('aria-label', 'Atualizar percentual de ' + phase.name);
       card.querySelector('.work-phase-folder-top')?.after(info);
+      const rename = card.querySelector('.phase-folder-options button');
+      if (rename) rename.textContent = 'Editar nome e percentual';
     });
     return '<section class="wc-simple">' + container.innerHTML +
-      (canSeeCosts ? '<p class="wc-cost-note">Mão de obra: presença confirmada × diária cadastrada.' +
+      (canSeeCosts ? '<p class="wc-cost-note">Mão de obra: diárias confirmadas + empreitas pagas. Faltas não geram diária.' +
         (unassigned > 0 ? ' <b>Sem fase definida: ' + cash(unassigned) + '</b>' : '') + '</p>' : '') + '</section>';
   };
   const previousWorkModal = openInternalWorkModal, previousOfficeModal = openOfficeWorkModal,
@@ -218,21 +230,21 @@
   const previousDeletePhase = deleteWorkPhase, previousMovePhase = moveWorkPhase;
   deleteWorkPhase = function (workId, phaseId) {
     if (!enabled()) return previousDeletePhase(workId, phaseId);
-    C.context(ctx()); if (!window.ObraAtivaWorkSync.ready(ctx().companyId)) return message(window.ObraAtivaWorkSync.error(ctx().companyId), true);
-    const phase = WorkTrackingService.phase(phaseId); if (!phase || phase.workId !== workId) return;
-    const snapshot = JSON.parse(JSON.stringify(phase));
-    const protectedUpdates = new Map(C.list(db.workUpdates).filter((e) => e.controlEvent && e.phaseId === phaseId).map((e) => [e.id, JSON.parse(JSON.stringify(e))]));
-    const finish = () => {
-      if (WorkTrackingService.phase(phaseId)) return;
-      // A exclusão vigente mantém as fotos e limpa vínculos antigos. Os novos
-      // eventos de controle conservam seus IDs de fase para preservar a trilha.
-      db.workUpdates = C.list(db.workUpdates).map((e) => protectedUpdates.get(e.id) || e);
-      C.event(db, workId, 'Fase excluída', { phaseId, before: snapshot, description: `${snapshot.name}. Fotos preservadas pelo fluxo existente.` }, ctx());
-      WorkTrackingService.persist('Histórico da exclusão preservado', snapshot.name); render();
-    };
-    const result = previousDeletePhase(workId, phaseId);
-    return result?.then ? result.then(finish) : finish();
+    try {
+      C.context(ctx()); if (!window.ObraAtivaWorkSync.ready(ctx().companyId)) return message(window.ObraAtivaWorkSync.error(ctx().companyId), true);
+      const phase = WorkTrackingService.phase(phaseId); if (!phase || phase.workId !== workId) return;
+      if (!window.confirm(`Excluir a fase “${phase.name}”? Isso não conta como serviço concluído. Custos, atualizações e fotos serão preservados. As fotos ficarão sem fase vinculada.`)) return;
+      commit(C.deletePhase(db, workId, phaseId, ctx()), 'Fase excluída', phase.name); render();
+    } catch (error) { message(error.message, true); }
   };
+  function reviewRemovedPhase(workId) {
+    C.context(ctx());
+    const physical = C.workProgress(db, workId); if (!physical.needsReview) return;
+    const phases = workPhasesFor(workId), value = C.progress(phases).value;
+    const valueText = value == null ? 'sem percentual total, até medir todas as fases' : `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(value)}%`;
+    if (!window.confirm(`Confira os percentuais das fases que restaram. Com elas, o avanço será ${valueText}. Confirmar esse novo escopo? Isso não registra serviço executado nem muda o percentual de nenhuma fase.`)) return;
+    commit(C.reviewPhaseRemoval(db, workId, ctx()), 'Escopo da obra conferido', workById(workId)?.name || ''); render();
+  }
   moveWorkPhase = function (workId, phaseId, direction) {
     if (!enabled()) return previousMovePhase(workId, phaseId, direction);
     C.context(ctx()); if (!window.ObraAtivaWorkSync.ready(ctx().companyId)) return message(window.ObraAtivaWorkSync.error(ctx().companyId), true);
@@ -258,7 +270,7 @@
   saveBulkDistribution = function () {
     const selects = document.querySelectorAll('[data-wc-plan-person]'); if (!selects.length) return previousBulk();
     try {
-      const selected = [...document.querySelectorAll('[data-plan-employee]:checked')].map((box) => ({ employeeId: box.dataset.planEmployee, phaseId: [...selects].find((s) => s.dataset.wcPlanPerson === box.dataset.planEmployee)?.value || '' }));
+      const selected = [...document.querySelectorAll('[data-plan-employee]:checked')].map((box) => ({ employeeId: box.dataset.planEmployee, phaseId: [...selects].find((s) => s.dataset.wcPlanPerson === box.dataset.planEmployee)?.value || '', contractId: [...document.querySelectorAll('[data-oa-contract-person]')].find((s) => s.dataset.oaContractPerson === box.dataset.planEmployee)?.value }));
       const next = C.schedulePhases(db, planningWorkId, planningDate || tomorrow(), selected, ctx());
       commit(next, 'Distribuição em lote salva', workById(planningWorkId)?.name || 'Obra', 'planning'); render();
     } catch (error) { message(error.message, true); }
@@ -268,6 +280,7 @@
     const phase = phaseId ? WorkTrackingService.phase(phaseId) : null;
     if (phaseId && (!phase || phase.workId !== workId)) throw new Error('A fase não foi encontrada nesta obra.');
     const name = String(values.name ?? phase?.name ?? '').trim();
+    if (!phase) confirmSimilarName(workPhasesFor(workId).filter(item => (item.parentPhaseId || '') === (values.parentPhaseId || '')), name, '', 'etapa');
     if (!phase && C.list(db.workPhases).some((item) => item.workId === workId && item.parentPhaseId === values.parentPhaseId && String(item.name || '').trim().toLocaleLowerCase('pt-BR') === name.toLocaleLowerCase('pt-BR'))) {
       throw new Error('Já existe uma etapa com esse nome nesta fase.');
     }
@@ -292,6 +305,7 @@
       if (d.wcAction === 'close') closeModal();
       else if (d.wcAction === 'template') suggestPhases(d.work);
       else if (d.wcAction === 'progress') editPhase(d.work, d.phase, true);
+      else if (d.wcAction === 'review-removed-phase') reviewRemovedPhase(d.work);
     } catch (error) { message(error.message, true); }
   }, true);
   // Do not let the legacy folder's Enter/Space handler open photos when
@@ -300,6 +314,6 @@
     if (e.target.closest?.('[data-wc-action]') && ['Enter', ' '].includes(e.key)) e.stopPropagation();
   }, true);
   document.addEventListener('obraativa:work-sync-conflict', () => message(window.ObraAtivaWorkSync.error(ctx().companyId), true));
-  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx, canEdit: editable, savePhaseSchedule });
+  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx, canEdit: editable, savePhaseSchedule, commit });
   Object.assign(window, { openInternalWorkModal, openOfficeWorkModal, openInternalWorkPhaseModal, openWorkPhaseModal, saveBulkDistribution });
 })();
