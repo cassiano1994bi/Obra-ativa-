@@ -12,6 +12,22 @@
   <meta name="apple-mobile-web-app-title" content="ObraAtiva">
   <title>ObraAtiva | Gestão inteligente de obras</title>
   <meta name="description" content="Construção e reformas com planejamento, transparência e acompanhamento.">
+  <script>
+    // Só a apresentação pública aguarda sua montagem; login, documentos e demonstração não mudam.
+    (function(){var params=new URLSearchParams(location.search);if(!params.has('public')&&params.get('app')!=='1'&&params.get('demo')!=='1'&&!params.get('documento'))document.documentElement.setAttribute('data-oa-public-opening','')})();
+  </script>
+  <style id="oa-public-opening-style">
+    html[data-oa-public-opening] body{background:var(--oa-night,#020b18)}
+    html[data-oa-public-opening] #app{visibility:hidden!important}
+    #oaPublicOpening{display:grid;place-items:center;min-height:100vh;min-height:100dvh;padding:24px;background:var(--oa-night,#020b18);color:#fff;font-family:var(--oa-font-family,Inter,system-ui,"Segoe UI",sans-serif);text-align:center}
+    #oaPublicOpening>div{width:min(100%,360px)}
+    #oaPublicOpening strong{font-size:28px;line-height:1.2}
+    #oaPublicOpening strong span{color:var(--oa-green,#16a34a)}
+    #oaPublicOpening p{margin:14px 0 0;font-size:16px;line-height:1.5;color:#c4d2df}
+    #oaPublicOpeningActions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+    #oaPublicOpeningActions[hidden]{display:none!important}
+    #oaPublicOpeningActions button,#oaPublicOpeningActions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:1px solid #7891a5;border-radius:8px;background:#0f2d4a;color:#fff;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}
+  </style>
   <link rel="stylesheet" href="public-assets/app-brand-lock-v1.css?v=20260906-single-mobile-brand">
   <style id="mobile-navigation-containment">
     @media(max-width:760px){#app:not(.public-app) .side .nav{max-width:100%;min-width:0}#app:not(.public-app) .top{max-width:100%;overflow:hidden}#app:not(.public-app) .top-brand{min-width:0;flex:1}#app:not(.public-app) .top-brand strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
@@ -2392,7 +2408,25 @@ ensureOnboardingActions();
 /* Páginas comerciais não possuem a estrutura interna do app. Impede que atualizações em segundo plano tentem renderizá-la. */
 const renderBeforeCommercialPageGuard=render;
 render=function(){if((isDemoPage()||isProductPage())&&!$('#app'))return;return renderBeforeCommercialPageGuard()};
-if(isDemoPage())renderDemoPage();else if(isProductPage())renderProductPage();else CloudSync.start();
+// A landing atual é montada uma única vez pelo módulo v2. A antiga continua
+// atendendo seus documentos, mas nunca aparece como etapa de carregamento.
+function showProductPageOpeningError(){
+  if(!$('#oaPublicOpening'))return;
+  $('#oaPublicOpeningMessage').textContent='Não foi possível carregar a página. Tente novamente ou entre na sua conta.';
+  $('#oaPublicOpeningActions').hidden=false;
+}
+function finishProductPageOpening(){
+  if(document.querySelector('.oa-public-site')){document.documentElement.removeAttribute('data-oa-public-opening');return}
+  showProductPageOpeningError();
+}
+function renderProductPageOpening(){
+  document.title='ObraAtiva | Gestão inteligente de obras';
+  document.body.innerHTML=`<main id="oaPublicOpening" aria-label="Abrindo a página pública do ObraAtiva"><div><strong>Obra<span>Ativa</span></strong><p id="oaPublicOpeningMessage" role="status" aria-live="polite">Carregando a página…</p><div id="oaPublicOpeningActions" hidden><button type="button" onclick="location.reload()">Tentar novamente</button><a href="${escapeHtml(location.pathname+'?app=1')}">Entrar</a></div></div></main>`;
+  // Também permite recuperar uma falha de execução do módulo, sem espera fixa
+  // nem retorno à oferta antiga. Scripts defer terminam antes do evento load.
+  window.addEventListener('load',finishProductPageOpening,{once:true});
+}
+if(isDemoPage())renderDemoPage();else if(isProductPage()){if(document.documentElement.hasAttribute('data-oa-public-opening'))renderProductPageOpening();else renderProductPage()}else CloudSync.start();
 /* Fechamentos por obra: previsão de recebimento independente dos lançamentos antigos. */
 function workClosingStore(){db.workClosings=Array.isArray(db.workClosings)?db.workClosings:[];return db.workClosings}
 function workClosingReceipts(item){item.receipts=Array.isArray(item?.receipts)?item.receipts:[];return item?.receipts||[]}
@@ -3191,7 +3225,7 @@ const paymentsV2BeforeFinanceCenter=paymentsV2;
 financialReceivables=function(){return financePaymentCenterPage('works',financialReceivablesBeforePaymentCenter())};
 paymentsV2=function(){return financePaymentCenterPage('payments',paymentsV2BeforeFinanceCenter())};
 </script>
-<script defer src="public-assets/obraativa-product-site-v2.js?v=20260906-free-account"></script>
+<script defer src="public-assets/obraativa-product-site-v2.js?v=20260906-free-account" onload="finishProductPageOpening()" onerror="showProductPageOpeningError()"></script>
 <script defer src="public-assets/action-feedback-v1.js?v=20260831-top"></script>
 <script defer src="public-assets/finance-legacy-view-v1.js"></script><script defer src="public-assets/orcamentos-admin-v1.js"></script><script defer src="public-assets/orcamentos-links-v1.js"></script><script defer src="public-assets/orcamentos-distribuicao-v1.js"></script><script defer src="public-assets/mobile-ui-v2.js"></script><script defer src="public-assets/responsive-ui-v3.js?v=20260828-2305"></script><script defer src="public-assets/landscape-density-v1.js?v=20260831-payments-admin"></script><script defer src="public-assets/responsive-visual-phase1-v1.js?v=20260831-work-actions"></script><script defer src="public-assets/responsive-visual-phase2-v1.js?v=20260829-0700"></script><script defer src="public-assets/responsive-visual-phase3-v1.js?v=20260829-0900"></script><script defer src="public-assets/sidebar-scroll-v1.js?v=20260831-scale-label"></script><script defer src="public-assets/home-weather-v1.js?v=20260831-saved-device"></script><script defer src="public-assets/owner-center-v1.js?v=20260905-campaign-tracking"></script><script defer src="public-assets/admin-navigation-v1.js?v=20260905-owner-users"></script><script defer src="public-assets/employee-performance-v1.js?v=20260830-0700"></script><script defer src="public-assets/assistant-obras-phase1-v1.js?v=20260831-floating-only"></script><script defer src="public-assets/assistant-capability-registry-v1.js?v=20260830-0700"></script><script defer src="public-assets/assistant-quality-auditor-v1.js?v=20260829-2345"></script><script defer src="public-assets/assistant-obras-phase2-v1.js?v=20260830-0945"></script><script defer src="public-assets/assistant-obras-phase3-v1.js?v=20260829-1830"></script><script defer src="public-assets/assistant-obras-phase4-v1.js?v=20260830-0700"></script><script defer src="public-assets/assistant-obras-phase5-v1.js?v=20260829-2130"></script><script defer src="public-assets/assistant-actions-core-v1.js?v=20260829-2200"></script><script defer src="public-assets/assistant-obras-phase6-v1.js?v=20260830-0730"></script><script defer src="public-assets/assistant-command-registry-v1.js?v=20260830-0800"></script><script defer src="public-assets/assistant-command-bus-v1.js?v=20260830-0800"></script><script defer src="public-assets/assistant-technical-expert-v1.js?v=20260830-0730"></script><script defer src="public-assets/assistant-digital-employee-v1.js?v=20260831-static-drag-performance"></script><script defer src="public-assets/account-deletion-v1.js"></script><script defer src="public-assets/pwa-register-v1.js?v=20260831-pwa15"></script><script defer src="public-assets/obraativa-home-v1.js?v=20260910-central-conferida"></script><script defer src="public-assets/home-shortcut-editor-v1.js?v=20260831-page-editor"></script><script defer src="public-assets/obraativa-mobile-brand-v1.js?v=20260831-app-brand"></script><script defer src="public-assets/obraativa-auth-brand-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/account-session-controls-v1.js?v=20260906-email-confirmation-top"></script><script defer src="public-assets/obraativa-reception-config-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/obraativa-social-auth-v1.js?v=20260906-official-domain"></script><script defer src="public-assets/obraativa-reception-v1.js?v=20260906-access-compact"></script><script defer src="public-assets/meta-pixel-v1.js?v=20260907-registration-trial" data-meta-dynamic></script><script defer src="public-assets/product-activity-v1.js?v=20260907-meta-events"></script><script defer src="public-assets/mobile-control-standards-v1.js?v=20260831"></script><script defer src="public-assets/app-brand-lock-v1.js?v=20260831"></script>
 <script defer src="public-assets/work-control-core-v1.js?v=20260910-central-conferida"></script>
