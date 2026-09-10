@@ -8,11 +8,13 @@
   const receiptChoices = new Map();
   const scheduleDrafts = new Map();
   const costViews = new Map();
+  let attendanceContext = null;
+  let attendanceNavigationPending = false;
   let draftScope = '';
   function scope() {
     const context = workControlContext();
     const next = `${context.companyId || ''}|${context.userId || ''}`;
-    if (next !== draftScope) { scheduleDrafts.clear(); costViews.clear(); draftScope = next; }
+    if (next !== draftScope) { scheduleDrafts.clear(); costViews.clear(); attendanceContext = null; attendanceNavigationPending = false; draftScope = next; }
     return next;
   }
   const draftKey = (workId, date) => `${scope()}|${workId}|${date}`;
@@ -252,14 +254,14 @@
       const attendance = list(db?.attendance).find((item) => item.employeeId === person.id && item.date === date && (!item.workId || item.workId === work.id));
       const availability = other ? `Em ${html(otherWork?.name || 'outra obra')}` : checked ? 'Nesta obra' : 'Disponível';
       return `<tr class="${checked ? 'selected' : ''}">
-        <td data-label="Escalar"><input type="checkbox" data-plan-employee="${html(person.id)}" ${checked ? 'checked' : ''} ${editable ? '' : 'disabled'} onchange="ObraAtivaWorkHub.togglePerson(this)"></td>
+        <td data-label="Escalar"><label class="oa-schedule-toggle"><input type="checkbox" aria-label="Escalar ${html(person.name)}" data-plan-employee="${html(person.id)}" ${checked ? 'checked' : ''} ${editable ? '' : 'disabled'} onchange="ObraAtivaWorkHub.togglePerson(this)"></label></td>
         <td data-label="Funcionário"><b>${html(person.name)}</b><small>${html(person.role || 'Função não informada')}</small></td>
         <td data-label="Situação"><span class="oa-work-hub-availability ${other ? 'other' : checked ? 'here' : ''}">${availability}</span>${attendance ? `<small>Presença: ${html(attendance.status || 'registrada')}</small>` : ''}</td>
         <td data-label="Fase do dia"><select class="wc-phase-select" aria-label="Fase de ${html(person.name)}" data-wc-plan-person="${html(person.id)}" ${editable ? '' : 'disabled'}>${phaseOptions(phases, draftRow?.phaseId ?? (checked ? current?.phaseId : ''))}</select>${window.ObraAtivaWorkCosts?.contractSelect(work.id, person.id, draftRow?.contractId ?? (checked ? current?.contractId || '' : ''), !editable) || ''}</td>
       </tr>`;
     }).join('');
     return `<section class="oa-work-hub-schedule" aria-labelledby="oaWorkHubScheduleTitle" data-work="${html(work.id)}" data-date="${html(date)}" data-scope="${html(scope())}">
-      <div class="oa-work-hub-section-title"><div><small>EQUIPE E ESCALA</small><h2 id="oaWorkHubScheduleTitle">Quem vai trabalhar nesta obra</h2><p>Marque as pessoas, escolha a fase e salve a escala.</p></div><label class="oa-work-hub-date"><span>${date === todayValue() ? 'Hoje' : date === tomorrowValue() ? 'Amanhã' : 'Data da escala'}</span><input type="date" value="${html(date)}" onchange="ObraAtivaWorkHub.changeDate(this.value)"></label></div>
+      <div class="oa-work-hub-section-title"><div><small>EQUIPE E ESCALA</small><h2 id="oaWorkHubScheduleTitle">Quem vai trabalhar nesta obra</h2><p>Marque as pessoas, escolha a fase e salve a escala.</p></div><label class="oa-work-hub-date" for="oaWorkHubScheduleDate"><span>Data da escala${date === todayValue() ? ' · Hoje' : date === tomorrowValue() ? ' · Amanhã' : ''}</span><input id="oaWorkHubScheduleDate" type="date" value="${html(date)}" onchange="ObraAtivaWorkHub.changeDate(this.value)"></label></div>
       <div class="oa-work-hub-schedule-bar"><span id="planCount"><b>${selectedCount}</b> ${selectedCount === 1 ? 'pessoa selecionada' : 'pessoas selecionadas'}</span>${editable ? `<div>${typeof repeatPreviousScale === 'function' ? '<button type="button" class="btn alt" onclick="ObraAtivaWorkHub.repeatPrevious()">↶ Repetir dia anterior</button>' : ''}<button type="button" class="btn" onclick="ObraAtivaWorkHub.saveSchedule()">Salvar escala</button></div>` : '<small>Somente consulta</small>'}</div>
       <p class="oa-work-hub-draft-status ${draft ? 'pending' : ''}" data-oa-draft-status role="status">${draft ? 'Alterações ainda não salvas. Seu rascunho foi mantido. Use Salvar escala para confirmar.' : 'Marcar a pessoa não confirma presença nem gera diária.'}</p>
       ${phases.length ? '' : '<p class="oa-work-hub-note">Ainda não há fases. Você pode escalar mesmo assim ou usar “Sugerir fases” na área Fases.</p>'}
@@ -474,9 +476,63 @@
     if (typeof saveBulkDistribution === 'function') saveBulkDistribution();
   }
   function openAttendance() {
+    if (!maySee('attendance') || typeof go !== 'function' || !list(db?.works).some(work => work.id === activeWorkTrackerId)) return;
     captureScheduleDraft();
     attendanceDate = planningDate || todayValue();
-    if (maySee('attendance') && typeof go === 'function') go('attendance');
+    attendanceContext = { workId: activeWorkTrackerId, scope: scope() };
+    attendanceNavigationPending = true;
+    if (typeof attendanceBulkSnapshot !== 'undefined') attendanceBulkSnapshot = null;
+    go('attendance');
+  }
+
+  function prepareAttendanceNavigation(destination) {
+    const keepContext = destination === 'attendance' && attendanceNavigationPending;
+    attendanceNavigationPending = false;
+    if (!keepContext) attendanceContext = null;
+    if (typeof attendanceBulkSnapshot !== 'undefined') attendanceBulkSnapshot = null;
+  }
+
+  function attendanceWork() {
+    const currentScope = scope();
+    if (page !== 'attendance' || !maySee('attendance') || attendanceContext?.scope !== currentScope) return null;
+    return list(db?.works).find(work => work.id === attendanceContext.workId) || null;
+  }
+
+  function attendancePeople(date, people) {
+    const work = attendanceWork();
+    // Preserve every person. The selected work only changes display order;
+    // assignment and attendance records are never rewritten by navigation.
+    return work ? list(people).slice().sort((a, b) => Number(distribution(b.id, date)?.workId === work.id) - Number(distribution(a.id, date)?.workId === work.id)) : people;
+  }
+
+  function attendanceAssignmentMarkup(employeeId, date) {
+    const work = attendanceWork();
+    if (!work) return '';
+    const assignment = distribution(employeeId, date);
+    const assignedWork = assignment && list(db?.works).find(item => item.id === assignment.workId);
+    const label = assignment?.workId === work.id ? `Nesta obra · Escala: ${work.name}` : assignment?.workId ? `Escala: ${assignedWork?.name || 'Obra não identificada'}` : 'Sem obra na escala deste dia';
+    return `<br><small data-oa-attendance-assignment="${html(assignment?.workId || '')}">${html(label)}</small>`;
+  }
+
+  function attendanceContextMarkup(date) {
+    const work = attendanceWork();
+    if (!work) return '';
+    const people = activePeople(), count = people.reduce((total, person) => total + Number(distribution(person.id, date)?.workId === work.id), 0);
+    const draft = scheduleDrafts.get(draftKey(work.id, date));
+    return `<section class="section oa-work-attendance-context" aria-labelledby="oaWorkAttendanceTitle" data-oa-attendance-work="${html(work.id)}">
+      <div class="section-head"><div><h2 id="oaWorkAttendanceTitle">Presença · ${html(work.name)}</h2><p class="sub">${dateLabel(date)} · ${count} pessoa(s) na escala salva desta obra.</p></div><div class="oa-work-hub-secondary-actions"><button type="button" class="btn alt" onclick="ObraAtivaWorkHub.returnToAttendanceWork()">Voltar à equipe da obra</button><button type="button" class="btn alt" onclick="go('attendance')">Ver toda equipe</button></div></div>
+      <p class="sub">Toda a equipe continua visível. As pessoas da escala salva desta obra aparecem primeiro e cada pessoa mostra sua obra do dia. Marcar todos e salvar presença abrangem a lista inteira.</p>
+      ${count ? '' : '<p class="notice">Nenhuma pessoa está escalada nesta obra para esta data. A lista completa permanece abaixo; volte à equipe da obra para organizar a escala.</p>'}
+      ${draft ? '<p class="notice">Há alterações da escala ainda não salvas. Seu rascunho foi preservado; volte à equipe da obra para salvar a escala.</p>' : ''}
+    </section>`;
+  }
+
+  function returnToAttendanceWork() {
+    const work = attendanceWork();
+    if (!work || !maySee('planning')) return;
+    planningDate = attendanceDate || todayValue();
+    openHub(work.id);
+    setTab('team');
   }
   function openPhaseCosts() {
     if (!maySee('financial')) return;
@@ -484,6 +540,12 @@
     setTab('financial');
     const report = document.querySelector('.oa-work-hub .oa-cost-phase-breakdown');
     if (report) { report.open = true; report.scrollIntoView({ block: 'start', behavior: 'auto' }); }
+  }
+
+  function openFinance(workId) {
+    if (!maySee('financial')) return;
+    openHub(workId);
+    if (activeWorkTrackerId === workId && page === 'worktracker') setTab('financial');
   }
 
   function repeatPrevious() {
@@ -580,7 +642,13 @@
     changeDate,
     saveSchedule,
     openAttendance,
+    prepareAttendanceNavigation,
+    attendancePeople,
+    attendanceContextMarkup,
+    attendanceAssignmentMarkup,
+    returnToAttendanceWork,
     openPhaseCosts,
+    openFinance,
     repeatPrevious,
     editExpected,
     receive,

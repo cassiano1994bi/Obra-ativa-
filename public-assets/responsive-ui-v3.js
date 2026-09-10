@@ -176,6 +176,12 @@
         #app:not(.public-app) table.responsive-v3-card-table tbody td .btn,
         #app:not(.public-app) table.mobile-ui-card-table tbody td .btn{flex:1 1 125px!important;min-width:0!important;min-height:44px!important}
 
+        /* Na escala da Central, a coluna de seleção não pode colapsar sob o nome. */
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-team-table tbody tr{grid-template-columns:44px minmax(0,1fr)!important;gap:8px!important}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-team-table tbody td:first-child{grid-column:1!important;grid-row:1/4!important;width:44px!important}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-team-table tbody td:not(:first-child){grid-column:2!important;display:block!important;width:auto!important}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-team-table tbody td:first-child::before{display:none!important}
+
         #app:not(.public-app) .presence{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0!important;width:100%!important;max-width:100%!important;overflow:visible!important;border:0!important;background:transparent!important}
         #app:not(.public-app) .presence .phead{display:none!important}
         #app:not(.public-app) .presence>div:not(.phead){display:block!important;min-width:0!important;background:#fff!important}
@@ -401,6 +407,22 @@
         body.responsive-v3-landscape-phone .dialog{width:min(760px,calc(100vw - 106px))!important;max-width:calc(100vw - 106px)!important;max-height:calc(100dvh - 16px)!important;padding:15px!important;border-radius:16px!important;overflow-x:hidden!important}
         body.responsive-v3-landscape-phone .dialog .form{grid-template-columns:repeat(2,minmax(0,1fr))!important}
         body.responsive-v3-landscape-phone .dialog footer{display:flex!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:8px!important;margin:12px 0 0!important;padding:0 10px 0!important}
+
+        /* Escala: recupera altura com alinhamento e espaço, mantendo todos os textos e ações. */
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.section-head{padding:4px 10px!important;margin-bottom:6px!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.section-head .page-title{margin:0!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.section-head .sub{margin:2px 0 0!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.toolbar{padding:4px 8px!important;margin-bottom:6px!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.toolbar>.field{display:grid!important;grid-template-columns:minmax(70px,auto) minmax(0,1fr)!important;align-items:center!important;gap:8px!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.toolbar>.field>label{max-width:100px;margin:0!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.card>.section-head:has(#planCount){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:4px!important;margin-bottom:3px!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.card>.section-head:has(#planCount) h2{margin:0!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.card>.section-head:has(#planCount) .sub{margin:2px 0 0!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"]>.card>.section-head:has(#planCount)>div:last-child{width:100%!important;justify-content:flex-start!important}
+        html body #app#app:not(.public-app) #view#view[data-landscape-page="planning"] table:has(.oa-schedule-toggle) :is(th,td):first-child{width:60px!important;min-width:60px!important;max-width:60px!important;padding-inline:7px!important}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-head{padding:10px 12px;gap:8px}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-head-main{gap:10px}
+        html body #app#app:not(.public-app) #view#view .oa-work-hub-identity h1{margin:2px 0 4px}
       }
     </style>`);
   }

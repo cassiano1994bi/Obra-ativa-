@@ -128,7 +128,7 @@
     installStyles();
     return `<main id="assistantObraPhase2" aria-labelledby="assistantChatTitle">
       <section class="assistant-chat-hero">
-        <div><span class="assistant-chat-kicker">Fase 2 · Chat inteligente</span><h1 id="assistantChatTitle">Assistente da Obra</h1><p>Converse, consulte os registros autorizados e peça ações seguras. Alterações usam as funções oficiais, com prévia e confirmação.</p></div>
+        <div><span class="assistant-chat-kicker">Conversa e consultas</span><h1 id="assistantChatTitle">Assistente da Obra</h1><p>Converse, consulte os registros que você pode acessar e prepare ações. Confira a prévia e confirme antes de alterar qualquer registro.</p></div>
         <div class="assistant-chat-safe">🛡️ Consulta e ações seguras</div>
       </section>
       <div class="assistant-chat-layout">
@@ -151,7 +151,7 @@
         </section>
         <aside class="assistant-chat-side">
           <section class="assistant-side-section"><h2>Perguntas sugeridas</h2><p>Escolha uma pergunta ou escreva do seu jeito.</p><div class="assistant-suggestions">${suggestions.map((suggestion) => `<button type="button" class="assistant-suggestion" onclick="AssistantObraPhase2.askSuggestion('${escapeValue(suggestion)}')" ${state.loading?'disabled':''}>${escapeValue(suggestion)}</button>`).join('')}</div></section>
-          <section class="assistant-side-section"><h2>Proteção ativa</h2><ul class="assistant-guard-list"><li>Somente a empresa autenticada</li><li>Respeita as permissões do usuário</li><li>Ações usam função oficial, prévia e confirmação</li><li>Não envia o banco inteiro ao provedor</li><li>Informa fontes, período e dados ausentes</li></ul></section>
+          <section class="assistant-side-section"><h2>Proteção ativa</h2><ul class="assistant-guard-list"><li>Consulta somente a empresa selecionada na sua conta</li><li>Respeita suas permissões de acesso</li><li>Alterações exigem prévia e confirmação</li><li>Compartilha com a IA somente os dados necessários para a consulta</li><li>Informa fontes, período e dados ausentes</li></ul></section>
         </aside>
       </div>
     </main>`;

@@ -62,24 +62,34 @@
     return `${summaryMarkup()}<section class="assistant-insight-list">${cardsMarkup()}</section>${checksMarkup()}<div class="assistant-insight-warnings">${(state.insights.warnings || []).map((item) => `<div>${escapeValue(item)}</div>`).join('')}</div>`;
   }
   function areaMarkup() {
-    return `<section id="assistantInsightsPhase4" ${state.mode==='alerts'?'':'hidden'} aria-labelledby="assistantInsightsTitle"><section class="assistant-insight-hero"><div><span class="assistant-insight-kicker">Fase 4 · Alertas e insights automáticos</span><h1 id="assistantInsightsTitle">O que merece conferência</h1><p>Dez verificações automáticas procuram sinais nos registros autorizados, mostram as evidências encontradas e abrem a área certa para conferência humana.</p></div><span class="assistant-insight-lock">🔒 Somente leitura</span></section>${toolbarMarkup()}${resultMarkup()}</section>`;
+    return `<section id="assistantInsightsPhase4" ${state.mode==='alerts'?'':'hidden'} aria-labelledby="assistantInsightsTitle"><section class="assistant-insight-hero"><div><span class="assistant-insight-kicker">Alertas automáticos</span><h1 id="assistantInsightsTitle">O que merece conferência</h1><p>Veja os pontos de atenção nos registros que você pode acessar, confira as informações encontradas e abra a área indicada para revisar cada situação.</p></div><span class="assistant-insight-lock">🔒 Somente leitura</span></section>${toolbarMarkup()}${resultMarkup()}</section>`;
   }
   function navigationMarkup() {
     return `<nav id="assistantPhaseNavigationV4" aria-label="Áreas do Assistente da Obra"><button type="button" class="${state.mode==='chat'?'active':''}" onclick="AssistantObraPhase4.switchMode('chat')">💬 Conversa</button><button type="button" class="${state.mode==='reports'?'active':''}" onclick="AssistantObraPhase4.switchMode('reports')">📄 Relatórios</button><button type="button" class="${state.mode==='alerts'?'active':''}" onclick="AssistantObraPhase4.switchMode('alerts')">⚠️ Alertas automáticos</button></nav>`;
+  }
+
+  function syncNavigation() {
+    if (window.AssistantObraPhase6?.syncNavigation) return window.AssistantObraPhase6.syncNavigation();
+    const phase2 = document.getElementById('assistantObraPhase2');
+    if (!phase2) return;
+    document.getElementById('assistantPhaseNavigation')?.remove();
+    if (!document.getElementById('assistantPhaseNavigationV4')) phase2.insertAdjacentHTML('beforebegin', navigationMarkup());
+    document.querySelectorAll('#assistantPhaseNavigationV4 button').forEach((button, index) => button.classList.toggle('active', ['chat', 'reports', 'alerts'][index] === state.mode));
+    phase2.hidden = state.mode !== 'chat';
+    const reports = document.getElementById('assistantReportsPhase3');
+    if (reports) reports.hidden = state.mode !== 'reports';
+    const insights = document.getElementById('assistantInsightsPhase4');
+    if (insights) insights.hidden = state.mode !== 'alerts';
   }
 
   function decorate() {
     installStyles();
     const phase2 = document.getElementById('assistantObraPhase2');
     if (!phase2) return;
-    document.getElementById('assistantPhaseNavigation')?.remove();
-    document.getElementById('assistantPhaseNavigationV4')?.remove();
     document.getElementById('assistantInsightsPhase4')?.remove();
-    phase2.insertAdjacentHTML('beforebegin', navigationMarkup());
     const reports = document.getElementById('assistantReportsPhase3');
     (reports || phase2).insertAdjacentHTML('afterend', areaMarkup());
-    phase2.hidden = state.mode !== 'chat';
-    if (reports) reports.hidden = state.mode !== 'reports';
+    syncNavigation();
   }
 
   async function api(payload) {
@@ -102,10 +112,11 @@
     catch (error) { state.error = error?.message || 'Não foi possível preparar os alertas.'; state.loaded = false; }
     finally { state.loading = false; decorate(); }
   }
-  function switchMode(mode) {
+  function switchMode(mode, navigationManaged = false) {
+    if (!navigationManaged && window.AssistantObraPhase6?.syncNavigation) return window.AssistantObraPhase6.switchMode(mode);
     state.mode = ['chat', 'reports', 'alerts'].includes(mode) ? mode : 'chat';
-    if (state.mode === 'reports') window.AssistantObraPhase3?.switchMode?.('reports');
-    else window.AssistantObraPhase3?.switchMode?.('chat');
+    if (state.mode === 'reports') window.AssistantObraPhase3?.switchMode?.('reports', true);
+    else window.AssistantObraPhase3?.switchMode?.('chat', true);
     renderTop(); decorate();
     if (state.mode === 'alerts') load();
   }
@@ -125,5 +136,5 @@
   render = function renderWithAssistantPhaseFour() { const result = renderBeforePhaseFour(); if (page === PAGE_KEY) setTimeout(decorate, 0); return result; };
   const renderTopBeforePhaseFour = renderTop;
   renderTop = function renderTopWithAssistantPhaseFour() { const result = renderTopBeforePhaseFour(); if (page === PAGE_KEY && state.mode === 'alerts') { const title = document.getElementById('headerPage'); if (title) title.textContent = 'Assistente da Obra · Alertas'; } return result; };
-  window.AssistantObraPhase4 = Object.freeze({ switchMode, changePeriod, changeSeverity, changeType, reload, openTarget, phase: 4, readOnly: true, automatic: true });
+  window.AssistantObraPhase4 = Object.freeze({ switchMode, syncNavigation, changePeriod, changeSeverity, changeType, reload, openTarget, phase: 4, readOnly: true, automatic: true });
 })();

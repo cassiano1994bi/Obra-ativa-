@@ -46,8 +46,8 @@
     if (state.type === 'attendance') return `<div class="assistant-action-field"><label>Data da presença</label><input id="assistantActionDate" type="date" value="${dateNow()}"></div><p>Os status não serão adivinhados: você escolherá cada um na prévia antes de confirmar.</p>`;
     if (state.type === 'reminder') return `<div class="assistant-action-field"><label>Título do lembrete</label><input id="assistantActionTitle" maxlength="180" placeholder="Descreva o compromisso"></div><div class="assistant-action-fields"><div class="assistant-action-field"><label>Data</label><input id="assistantActionDate" type="date" value="${dateTomorrow()}"></div><div class="assistant-action-field"><label>Horário</label><input id="assistantActionTime" type="time"></div></div><div class="assistant-action-field"><label>Obra</label><select id="assistantActionWork">${workOptions()}</select></div><div class="assistant-action-field"><label>Observação</label><textarea id="assistantActionNotes" maxlength="600"></textarea></div>`;
     if (state.type === 'whatsapp') return `<div class="assistant-action-field"><label>Data da escala</label><input id="assistantActionDate" type="date" value="${dateTomorrow()}"></div><p>A Assistente somente copiará a lista. Ela não abrirá conversa nem enviará mensagem.</p>`;
-    if (state.type === 'report') return `<div class="assistant-action-field"><label>Tipo de relatório</label><select id="assistantActionReportType"><option value="daily">Diário</option><option value="weekly">Semanal</option><option value="fortnightly">Quinzenal</option><option value="financial">Financeiro</option><option value="payments">Pagamentos</option><option value="team">Equipe</option><option value="vehicles">Veículos</option><option value="performance">Desempenho</option></select></div><p>A confirmação somente abrirá a área oficial de relatórios. Nada será salvo ou publicado.</p>`;
-    if (state.type === 'payments') return `${payrollRowsMarkup()}<p>A Assistente não marcará ninguém como pago. Após a confirmação reforçada, abrirá a lista oficial para você conferir e usar o botão original.</p>`;
+    if (state.type === 'report') return `<div class="assistant-action-field"><label>Tipo de relatório</label><select id="assistantActionReportType"><option value="daily">Diário</option><option value="weekly">Semanal</option><option value="fortnightly">Quinzenal</option><option value="financial">Financeiro</option><option value="payments">Pagamentos</option><option value="team">Equipe</option><option value="vehicles">Veículos</option><option value="performance">Desempenho</option></select></div><p>A confirmação abrirá a área de relatórios. Nada será salvo ou publicado.</p>`;
+    if (state.type === 'payments') return `${payrollRowsMarkup()}<p>A Assistente não marcará ninguém como pago. Após a confirmação reforçada, abrirá a lista de pagamentos para você conferir e registrar os pagamentos nessa área.</p>`;
     return '';
   }
 
@@ -70,22 +70,33 @@
   }
 
   function areaMarkup() {
-    return `<section id="assistantActionsPhase6" ${state.mode === 'actions' ? '' : 'hidden'}><section class="assistant-action-hero"><div><span class="assistant-action-kicker">Fase 6 · Ações com confirmação</span><h1>A Assistente prepara. Você decide.</h1><p>Nada é executado a partir de uma mensagem ambígua. Primeiro aparece a prévia completa; depois o servidor reconfirma empresa e permissões; somente então o botão explícito pode usar o fluxo nativo.</p></div><span class="assistant-action-lock">🛡️ Confirmação obrigatória</span></section>${actionTypeMarkup()}<section class="assistant-action-workspace">${formMarkup()}${previewMarkup()}</section></section>`;
+    return `<section id="assistantActionsPhase6" ${state.mode === 'actions' ? '' : 'hidden'}><section class="assistant-action-hero"><div><span class="assistant-action-kicker">Ações com confirmação</span><h1>A Assistente prepara. Você decide.</h1><p>Escolha uma ação, confira a prévia completa e confirme quando estiver tudo certo. Antes de concluir, sua empresa e suas permissões serão verificadas novamente. Pedidos que não estejam claros precisam ser esclarecidos primeiro.</p></div><span class="assistant-action-lock">🛡️ Confirmação obrigatória</span></section>${actionTypeMarkup()}<section class="assistant-action-workspace">${formMarkup()}${previewMarkup()}</section></section>`;
   }
 
   function navigationMarkup() { return `<nav id="assistantPhaseNavigationV6" aria-label="Áreas do Assistente da Obra"><button type="button" class="${state.mode === 'chat' ? 'active' : ''}" onclick="AssistantObraPhase6.switchMode('chat')">💬 Conversa</button><button type="button" class="${state.mode === 'reports' ? 'active' : ''}" onclick="AssistantObraPhase6.switchMode('reports')">📄 Relatórios</button><button type="button" class="${state.mode === 'alerts' ? 'active' : ''}" onclick="AssistantObraPhase6.switchMode('alerts')">⚠️ Alertas</button><button type="button" class="${state.mode === 'actions' ? 'active' : ''}" onclick="AssistantObraPhase6.switchMode('actions')">✅ Ações</button></nav>`; }
+
+  function syncNavigation() {
+    const phase2 = document.getElementById('assistantObraPhase2');
+    if (!phase2) return;
+    document.getElementById('assistantPhaseNavigation')?.remove();
+    document.getElementById('assistantPhaseNavigationV4')?.remove();
+    if (!document.getElementById('assistantPhaseNavigationV6')) phase2.insertAdjacentHTML('beforebegin', navigationMarkup());
+    const modes = ['chat', 'reports', 'alerts', 'actions'];
+    document.querySelectorAll('#assistantPhaseNavigationV6 button').forEach((button, index) => button.classList.toggle('active', modes[index] === state.mode));
+    ['assistantObraPhase2', 'assistantReportsPhase3', 'assistantInsightsPhase4', 'assistantActionsPhase6'].forEach((id, index) => {
+      const area = document.getElementById(id);
+      if (area) area.hidden = modes[index] !== state.mode;
+    });
+  }
 
   function decorate() {
     installStyles();
     const phase2 = document.getElementById('assistantObraPhase2');
     if (!phase2) return;
-    document.getElementById('assistantPhaseNavigationV4')?.remove(); document.getElementById('assistantPhaseNavigationV6')?.remove(); document.getElementById('assistantActionsPhase6')?.remove();
-    phase2.insertAdjacentHTML('beforebegin', navigationMarkup());
+    document.getElementById('assistantActionsPhase6')?.remove();
     const insights = document.getElementById('assistantInsightsPhase4');
     (insights || document.getElementById('assistantReportsPhase3') || phase2).insertAdjacentHTML('afterend', areaMarkup());
-    phase2.hidden = state.mode !== 'chat';
-    const reports = document.getElementById('assistantReportsPhase3'); if (reports) reports.hidden = state.mode !== 'reports';
-    if (insights) insights.hidden = state.mode !== 'alerts';
+    syncNavigation();
   }
 
   async function api(payload) {
@@ -110,7 +121,7 @@
 
   function switchMode(mode) {
     state.mode = ['chat', 'reports', 'alerts', 'actions'].includes(mode) ? mode : 'chat';
-    window.AssistantObraPhase4?.switchMode?.(state.mode === 'actions' ? 'chat' : state.mode);
+    window.AssistantObraPhase4?.switchMode?.(state.mode === 'actions' ? 'chat' : state.mode, true);
     setTimeout(() => { decorate(); if (state.mode === 'actions') loadOptions(); const title = document.getElementById('headerPage'); if (title && state.mode === 'actions') title.textContent = 'Assistente da Obra · Ações'; }, 0);
   }
   function selectType(type) { if (!actionAllowed(type)) return; state.type = type; state.proposal = null; state.error = ''; state.success = ''; decorate(); }
@@ -124,7 +135,7 @@
   async function startCommand(type, payload = {}) {
     if (!Object.prototype.hasOwnProperty.call(AssistantActionsCore.ACTION_DEFINITIONS, type)) return { ok: false, message: 'Essa ação não pertence à lista segura da Assistente.' };
     state.mode = 'actions'; state.error = ''; state.success = ''; state.proposal = null;
-    window.AssistantObraPhase4?.switchMode?.('chat');
+    window.AssistantObraPhase4?.switchMode?.('chat', true);
     decorate();
     await loadOptions();
     if (!actionAllowed(type)) { state.error = 'Seu perfil não possui permissão para preparar essa ação.'; decorate(); return { ok: false, message: state.error }; }
@@ -181,13 +192,13 @@
         state.proposal = proposal;
       }
       AssistantActionsCore.validateProposal(proposal, { requireReady: true });
-      if (typeof save !== 'function') throw new Error('O fluxo nativo de salvamento não está disponível.');
+      if (typeof save !== 'function') throw new Error('Não é possível salvar agora. Tente novamente antes de confirmar.');
       state.confirming = true; decorate();
       const body = await api({ action: 'confirm', proposal, explicit: true, confirmationPhrase: reinforcedPhrase });
       const result = AssistantActionsCore.applyConfirmedProposal({ data: db, proposal, confirmation: body.confirmation, currentCompanyId: companyId(), currentUserId: userId(), uid: typeof uid === 'function' ? uid : undefined });
       save('Assistente da Obra: ação confirmada', `${proposal.label} · ${result.affectedRecords.length} registro(s) afetado(s) · confirmação ${body.confirmation.id}`);
       if (proposal.type === 'whatsapp') { const copied = await copyText(proposal.message || ''); if (!copied) throw new Error('A ação foi confirmada, mas não foi possível copiar o texto.'); }
-      state.success = result.dataChanged ? 'Ação confirmada e salva pelo fluxo oficial da empresa.' : 'Preparação confirmada. Nenhum pagamento, envio ou publicação foi realizado pela Assistente.';
+      state.success = result.dataChanged ? 'Ação confirmada e salva nos registros da empresa.' : 'Preparação confirmada. Nenhum pagamento, envio ou publicação foi realizado pela Assistente.';
       state.proposal = null;
       if (proposal.type === 'report') { window.AssistantObraPhase3?.switchMode?.('reports'); state.mode = 'reports'; }
       if (proposal.type === 'payments' && typeof go === 'function') go('payments');
@@ -200,5 +211,5 @@
   render = function renderWithAssistantPhaseSix() { const result = renderBeforePhaseSix(); if (page === PAGE_KEY) setTimeout(decorate, 0); return result; };
   const renderTopBeforePhaseSix = renderTop;
   renderTop = function renderTopWithAssistantPhaseSix() { const result = renderTopBeforePhaseSix(); if (page === PAGE_KEY && state.mode === 'actions') { const title = document.getElementById('headerPage'); if (title) title.textContent = 'Assistente da Obra · Ações'; } return result; };
-  window.AssistantObraPhase6 = Object.freeze({ switchMode, selectType, prepare, confirm, loadOptions, startCommand, phase: 6, confirmationRequired: true, noAmbiguousAuthorization: true });
+  window.AssistantObraPhase6 = Object.freeze({ switchMode, syncNavigation, selectType, prepare, confirm, loadOptions, startCommand, phase: 6, confirmationRequired: true, noAmbiguousAuthorization: true });
 })();

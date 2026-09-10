@@ -85,6 +85,47 @@ html body:not(.public-mode):not(.auth-mode) #modal {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Os formulários compartilhados ficam acima da navegação, inclusive em baixa altura. */
+html body:not(.public-mode):not(.auth-mode) #modal.modal {
+  z-index: 10020 !important;
+}
+
+/* Nome acessível no próprio controle; o rótulo amplia o toque sem ampliar a tabela. */
+html body #app#app:not(.public-app) #view#view .oa-schedule-toggle {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  cursor: pointer;
+}
+html body #app#app:not(.public-app) #view#view .oa-schedule-toggle input[type="checkbox"] {
+  width: 20px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  margin: 0 !important;
+}
+html body #app#app:not(.public-app) #view#view .oa-schedule-toggle:focus-within {
+  outline: 3px solid var(--oa-blue-700);
+  outline-offset: 1px;
+  border-radius: var(--oa-control-radius);
+}
+
+/* Legendas do resumo financeiro usam o contraste e a escala de leitura compartilhados. */
+html body #app#app:not(.public-app) #view#view .finance-executive-summary :is(small, article > span, p) {
+  color: var(--oa-palette-muted) !important;
+}
+html body #app#app:not(.public-app) #view#view .finance-executive-summary small {
+  font-size: max(12px, var(--oa-type-secondary)) !important;
+  line-height: 1.45;
+}
+html body #app#app:not(.public-app) #view#view .finance-executive-summary :is(article > span, p) {
+  font-size: max(14px, var(--oa-type-body)) !important;
+  line-height: 1.45;
+}
+
 html body #app#app:not(.public-app) #view h1,
 html body #app#app:not(.public-app) #view .page-title,
 html body #app#app:not(.public-app) #view .site-management-hero h1,

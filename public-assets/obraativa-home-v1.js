@@ -111,7 +111,7 @@
     const phase = safeCall(() => typeof workCurrentPhase === 'function' ? workCurrentPhase(work.id) : null, null);
     const raw = phase?.percent ?? work.progress ?? work.percent ?? (work.status === 'Finalizada' ? 100 : 0);
     const percent = Math.max(0, Math.min(100, Number(raw) || 0));
-    return { percent, label: phase?.name || work.phase || work.status || 'Em acompanhamento' };
+    return { percent, isPhase: Boolean(phase), label: phase?.name || work.phase || work.status || 'Em acompanhamento' };
   }
 
   function dashboardData() {
@@ -132,12 +132,14 @@
     const labor = preview ? Number(data.labor || 0) : financeRows.reduce((sum, row) => sum + Number(row.labor || 0), 0);
     const expected = preview ? Number(data.expected || 0) : financeRows.reduce((sum, row) => sum + Number(row.expected || 0), 0);
     const balance = preview ? Number(data.balance || 0) : financeRows.reduce((sum, row) => sum + Number(row.cash || 0), 0);
+    // Exibe a composição já usada no saldo, sem trocar a regra de cálculo.
+    const otherCosts = preview ? Number(data.otherCosts ?? (received - labor - balance)) : financeRows.reduce((sum, row) => sum + Number(row.otherCosts || 0), 0);
     const financeHasData = preview ? [received, labor, expected, balance].some((value) => value !== 0) : financeRows.some((row) => [row.received, row.labor, row.expected, row.cash]
       .some((value) => Number(value || 0) !== 0));
     return {
       works, worksCount: works.length, teamToday: preview ? Number(data.teamToday || 0) : todayPeople.size, schedule,
       scheduledToday: preview ? Number(data.scheduledToday || scheduledPeople.size) : scheduledPeople.size,
-      pending, received, labor, expected, balance, financeHasData, access, date, dateLabel: currentDateLabel()
+      pending, received, labor, otherCosts, expected, balance, financeHasData, access, date, dateLabel: currentDateLabel()
     };
   }
 
@@ -164,7 +166,7 @@
       const progress = workProgress(work);
       const scheduled = model.schedule.find((group) => group.work.id === work.id)?.people.length || 0;
       const responsible = String(work.responsible || '').trim();
-      return `<article class="obraativa-work-row"><span class="obraativa-work-icon">${iconArt('works')}</span><div class="obraativa-work-copy"><b>${escapeHtml(work.name || 'Obra sem nome')}</b><small>${escapeHtml(progress.label)}${responsible ? ` · ${escapeHtml(responsible)}` : ''}</small><div class="obraativa-work-tags"><span>${scheduled} ${scheduled === 1 ? 'escalado hoje' : 'escalados hoje'}</span><span>${progress.percent}% concluída</span></div><div class="obraativa-work-progress"><div class="obraativa-progress" aria-label="${progress.percent}% concluído"><i style="width:${progress.percent}%"></i></div><span class="obraativa-work-percent">${progress.percent}%</span></div><button class="obraativa-work-open" type="button" onclick="go('works')">Ver detalhes</button></div><span class="obraativa-work-chevron" aria-hidden="true">›</span></article>`;
+      return `<article class="obraativa-work-row"><span class="obraativa-work-icon">${iconArt('works')}</span><div class="obraativa-work-copy"><b>${escapeHtml(work.name || 'Obra sem nome')}</b><small>${escapeHtml(progress.label)}${responsible ? ` · ${escapeHtml(responsible)}` : ''}</small><div class="obraativa-work-tags"><span>${scheduled} ${scheduled === 1 ? 'escalado hoje' : 'escalados hoje'}</span><span>${progress.isPhase ? 'Fase atual' : 'Obra'}: ${progress.percent}%</span></div><div class="obraativa-work-progress"><div class="obraativa-progress" aria-label="${progress.isPhase ? 'Fase atual' : 'Obra'}: ${progress.percent}% concluído"><i style="width:${progress.percent}%"></i></div><span class="obraativa-work-percent">${progress.percent}%</span></div><button class="obraativa-work-open" type="button" onclick="ObraAtivaVisualV1.openWork(${escapeHtml(JSON.stringify(String(work.id)))})">Ver detalhes</button></div><span class="obraativa-work-chevron" aria-hidden="true">›</span></article>`;
     }).join('');
     return rows || '<p class="obraativa-empty">Nenhuma obra ativa cadastrada.</p>';
   }
@@ -179,8 +181,8 @@
     if (!model.financeHasData) {
       return '<p class="obraativa-empty obraativa-finance-empty">Ainda não há dados financeiros suficientes para gerar este gráfico.</p>';
     }
-    const maximum = Math.max(Math.abs(model.received), Math.abs(model.labor), Math.abs(model.expected), 1);
-    return `<div class="obraativa-finance-body"><div class="obraativa-finance-total"><article data-oa-finance-tone="${model.balance < 0 ? 'negative' : model.balance > 0 ? 'positive' : 'neutral'}"><small>SALDO ATUAL</small><b>${localMoney(model.balance)}</b></article><article><small>PREVISTO A RECEBER</small><b>${localMoney(model.expected)}</b></article></div><div class="obraativa-bars">${barMarkup('Entradas', model.received, maximum, false, 'income')}${barMarkup('Mão de obra', model.labor, maximum, true, 'expense')}${barMarkup('Previsto', model.expected, maximum)}</div></div>`;
+    const maximum = Math.max(Math.abs(model.received), Math.abs(model.labor), Math.abs(model.otherCosts), Math.abs(model.expected), 1);
+    return `<div class="obraativa-finance-body"><div class="obraativa-finance-total"><article data-oa-finance-tone="${model.balance < 0 ? 'negative' : model.balance > 0 ? 'positive' : 'neutral'}"><small>SALDO CALCULADO</small><b>${localMoney(model.balance)}</b></article><article><small>PREVISTO A RECEBER</small><b>${localMoney(model.expected)}</b></article></div><div class="obraativa-bars">${barMarkup('Entradas', model.received, maximum, false, 'income')}${barMarkup('Mão de obra', model.labor, maximum, true, 'expense')}${barMarkup('Outros custos', model.otherCosts, maximum, true, 'expense')}${barMarkup('Previsto', model.expected, maximum)}</div><p class="obraativa-empty">Outros custos: empreitas pagas, extras e custos anteriores. O saldo inclui diárias confirmadas, mesmo antes do pagamento.</p></div>`;
   }
 
   function overviewMarkup(model) {
@@ -421,7 +423,10 @@
     queueRefresh();
   }
 
-  window.ObraAtivaVisualV1 = { refresh: queueRefresh, showSplash };
+  window.ObraAtivaVisualV1 = { refresh: queueRefresh, showSplash, openWork(id) {
+    if (typeof openWorkTracker === 'function') openWorkTracker(id);
+    else if (typeof go === 'function') go('works');
+  } };
   if (compactHome.addEventListener) compactHome.addEventListener('change', queueRefresh);
   else compactHome.addListener?.(queueRefresh);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });

@@ -66,6 +66,10 @@
       .assistant-employee-button[data-state="alert"]{box-shadow:0 10px 28px #123c6e55,0 0 0 4px #f4bd2e}.assistant-employee-button[data-state="alert"] .assistant-employee-status{background:#f2a620}
       @media(max-width:820px){#assistantDigitalEmployee{--assistant-fab-size:66px;right:max(11px,env(safe-area-inset-right))}.assistant-employee-notice{max-width:min(270px,calc(100vw - 24px));font-size:11px}}
       @media(max-height:500px) and (orientation:landscape){#assistantDigitalEmployee{--assistant-fab-size:58px}.assistant-employee-status{width:16px;height:16px}.assistant-employee-notice{max-width:245px;padding:8px 10px;font-size:10px}}
+      /* A posição inicial ocupa uma faixa própria; arrastar continua sendo escolha do usuário. */
+      @media(max-width:1024px) and (max-height:500px) and (orientation:landscape){
+        html body:has(#assistantDigitalEmployee:not([hidden]):not([data-dragged="true"])) #app#app:not(.public-app) .content[data-landscape-page="planning"]{padding-right:calc(92px + env(safe-area-inset-right))!important}
+      }
     </style>`);
   }
 
