@@ -3,6 +3,24 @@
   const C = window.ObraAtivaWorkCore;
   if (!C || typeof workTrackerPage !== 'function' || window.ObraAtivaWorkControl) return;
   const local = { saving: false };
+  // Reuse only during one synchronous, read-only render. Never keep calculated
+  // data across events, edits, account switches, failures or asynchronous work.
+  let readSnapshot = null;
+  function withReadSnapshot(callback) {
+    if (readSnapshot) return callback();
+    readSnapshot = { state: db, company: CompanyWorkspace.current?.id, user: CloudSync.session?.user?.id, values: new Map() };
+    try { return callback(); } finally { readSnapshot = null; }
+  }
+  function readMemo(group, key, calculate) {
+    if (!readSnapshot) return calculate();
+    if (readSnapshot.state !== db || readSnapshot.company !== CompanyWorkspace.current?.id || readSnapshot.user !== CloudSync.session?.user?.id) {
+      readSnapshot = { state: db, company: CompanyWorkspace.current?.id, user: CloudSync.session?.user?.id, values: new Map() };
+    }
+    if (!readSnapshot.values.has(group)) readSnapshot.values.set(group, new Map());
+    const values = readSnapshot.values.get(group);
+    if (!values.has(key)) values.set(key, calculate());
+    return values.get(key);
+  }
   const h = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const cash = (v) => v == null ? 'Não informado' : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
   const b = (action, label, values = {}, primary = false) => `<button type="button" class="wc-button ${primary ? 'primary' : ''}" data-wc-action="${action}" ${Object.entries(values).map(([k, v]) => `data-${k}="${h(v)}"`).join(' ')}>${label}</button>`;
@@ -21,6 +39,9 @@
   // As gravações continuam protegidas por commit(), que exige sync pronto.
   function enabled() { return !!(ctx().companyId && window.ObraAtivaWorkSync); }
   function ledger() {
+    return readMemo('ledger', '', buildLedger);
+  }
+  function buildLedger() {
     const rows = [];
     if (typeof financeAttendanceLaborRows === 'function') for (const r of financeAttendanceLaborRows()) {
       if (!r.confirmed || r.unassigned || r.paymentMode === 'contract') continue;
@@ -43,9 +64,13 @@
     return rows;
   }
   function model(id) {
-    const result = C.overview(db, id, ledger(), ctx());
-    if (result.finance && typeof workCashExpected === 'function') result.finance.recordedOutstanding = workCashExpected(id);
-    return result;
+    const context = ctx();
+    const key = JSON.stringify([id, context.companyId, context.userId, context.modules, context.readOnly, context.today]);
+    return readMemo('model', key, () => {
+      const result = C.overview(db, id, ledger(), context);
+      if (result.finance && typeof workCashExpected === 'function') result.finance.recordedOutstanding = workCashExpected(id);
+      return result;
+    });
   }
   function message(text, error = false) {
     let target = document.getElementById('wc-message');
@@ -314,6 +339,10 @@
     if (e.target.closest?.('[data-wc-action]') && ['Enter', ' '].includes(e.key)) e.stopPropagation();
   }, true);
   document.addEventListener('obraativa:work-sync-conflict', () => message(window.ObraAtivaWorkSync.error(ctx().companyId), true));
-  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx, canEdit: editable, savePhaseSchedule, commit });
+  window.ObraAtivaWorkControl = Object.freeze({ ledger, model, context: ctx, canEdit: editable, savePhaseSchedule, commit, withReadSnapshot, readMemo });
+  if (typeof render === 'function') {
+    const before = render;
+    render = function (...args) { return withReadSnapshot(() => before.apply(this, args)); };
+  }
   Object.assign(window, { openInternalWorkModal, openOfficeWorkModal, openInternalWorkPhaseModal, openWorkPhaseModal, saveBulkDistribution });
 })();

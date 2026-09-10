@@ -8,6 +8,7 @@
   const receiptChoices = new Map();
   const scheduleDrafts = new Map();
   const costViews = new Map();
+  let requestedHubView = null;
   let attendanceContext = null;
   let attendanceNavigationPending = false;
   let draftScope = '';
@@ -189,7 +190,7 @@
     const status = work.archived || work.status === 'Finalizada' ? 'Finalizada' : work.status || 'Em andamento';
     return `<header class="oa-work-hub-head">
       <div class="oa-work-hub-head-main">
-        <button type="button" class="oa-work-hub-back" onclick="go('works')" aria-label="Voltar para todas as obras">← <span>Todas as obras</span></button>
+        <button type="button" class="oa-work-hub-back" onclick="go('works')" aria-label="Voltar às obras">← <span>Voltar às obras</span></button>
         <div class="oa-work-hub-identity"><small>CENTRAL DA OBRA <span class="oa-work-hub-status">${html(status)}</span></small><h1>${html(work.name)}</h1></div>
         ${mayEdit('works') && !work.archived ? `<button type="button" class="oa-work-hub-edit" onclick="openInternalWorkModal('${html(work.id)}')">Editar obra</button>` : ''}
       </div>
@@ -440,6 +441,9 @@
     captureScheduleDraft();
     const model = safeModel(work.id);
     const phases = phasesFor(work.id);
+    // The existing entry point still runs all navigation/access guards. Select
+    // the requested section during its single render, not by rendering again.
+    if (requestedHubView?.workId === work.id) activeWorkTrackerTab = tabList().includes(requestedHubView.tab) ? requestedHubView.tab : 'summary';
     const active = normalizedTab();
     activeWorkTrackerTab = active;
     const contents = {
@@ -531,8 +535,7 @@
     const work = attendanceWork();
     if (!work || !maySee('planning')) return;
     planningDate = attendanceDate || todayValue();
-    openHub(work.id);
-    setTab('team');
+    openHub(work.id, 'team');
   }
   function openPhaseCosts() {
     if (!maySee('financial')) return;
@@ -544,8 +547,7 @@
 
   function openFinance(workId) {
     if (!maySee('financial')) return;
-    openHub(workId);
-    if (activeWorkTrackerId === workId && page === 'worktracker') setTab('financial');
+    openHub(workId, 'financial');
   }
 
   function repeatPrevious() {
@@ -596,12 +598,13 @@
     if (target) financeSelectClientReceiptTarget(target);
   }
 
-  function openHub(workId) {
+  function openHub(workId, tab = 'summary') {
     if (!previousOpenWorkTracker) return;
-    previousOpenWorkTracker(workId);
-    if (activeWorkTrackerId !== workId || page !== 'worktracker') return;
-    activeWorkTrackerTab = 'summary';
-    render();
+    captureScheduleDraft();
+    const previousRequest = requestedHubView;
+    requestedHubView = { workId, tab };
+    try { return previousOpenWorkTracker(workId); }
+    finally { requestedHubView = previousRequest; }
   }
 
   workTrackerPage = pageMarkup;
