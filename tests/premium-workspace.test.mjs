@@ -128,15 +128,7 @@ test('Home e módulos: cinco tamanhos, navegação, preferências e sessão fict
     await page.locator('[data-home-weather-location]').click();
     await page.waitForTimeout(150);
     assert.ok(await page.locator('.home-weather-idle small').isVisible(),'Orientação de clima continua visível quando não há permissão');
-    const bubble=page.locator('#assistantEmployeeButton');
-    assert.ok(await bubble.isVisible(),'Assistente preservada após editar a Home');
-    const before=await bubble.boundingBox();
-    await page.mouse.move(before.x+before.width/2,before.y+before.height/2);
-    await page.mouse.down();
-    await page.mouse.move(before.x-100,before.y-80,{steps:12});
-    await page.mouse.up();
-    const after=await bubble.boundingBox();
-    assert.ok(Math.abs(after.x-before.x)>40,'Arrastar assistente continua funcionando');
+    assert.equal(await page.locator('#assistantEmployeeButton,#assistantHomeShortcut').count(),0,'A assistente removida não retorna ao editar a Home');
     assert.equal(await page.evaluate(()=>CloudSync.session.user.id),'USUARIO-TESTE');
     assert.deepEqual(errors,[]);
     await fs.mkdir(path.join(root,'tmp/premium-workspace-qa'),{recursive:true});
@@ -160,7 +152,7 @@ test('Home moderna: registros preenchidos, clima completo, números zero e contr
       await page.waitForTimeout(150);
       assert.equal(await page.locator('.obraativa-schedule-row').count(),3);
       assert.equal(await page.locator('.obraativa-work-row').count(),3);
-      assert.equal(await page.locator('.home-attention-item').count(),2);
+      assert.equal(await page.locator('.home-attention-item').count(),3,'Duas obras negativas e uma com contrato a receber nas fixtures atuais');
       assert.equal(await page.locator('.home-activity-item').count(),2);
       assert.equal(await page.locator('.home-weather-day').count(),3);
       assert.ok(await page.locator('.obraativa-work-percent').getByText('0%',{exact:true}).count()>=1,'Obra sem evolução permanece visível');

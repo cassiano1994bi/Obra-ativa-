@@ -5,7 +5,7 @@ export function createHandler(deps) {
     if (b.env.BILLING_RECONCILIATION_ENABLED !== 'true') return;
     const enabled = await b.db('billing_control?id=eq.true&select=enabled');
     if (!enabled?.[0]?.enabled) return;
-    const rows = await b.db('billing_attempts?select=*&order=checked_at.asc.nullsfirst,created_at.asc&limit=4');
+    const rows = await b.db('billing_attempts?select=*&or=(provider_id.not.is.null,status.neq.cancelled)&order=checked_at.asc.nullsfirst,created_at.asc&limit=4');
     await Promise.all(rows.map(async a => {
       if (!await b.rpc('billing_claim_sync', { p_attempt: a.id })) return;
       try { await b.sync(a); }

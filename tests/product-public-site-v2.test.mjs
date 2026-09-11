@@ -24,7 +24,8 @@ test('landing pública segue a referência sem substituir login ou cadastro', ()
 
 test('módulos, dispositivos, públicos, etapas, planos e FAQ permanecem completos', () => {
   for (const text of ['Tudo que sua obra precisa', 'CONTROLE NA PALMA DA MÃO', 'Feito para quem vive a obra', 'Como funciona', 'Um plano completo', 'Perguntas frequentes']) assert.match(source, new RegExp(text));
-  for (const module of ['Equipe', 'Presença', 'Obras', 'Pagamentos', 'Financeiro', 'Veículos', 'Relatórios', 'Orçamentos', 'Assistente IA']) assert.match(source, new RegExp(module));
+  for (const module of ['Equipe', 'Presença', 'Obras', 'Pagamentos', 'Financeiro', 'Veículos', 'Relatórios', 'Orçamentos']) assert.match(source, new RegExp(module));
+  assert.doesNotMatch(source, /Assistente IA|funcionária digital/);
   assert.match(source, /ObraAtiva completo/);
   assert.match(source, /R\$ 69\/mês/);
   assert.match(source, /30 dias grátis/);

@@ -36,7 +36,9 @@ try {
   assert.deepEqual(errors, []);
 
   const initialSnapshot = await page.evaluate(() => JSON.stringify(db));
-  assert.equal(await page.locator('.oa-work-hub-tab').count(), 5, 'A central inclui a nova área de empreitas');
+  assert.equal(await page.locator('.oa-work-hub-tab').count(), 4, 'A central mantém resumo, fases, empreitas e financeiro');
+  assert.equal(await page.getByRole('tab', { name: 'Equipe e escala', exact: true }).count(), 0);
+  assert.equal(await page.getByRole('button', { name: /Escalar equipe/ }).count(), 0);
   assert.match(await page.locator('.oa-work-hub-head').textContent(), /CENTRAL DA OBRA/);
   assert.match(await page.locator('.oa-work-hub-summary').textContent(), /FASE ATUAL/);
   assert.match(await page.locator('.oa-work-hub-summary').textContent(), /EQUIPE DE HOJE/);
@@ -65,14 +67,11 @@ try {
   assert.equal(await page.evaluate(() => JSON.stringify(db)), initialSnapshot, 'Abrir as áreas não pode alterar nenhum dado');
   assert.equal(await page.evaluate(() => db.workMedia.length), 1, 'A foto antiga permanece preservada nos dados');
 
-  await page.getByRole('tab', { name: /Equipe e escala/ }).click();
-  assert.equal(await page.locator('[data-wc-plan-person]').count(), 2);
-  await page.locator('[data-plan-employee="PESSOA-TESTE-B"]').check();
-  await page.locator('[data-wc-plan-person="PESSOA-TESTE-B"]').selectOption('FASE-TESTE-2');
-  await page.getByRole('button', { name: 'Salvar escala' }).click();
-  assert.equal(await page.evaluate(() => db.distributions.find((item) => item.employeeId === 'PESSOA-TESTE-B')?.workId), 'OBRA-TESTE');
-  assert.equal(await page.evaluate(() => db.distributions.find((item) => item.employeeId === 'PESSOA-TESTE-B')?.phaseId), 'FASE-TESTE-2');
-  assert.equal(await page.evaluate(() => db.workMedia.length), 1, 'Salvar a escala não interfere nos registros antigos de fotos');
+  await page.evaluate(() => { activeWorkTrackerTab = 'team'; render(); });
+  assert.equal(await page.getByRole('tab', { name: 'Visão geral', exact: true }).getAttribute('aria-selected'), 'true');
+  await page.evaluate(() => ObraAtivaWorkHub.openTab('team'));
+  assert.equal(await page.locator('.oa-work-hub-schedule').count(), 0, 'A área removida não reaparece por pedido antigo');
+  assert.equal(await page.evaluate(() => JSON.stringify(db)), initialSnapshot, 'Remover o acesso duplicado não apaga escala, equipe ou outros dados');
 
   await page.evaluate(() => {
     CompanyWorkspace.current.role = 'supervisor';
@@ -80,7 +79,7 @@ try {
     activeWorkTrackerTab = 'summary';
     render();
   });
-  assert.equal(await page.locator('.oa-work-hub-tab').count(), 3);
+  assert.equal(await page.locator('.oa-work-hub-tab').count(), 2);
   assert.doesNotMatch(await page.locator('.oa-work-hub-tabs').textContent(), /Financeiro/);
   assert.equal(await page.locator('.oa-work-hub-summary').getByText('MÃO DE OBRA', { exact: true }).count(), 0);
 
@@ -105,7 +104,7 @@ try {
   }
 
   assert.deepEqual(errors, []);
-  console.log('WORK_HUB_V1_OK: central simples por obra, quatro áreas, escala e finanças integradas, fotos removidas da interface sem apagar dados e responsividade validada com dados FICTÍCIOS.');
+  console.log('WORK_HUB_V1_OK: quatro áreas, equipe/escala duplicada removida, pedidos antigos seguros, fases e finanças mantidas; dados FICTÍCIOS preservados e responsividade validada.');
 } finally {
   await browser.close();
   await new Promise((resolve) => server.close(resolve));

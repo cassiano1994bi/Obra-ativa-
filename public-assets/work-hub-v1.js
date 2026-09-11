@@ -40,7 +40,6 @@
   }
   const TAB_LABELS = Object.freeze({
     summary: ['Visão geral', 'Resumo'],
-    team: ['Equipe e escala', 'Equipe'],
     phases: ['Fases da obra', 'Fases'],
     contracts: ['Empreitas', 'Empreitas'],
     financial: ['Financeiro da obra', 'Financeiro']
@@ -161,7 +160,8 @@
   }
 
   function tabList() {
-    return ['summary', ...(maySee('planning') ? ['team'] : []), 'phases', ...(maySee('financial') ? ['contracts', 'financial'] : [])];
+    // Equipe e escala permanecem nos módulos globais, sem uma segunda área na obra.
+    return ['summary', 'phases', ...(maySee('financial') ? ['contracts', 'financial'] : [])];
   }
 
   function normalizedTab() {
@@ -225,7 +225,6 @@
       ${maySee('financial') ? `<p class="oa-work-hub-contract-value"><span>Valor do contrato com o cliente</span><strong>${finance.contract == null ? 'Não informado' : cash(finance.contract)}</strong></p>` : ''}
       ${nextStep ? `<div class="oa-work-hub-next-step">${nextStep}</div>` : ''}
       <div class="oa-work-hub-actions">
-        ${maySee('planning') ? '<button type="button" onclick="ObraAtivaWorkHub.openTab(\'team\')"><span>👷</span><b>Escalar equipe</b><small>Escolher pessoas e fases</small></button>' : ''}
         <button type="button" onclick="ObraAtivaWorkHub.openTab('phases')"><span>▤</span><b>Atualizar fases</b><small>Percentual e prazos</small></button>
         ${maySee('financial') ? '<button type="button" onclick="ObraAtivaWorkHub.openTab(\'financial\')"><span>R$</span><b>Ver financeiro</b><small>Entradas, gastos e compromissos</small></button>' : ''}
       </div>
@@ -448,7 +447,6 @@
     activeWorkTrackerTab = active;
     const contents = {
       summary: () => summaryMarkup(work, model, phases),
-      team: () => scheduleMarkup(work),
       phases: () => phasesMarkup(work),
       contracts: () => window.ObraAtivaWorkCosts?.contractsMarkup(work) || '',
       financial: () => financialMarkup(work, model)
@@ -524,10 +522,10 @@
     const people = activePeople(), count = people.reduce((total, person) => total + Number(distribution(person.id, date)?.workId === work.id), 0);
     const draft = scheduleDrafts.get(draftKey(work.id, date));
     return `<section class="section oa-work-attendance-context" aria-labelledby="oaWorkAttendanceTitle" data-oa-attendance-work="${html(work.id)}">
-      <div class="section-head"><div><h2 id="oaWorkAttendanceTitle">Presença · ${html(work.name)}</h2><p class="sub">${dateLabel(date)} · ${count} pessoa(s) na escala salva desta obra.</p></div><div class="oa-work-hub-secondary-actions"><button type="button" class="btn alt" onclick="ObraAtivaWorkHub.returnToAttendanceWork()">Voltar à equipe da obra</button><button type="button" class="btn alt" onclick="go('attendance')">Ver toda equipe</button></div></div>
+      <div class="section-head"><div><h2 id="oaWorkAttendanceTitle">Presença · ${html(work.name)}</h2><p class="sub">${dateLabel(date)} · ${count} pessoa(s) na escala salva desta obra.</p></div><div class="oa-work-hub-secondary-actions"><button type="button" class="btn alt" onclick="ObraAtivaWorkHub.returnToAttendanceWork()">Voltar à Central da Obra</button><button type="button" class="btn alt" onclick="go('attendance')">Ver toda equipe</button></div></div>
       <p class="sub">Toda a equipe continua visível. As pessoas da escala salva desta obra aparecem primeiro e cada pessoa mostra sua obra do dia. Marcar todos e salvar presença abrangem a lista inteira.</p>
-      ${count ? '' : '<p class="notice">Nenhuma pessoa está escalada nesta obra para esta data. A lista completa permanece abaixo; volte à equipe da obra para organizar a escala.</p>'}
-      ${draft ? '<p class="notice">Há alterações da escala ainda não salvas. Seu rascunho foi preservado; volte à equipe da obra para salvar a escala.</p>' : ''}
+      ${count ? '' : '<p class="notice">Nenhuma pessoa está escalada nesta obra para esta data. A lista completa permanece abaixo; use a aba Escala diária para organizar a escala.</p>'}
+      ${draft ? '<p class="notice">Há alterações da antiga escala da obra ainda não salvas. Confira a escala na aba Escala diária antes de confirmar a presença.</p>' : ''}
     </section>`;
   }
 
@@ -535,7 +533,7 @@
     const work = attendanceWork();
     if (!work || !maySee('planning')) return;
     planningDate = attendanceDate || todayValue();
-    openHub(work.id, 'team');
+    openHub(work.id, 'summary');
   }
   function openPhaseCosts() {
     if (!maySee('financial')) return;
@@ -613,7 +611,7 @@
     worksGlobal = function () {
       const container = document.createElement('div'); container.innerHTML = previousWorksGlobal();
       const intro = container.querySelector('.works-grid-head .sub');
-      if (intro) intro.textContent = 'Abra uma obra para organizar equipe, fases, empreitas e valores em um lugar só.';
+      if (intro) intro.textContent = 'Abra uma obra para organizar fases, empreitas e valores em um lugar só.';
       container.querySelectorAll('.internal-work-status > span').forEach(el => { if (/foto/i.test(el.textContent)) el.remove(); });
       container.querySelectorAll('.internal-work-current > span').forEach(el => { if (/registrar fotos/i.test(el.textContent)) el.textContent = 'Abra a obra para organizar o trabalho e acompanhar os custos.'; });
       return container.innerHTML;

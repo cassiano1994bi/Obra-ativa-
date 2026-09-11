@@ -61,8 +61,10 @@ try {
     await fill('value', value); await fill('note', 'PAGAMENTO QUINZENAL FICTÍCIO'); await submit();
   }
   assert.deepEqual(await page.evaluate((id) => ObraAtivaWorkCostCore.totals(db, 'OBRA-TESTE', id), contractId), { contracted: 233.55, paid: 72.55, outstanding: 161 });
-  await tab('Equipe e escala'); await page.evaluate(() => ObraAtivaWorkHub.changeDate('2031-01-15'));
+  await page.evaluate(() => { planningDate = '2031-01-15'; planningWorkId = 'OBRA-TESTE'; go('planning'); });
+  await page.locator('[data-wc-plan-person="PESSOA-TESTE-A"]').selectOption('FASE-TESTE-1');
   await page.locator('[data-oa-contract-person="PESSOA-TESTE-A"]').selectOption(contractId); await page.getByRole('button', { name: 'Salvar escala', exact: true }).click();
+  assert.deepEqual(await page.evaluate(() => { const row = db.distributions.find((row) => row.employeeId === 'PESSOA-TESTE-A' && row.date === '2031-01-15'); return { phaseId: row.phaseId, contractId: row.contractId }; }), { phaseId: 'FASE-TESTE-1', contractId }, 'Escala diária global salva fase e empreita');
   assert.equal(await page.evaluate(() => ObraAtivaWorkCosts.snapshot('OBRA-TESTE').labor), 0, 'presença da empreita não gera diária');
   assert.equal(await page.evaluate(() => amountForPresence(db.attendance.find((row) => row.employeeId === 'PESSOA-TESTE-A'))), 0, 'folha também não gera diária');
   assert.equal(await page.evaluate(() => db.attendance.find((row) => row.employeeId === 'PESSOA-TESTE-A').status), 'Meio período');
@@ -101,12 +103,12 @@ try {
   await fs.mkdir(path.join(root, 'tmp/work-costs-qa'), { recursive: true });
   for (const [name, width, height] of [['desktop', 1440, 1000], ['tablet', 1024, 768], ['android-horizontal', 844, 390], ['android-menor', 667, 375], ['portrait', 390, 844]]) {
     await page.setViewportSize({ width, height });
-    for (const area of ['Empreitas', 'Financeiro da obra', 'Equipe e escala']) {
+    for (const area of ['Empreitas', 'Financeiro da obra', 'Visão geral']) {
       await tab(area);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${name}/${area}: sem rolagem lateral global`);
       const clips = await page.locator('.oa-work-hub').evaluate((root) => [...root.querySelectorAll('button,select')].filter((e) => e.getClientRects().length).filter((e) => { const r = e.getBoundingClientRect(); return r.left < 0 || r.right > innerWidth + 1; }).map((e) => e.textContent.slice(0, 50)));
       assert.deepEqual(clips, [], `${name}/${area}: controles dentro da tela`);
-      await page.screenshot({ path: path.join(root, `tmp/work-costs-qa/${name}-${area === 'Empreitas' ? 'empreitas' : area === 'Financeiro da obra' ? 'financeiro' : 'equipe'}.png`) });
+      await page.screenshot({ path: path.join(root, `tmp/work-costs-qa/${name}-${area === 'Empreitas' ? 'empreitas' : area === 'Financeiro da obra' ? 'financeiro' : 'visao-geral'}.png`) });
     }
     await tab('Empreitas'); await page.getByRole('button', { name: 'Nova empreita', exact: true }).click();
     for (const mode of ['fixed', 'meters']) {

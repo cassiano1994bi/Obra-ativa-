@@ -46,8 +46,8 @@
     const e = new Error('Somente consulta no momento. Seus dados estão seguros. Confira sua assinatura para salvar alterações.');
     e.code = 'OB069'; throw e;
   }
-  async function rpc(name, body = {}) {
-    return cloud().request(`/rest/v1/rpc/${name}`, {method:'POST',body:JSON.stringify(body)}, cloud().session.access_token);
+  async function rpc(name, body = {}, signal) {
+    return cloud().request(`/rest/v1/rpc/${name}`, {method:'POST',body:JSON.stringify(body),signal}, cloud().session.access_token);
   }
   function accept(value, requestKey) {
     if (requestKey !== key()) return;
@@ -61,7 +61,11 @@
     const requestKey = key();
     if (requestKey !== identity) { access=null; verified=false; identity=requestKey;adminRows=null;adminOffset=0;document.getElementById('oaBillingDialog')?.close(); }
     pending = (async () => {
-      try { accept(await rpc('billing_access', {p_company_id:company()}), requestKey); message=''; }
+      try {
+        const value=await rpc('billing_access', {p_company_id:company()}, AbortSignal.timeout(25000));
+        if(requestKey!==key())return;
+        message='';accept(value,requestKey);
+      }
       catch (e) {
         if (requestKey !== key()) return;
         // A missing migration keeps the previous system, not a partial activation.
@@ -104,10 +108,30 @@
       dialog=document.createElement('dialog'); dialog.id='oaBillingDialog'; dialog.className='oa-billing-dialog';
       dialog.setAttribute('aria-label','Assinatura ObraAtiva'); document.body.append(dialog);
     }
-    dialog.innerHTML=`<div class="oa-billing-close"><button type="button" class="btn alt" data-billing-action="close">Continuar consultando</button></div>${markup()}`;
+    dialog.__billingMarkup=markup();
+    dialog.innerHTML=`<div class="oa-billing-close"><button type="button" class="btn alt" data-billing-action="close">Continuar consultando</button></div>${dialog.__billingMarkup}`;
     if (!dialog.open) dialog.showModal();
   }
+  function syncOpenDialog() {
+    const dialog=document.getElementById('oaBillingDialog');
+    if(!signedIn()){dialog?.close();return;}
+    if(!dialog?.open || busy)return;
+    const next=markup();
+    if(dialog.__billingMarkup===next)return;
+    const panel=dialog.querySelector('.oa-billing-panel');
+    if(!panel)return;
+    const focused=document.activeElement,restore=panel.contains(focused),scroll=dialog.scrollTop;
+    const action=focused?.dataset?.billingAction,href=focused?.getAttribute?.('href');
+    panel.outerHTML=next;dialog.__billingMarkup=next;
+    if(restore){
+      const target=[...dialog.querySelectorAll('[data-billing-action],a[href]')].find(el=>action ? el.dataset.billingAction===action : href && el.getAttribute('href')===href);
+      (target || dialog.querySelector('[data-billing-action="refresh"]') || dialog.querySelector('[data-billing-action="close"]'))?.focus({preventScroll:true});
+    }
+    dialog.scrollTop=scroll;
+  }
   function paint() {
+    // Atualiza o modal mesmo quando o acesso foi liberado e o banner deve desaparecer.
+    syncOpenDialog();
     const a=current();
     let bar=document.getElementById('oaBillingBanner');
     if (!signedIn() || a?.enabled === false) { bar?.remove(); return; }
@@ -123,7 +147,10 @@
     if (bar.innerHTML!==text) bar.innerHTML=text;
     bar.dataset.readonly=String(!canWrite());
     if (!canWrite()) clearTimeout(cloud()?.timer);
-    if (verified && a?.enabled && !a.can_write && !notified.has(identity)) { notified.add(identity); open(); }
+    if (verified && a?.enabled && !a.can_write && !notified.has(identity) && !busy) {
+      notified.add(identity);
+      if(!document.getElementById('oaBillingDialog')?.open)open();
+    }
   }
   async function api(name, body) {
     const response=await fetch(`/.netlify/functions/billing-${name}`, {method:'POST',headers:{authorization:`Bearer ${cloud().session.access_token}`,'content-type':'application/json'},body:JSON.stringify({companyId:company(),...body}),signal:AbortSignal.timeout(25000)});
@@ -145,12 +172,12 @@
         if (url.protocol!=='https:' || !['www.mercadopago.com.br','mercadopago.com.br'].includes(url.hostname) || !url.pathname.startsWith('/subscriptions/')) throw Error('Endereço de pagamento não confirmado.');
         location.assign(url.href); return;
       }
-      if (name==='cancel') { const result=await api('cancel',{confirm:true});message=result.message;await refresh(); }
-      else if (current()?.enabled) { accept(await api('status',{}),requestKey); message=current()?.mode==='active' ? 'Pagamento confirmado. Acesso completo liberado!' : 'Status atualizado. A liberação acontece quando o pagamento é confirmado.'; }
+      if (name==='cancel') { const result=await api('cancel',{confirm:true});if(requestKey!==key())return;await refresh();if(requestKey!==key())return;message=result.message; }
+      else if (current()?.enabled) { const result=await api('status',{});if(requestKey!==key())return;accept(result,requestKey);message=current()?.mode==='active' ? 'Pagamento confirmado. Acesso completo liberado!' : 'Status atualizado. A liberação acontece quando o pagamento é confirmado.'; }
       else await refresh();
       if(requestKey===key())open();
-    } catch(e) { message=e.message || 'Não foi possível confirmar. Tente novamente.';open(); }
-    finally {busy=false;button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original;}
+    } catch(e) { if(requestKey===key()){message=e.message || 'Não foi possível confirmar. Tente novamente.';open();} }
+    finally {busy=false;button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original;paint();}
   }
   function adminMarkup() {
     if (!cloud()?.isSalesAdmin) return '';
@@ -185,8 +212,8 @@
     const el=event.target.closest?.('button,a,[onclick],[data-wc-action],input[type=file]');
     const handler=el?.getAttribute('onclick')||'', text=(el?.textContent||'').trim();
     const mutating=event.type==='submit' || (event.type==='change' && event.target.matches('input[type=file]')) ||
-      (event.type==='click' && el && (/\b(save|delete|remove|restore|import|addSuggested|moveWorkPhase|payAll|confirmPayment)/.test(handler) ||
-        /^(?:[+✓💾✎🗑️\s]*)(salvar|excluir|remover|adicionar|criar|nova?\b|editar|registrar|pagar|confirmar|importar|restaurar|distribuir|sugerir fases)/i.test(text) ||
+      (event.type==='click' && el && (/\b(save|delete|remove|restore|import|addSuggested|moveWorkPhase|payAll|confirmPayment|reverseLatestPayment)/.test(handler) ||
+        /^(?:[+✓💾✎🗑️\s]*)(salvar|excluir|remover|adicionar|criar|nova?\b|editar|registrar|pagar|confirmar|estornar|importar|restaurar|distribuir|sugerir fases)/i.test(text) ||
         (el.dataset.wcAction && el.dataset.wcAction!=='close')));
     if (mutating) {event.preventDefault();event.stopImmediatePropagation();open();}
   }
@@ -222,7 +249,23 @@
     // Recognize that shape only; the ID is never used to select or unlock an account.
     const billingReturn=new URLSearchParams(location.search).get('billing');
     if(billingReturn==='return' || /^return\?preapproval_id=[a-fA-F0-9]{32}$/.test(billingReturn||'')) {
-      let tries=0;const timer=setInterval(async()=>{if(++tries>12 || current()?.mode==='active'){clearInterval(timer);return;}if(signedIn()){await refresh();const requestKey=key();if(tries===1&&current()?.enabled)api('status',{}).then(v=>accept(v,requestKey)).catch(()=>{});}},10000);
+      let ticks=0,attempts=0,inFlight=false,returnKey='',lastAttempt=-Infinity;
+      const timer=setInterval(async()=>{
+        if(++ticks>30 || current()?.mode==='active' || attempts>=4){clearInterval(timer);return;}
+        if(inFlight || !signedIn() || !cloud()?.ready)return;
+        const requestKey=key();
+        if(returnKey && returnKey!==requestKey){clearInterval(timer);return;}
+        returnKey=requestKey;inFlight=true;
+        try {
+          await refresh();
+          if(requestKey!==key()){clearInterval(timer);return;}
+          if(!current()?.enabled || performance.now()-lastAttempt<35000)return;
+          // Só conta consultas realizadas; respeita o intervalo de 30s do servidor.
+          attempts++;lastAttempt=performance.now();
+          accept(await api('status',{}),requestKey);
+        } catch { /* Falha temporária: nova consulta limitada, nunca uma nova cobrança. */ }
+        finally {inFlight=false;}
+      },10000);
     }
     if(cloud().ready)refresh();
   }

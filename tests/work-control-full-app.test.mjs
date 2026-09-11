@@ -42,7 +42,7 @@ try{
  assert.match(await page.locator('.internal-work-card').filter({hasText:'OBRA FICTÍCIA — Centro de treinamento'}).locator('.wc-work-labor-total').textContent(),/Mão de obra:.*11,50/);
   await page.evaluate(()=>openWorkTracker('OBRA-TESTE'));
    assert.match(await page.locator('.oa-work-hub-identity h1').textContent(),/OBRA FICTÍCIA — Centro de treinamento/);
-   assert.equal(await page.locator('.oa-work-hub-tab').count(),5,'Central da Obra inclui empreitas sem remover as áreas anteriores');
+   assert.equal(await page.locator('.oa-work-hub-tab').count(),4,'Central da Obra mantém quatro áreas após remover a subaba Equipe e escala');
    assert.doesNotMatch(await page.locator('.oa-work-hub-tabs').textContent(),/Fotos/i,'Aba Fotos foi removida');
    assert.equal(await page.locator('.wc-tabs,.wc-health,.wc-metrics').count(),0);
    await page.getByRole('tab',{name:/Fases da obra/}).click();

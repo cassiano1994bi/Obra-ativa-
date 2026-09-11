@@ -56,10 +56,9 @@
       ['chart', 'Financeiro', 'Controle receitas, despesas e o fluxo de cada obra.'],
       ['vehicle', 'Veículos', 'Gerencie combustível, manutenção e ocorrências.'],
       ['report', 'Relatórios', 'Informações organizadas para decisões melhores.'],
-      ['budget', 'Orçamentos', 'Crie propostas e acompanhe o que foi aprovado.'],
-      ['bot', 'Assistente IA', 'Sua funcionária digital para análises e sugestões.']
+      ['budget', 'Orçamentos', 'Crie propostas e acompanhe o que foi aprovado.']
     ];
-    return modules.map(([key, title, copy], index) => `<article class="oa-module-card">${index === 8 ? '<span class="oa-new-badge">NOVO</span>' : ''}${icon(key)}<h3>${title}</h3><p>${copy}</p></article>`).join('');
+    return modules.map(([key, title, copy]) => `<article class="oa-module-card">${icon(key)}<h3>${title}</h3><p>${copy}</p></article>`).join('');
   }
 
   function devicesMarkup() {
@@ -71,7 +70,7 @@
   }
 
   function plansMarkup() {
-    const plans = [{name:'ObraAtiva completo',price:'R$ 69/mês',works:'Todas as funcionalidades',users:'30 dias grátis',featured:true,items:['Obras, equipe, escala e presença','Pagamentos, financeiro e relatórios','Assistente IA integrada','Sem limites comerciais de obras ou usuários','Cancelamento sem apagar os dados']}];
+    const plans = [{name:'ObraAtiva completo',price:'R$ 69/mês',works:'Todas as funcionalidades',users:'30 dias grátis',featured:true,items:['Obras, equipe, escala e presença','Pagamentos, financeiro e relatórios','Sem limites comerciais de obras ou usuários','Cancelamento sem apagar os dados']}];
     return plans.map((plan) => `<article class="oa-price-card ${plan.featured ? 'featured' : ''}">
       ${plan.featured ? '<span class="oa-choice">PLANO ÚNICO · ACESSO COMPLETO</span>' : ''}
       <h3>${safe(plan.name)}</h3><div class="oa-price">${safe(plan.price)}</div><p>${safe(plan.works)} · ${safe(plan.users)}</p>

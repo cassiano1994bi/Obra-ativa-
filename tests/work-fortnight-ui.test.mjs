@@ -103,7 +103,7 @@ try {
   await action('next'); assert.equal(await total(), 0); assert.match(await page.locator('.oa-work-period-status').innerText(), /futura/);
   assert.match(await page.locator('.oa-work-period-result').innerText(), /SEM DIFERENÇA/);
   await action('current'); assert.equal(await total(), 155.5);
-  await tab('Equipe e escala'); await tab('Financeiro da obra'); assert.equal(await total(), 155.5); assert.equal(await detailOpen(), true);
+  await tab('Visão geral'); await tab('Financeiro da obra'); assert.equal(await total(), 155.5); assert.equal(await detailOpen(), true);
   await tab('Fases da obra'); await page.getByRole('button', { name: 'Ver gastos por fase', exact: true }).click();
   assert.equal(await page.locator('.oa-cost-phase-breakdown').evaluate(el => el.open), true);
   assert.equal(await page.locator('.oa-work-hub-finance-grid').innerText(), accumulated);

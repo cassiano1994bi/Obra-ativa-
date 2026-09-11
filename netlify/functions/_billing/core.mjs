@@ -116,14 +116,28 @@ export function createBilling({ env = process.env, fetchImpl = fetch, now = () =
     return (await db(`billing_attempts?id=eq.${id}&select=*&limit=1`))?.[0] || null;
   }
   async function current(owner) { return (await db(`billing_attempts?owner_user_id=eq.${owner}&order=created_at.desc&limit=1&select=*`))?.[0] || null; }
-  function validateSubscription(s, a) {
-    const r = s?.auto_recurring;
+  function validateSubscriptionIdentity(s, a) {
     if (!a || String(s.external_reference) !== a.id || (a.provider_id && String(s.id) !== a.provider_id) ||
-      String(s.collector_id) !== env.MERCADOPAGO_COLLECTOR_ID || Number(r?.transaction_amount) !== 69 || r?.currency_id !== 'BRL' ||
-      Number(r?.frequency) !== 1 || r?.frequency_type !== 'months' || !['pending', 'authorized', 'paused', 'cancelled'].includes(s.status))
+      String(s.collector_id) !== env.MERCADOPAGO_COLLECTOR_ID || !['pending', 'authorized', 'paused', 'cancelled'].includes(s.status))
       fail(502, 'provider_mismatch', 'Os dados da assinatura precisam ser conferidos. Nenhum acesso foi alterado.');
     resource(s.id); date(s.last_modified);
     return s;
+  }
+  function validateSubscription(s, a) {
+    validateSubscriptionIdentity(s, a);
+    const r = s.auto_recurring;
+    if (Number(r?.transaction_amount) !== 69 || r?.currency_id !== 'BRL' || Number(r?.frequency) !== 1 || r?.frequency_type !== 'months')
+      fail(502, 'provider_mismatch', 'Os dados da assinatura precisam ser conferidos. Nenhum acesso foi alterado.');
+    return s;
+  }
+  // Cancelar uma recorrência divergente não equivale a aceitar seu preço ou liberar pagamento.
+  async function applyCancellation(s, a) {
+    validateSubscriptionIdentity(s, a);
+    if (s.status !== 'cancelled') fail(503, 'cancellation_pending', 'Ainda estamos confirmando o cancelamento. Atualize o status antes de tentar novamente.');
+    await rpc('billing_apply_provider', {
+      p_attempt: a.id, p_provider_id: String(s.id), p_status: 'cancelled',
+      p_modified: date(s.last_modified), p_checkout: null, p_payment: null
+    });
   }
   async function apply(s, a, payment = null) {
     validateSubscription(s, a);
@@ -158,17 +172,20 @@ export function createBilling({ env = process.env, fetchImpl = fetch, now = () =
     });
     return true;
   }
-  async function sync(a, withPayments = true) {
-    let s;
-    if (a.provider_id) s = await mp(`/preapproval/${resource(a.provider_id)}`);
-    else {
+  async function readProvider(a) {
+    let providerId = a.provider_id;
+    if (!providerId) {
       const found = await mp(`/preapproval/search?external_reference=${encodeURIComponent(a.id)}&limit=10`);
       const matches = (found.results || []).filter(s => String(s.external_reference) === a.id);
       if (matches.length !== 1) fail(409, 'checkout_uncertain', 'Ainda estamos conferindo a tentativa anterior. Não inicie outra cobrança. Tente atualizar em alguns instantes.');
-      s = matches[0];
-      // Search may return a reduced object: read the canonical subscription.
-      s = await mp(`/preapproval/${resource(s.id)}`);
+      providerId = matches[0].id;
     }
+    const s = await mp(`/preapproval/${resource(providerId)}`);
+    validateSubscriptionIdentity(s, { ...a, provider_id: String(providerId) });
+    return s;
+  }
+  async function sync(a, withPayments = true) {
+    const s = await readProvider(a);
     await apply(s, a);
     if (withPayments) {
       // Persisted pagination revisits every invoice, including old refunds.
@@ -182,8 +199,10 @@ export function createBilling({ env = process.env, fetchImpl = fetch, now = () =
     return s;
   }
   async function recordError(a, code) {
-    await db(`billing_attempts?id=eq.${a.id}`, { method: 'PATCH', body: { last_error: String(code || 'temporarily_unavailable').slice(0, 80), checked_at: new Date(now()).toISOString() } });
-    if (!a.provider_id) await db(`billing_attempts?id=eq.${a.id}&provider_id=is.null`, { method: 'PATCH', body: { status: 'uncertain' } });
+    // Os filtros usam o estado atual no banco: um callback antigo não reabre recusa definitiva.
+    await db(`billing_attempts?id=eq.${a.id}&or=(provider_id.not.is.null,status.neq.cancelled)`, { method: 'PATCH', body: { last_error: String(code || 'temporarily_unavailable').slice(0, 80), checked_at: new Date(now()).toISOString() } });
+    if (!a.provider_id) await db(`billing_attempts?id=eq.${a.id}&provider_id=is.null&status=in.(creating,uncertain)`, { method: 'PATCH', body: { status: 'uncertain' } });
   }
-  return { env, db, rpc, mp, actor, manage, current, attempt, subscription, apply, invoice, sync, recordError, now, configured };
+  return { env, db, rpc, mp, actor, manage, current, attempt, subscription, apply, applyCancellation, readProvider, invoice, sync, recordError, now, configured };
 }
+export const uncreatedCancellation = a => a?.status === 'cancelled' && !a.provider_id;

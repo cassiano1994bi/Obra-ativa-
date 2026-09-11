@@ -35,6 +35,9 @@ export function resetAssistantInsightStateForTests() {
 }
 
 export default async (request) => {
+  // Recurso removido: inclusive clientes antigos não devem consultar dados ou consumir IA.
+  return json(410, { ok: false, code: 'ASSISTANT_DISABLED', error: 'A assistente de IA foi removida do ObraAtiva.' });
+
   const startedAt = Date.now();
   let auditBase = {};
   let claimedFingerprint = '';

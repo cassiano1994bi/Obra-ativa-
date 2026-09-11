@@ -56,19 +56,14 @@ try {
   await costField('total').fill('2519'); assert.match(await page.locator('#oaClientRemaining').innerText(), /2.406,00/); await costSave();
   assert.equal(await page.evaluate(() => db.receivables[0].total), 2519);
   await page.getByRole('button', { name: 'Registrar recebimento', exact: true }).click(); assert.equal(await page.locator('#modal').isVisible(), true); await close();
-  await tab('Equipe e escala'); assert.equal(await page.locator('.oa-work-hub-date input').inputValue(), '2031-01-15');
+  assert.equal(await page.getByRole('tab', { name: 'Equipe e escala', exact: true }).count(), 0);
+  // A escala continua na aba global, com as mesmas pessoas e fases fictícias.
+  await page.evaluate(() => { planningDate = '2031-01-15'; planningWorkId = 'OBRA-TESTE'; go('planning'); });
   await page.locator('[data-plan-employee="PESSOA-TESTE-B"]').check(); await page.locator('[data-wc-plan-person="PESSOA-TESTE-B"]').selectOption('FASE-TESTE-2');
-  await tab('Visão geral'); await tab('Equipe e escala');
-  assert.equal(await page.locator('[data-plan-employee="PESSOA-TESTE-B"]').isChecked(), true);
-  assert.equal(await page.locator('[data-wc-plan-person="PESSOA-TESTE-B"]').inputValue(), 'FASE-TESTE-2');
-  assert.match(await page.locator('[data-oa-draft-status]').innerText(), /não salvas/);
-  assert.match(await page.locator('#planCount').innerText(), /2 pessoas/);
-  await page.locator('.oa-work-hub-date input').fill('2031-01-16'); await page.locator('.oa-work-hub-date input').fill('2031-01-15');
-  assert.equal(await page.locator('[data-plan-employee="PESSOA-TESTE-B"]').isChecked(), true);
-  await page.getByRole('button', { name: 'Salvar escala', exact: true }).click();
+  await page.evaluate(() => saveBulkDistribution());
   assert.equal(await page.evaluate(() => db.distributions.find(r => r.employeeId === 'PESSOA-TESTE-B')?.phaseId), 'FASE-TESTE-2');
-  assert.equal(await page.locator('[data-oa-draft-status]').getAttribute('class').then(v => v.includes('pending')), false);
   assert.equal(await page.evaluate(() => ObraAtivaWorkCosts.snapshot('OBRA-TESTE').labor), 11.5, 'a falta continua sem custo');
+  await page.evaluate(() => openWorkTracker('OBRA-TESTE'));
   await tab('Empreitas'); await page.getByRole('button', { name: 'Nova empreita', exact: true }).click();
   await costField('name').fill('EMPREITA FICTICIA AUDITORIA'); await costField('responsible').fill('PESSOA FICTICIA AUDITORIA'); await costField('mode').selectOption('meters'); await costField('unit').selectOption('m²'); await costField('quantity').fill('11'); await costField('unitPrice').fill('17'); await costSave();
   assert.equal(await page.evaluate(() => db.works[0].control.empreitas[0].unit), 'm²');
@@ -90,7 +85,7 @@ try {
   await fs.mkdir(path.join(root, 'tmp/work-hub-audit-qa'), { recursive: true });
   for (const [width, height] of [[1440, 1000], [844, 390], [667, 375], [390, 844]]) {
     await page.setViewportSize({ width, height });
-    for (const [name, key] of [['Visão geral', 'resumo'], ['Fases da obra', 'fases'], ['Equipe e escala', 'equipe'], ['Empreitas', 'empreitas'], ['Financeiro da obra', 'financeiro']]) {
+    for (const [name, key] of [['Visão geral', 'resumo'], ['Fases da obra', 'fases'], ['Empreitas', 'empreitas'], ['Financeiro da obra', 'financeiro']]) {
       await tab(name);
       await page.locator('.oa-work-hub-head').scrollIntoViewIfNeeded();
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}/${name}: sem estouro lateral`);
@@ -104,5 +99,5 @@ try {
     }
   }
   assert.deepEqual(errors, []);
-  console.log('AUDIT_UI_OK: contrato, relatório único, rascunho por data, falta, unidade e avisos de duplicidade; somente dados FICTÍCIOS e sem rede real.');
+  console.log('AUDIT_UI_OK: contrato, relatório único, escala global, falta, unidade e avisos de duplicidade; somente dados FICTÍCIOS e sem rede real.');
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

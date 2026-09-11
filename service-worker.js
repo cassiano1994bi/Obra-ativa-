@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v66';
+const CACHE_VERSION = 'v67';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -70,19 +70,6 @@ const OPTIONAL_ASSETS = [
   '/public-assets/product-activity-v1.js',
   '/public-assets/meta-pixel-v1.js',
   '/public-assets/assistant-avatar-v1.png',
-  '/public-assets/assistant-actions-core-v1.js',
-  '/public-assets/assistant-capability-registry-v1.js',
-  '/public-assets/assistant-command-bus-v1.js',
-  '/public-assets/assistant-command-registry-v1.js',
-  '/public-assets/assistant-digital-employee-v1.js',
-  '/public-assets/assistant-obras-phase1-v1.js',
-  '/public-assets/assistant-obras-phase2-v1.js',
-  '/public-assets/assistant-obras-phase3-v1.js',
-  '/public-assets/assistant-obras-phase4-v1.js',
-  '/public-assets/assistant-obras-phase5-v1.js',
-  '/public-assets/assistant-obras-phase6-v1.js',
-  '/public-assets/assistant-quality-auditor-v1.js',
-  '/public-assets/assistant-technical-expert-v1.js',
   '/public-assets/employee-performance-v1.js',
   '/public-assets/finance-legacy-view-v1.js',
   '/public-assets/home-weather-v1.js',

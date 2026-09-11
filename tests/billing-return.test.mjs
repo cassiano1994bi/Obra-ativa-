@@ -28,7 +28,7 @@ test('assinatura pode ser iniciada sem caixa redundante e informa cobrança agen
 });
 function boot(search,{signedIn=false,ready=false}={}) {
   const timers=[];
-  const context={URLSearchParams,performance:{now:()=>0},location:{search},
+  const context={URLSearchParams,AbortSignal,performance:{now:()=>0},location:{search},
     document:{readyState:'complete',hidden:false,body:{classList:{contains:()=>false}},addEventListener(){},getElementById(){return null}},
     setInterval(callback,delay){timers.push({callback,delay});return timers.length},clearInterval(){},clearTimeout(){},
     window:{addEventListener(){},CloudSync:{ready,session:signedIn?{user:{id:'USUARIO-FICTICIO'},access_token:'TOKEN-FICTICIO'}:null,finishActivation(){},schedule(){},flush(){},request(){throw Error('No network allowed in this test')}}}};

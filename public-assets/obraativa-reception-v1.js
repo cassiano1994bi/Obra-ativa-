@@ -60,10 +60,6 @@
         <p>Organize obras, equipes, presença, pagamentos e resultados em um só lugar.</p>
       </div>
       ${proofMarkup()}
-      <article class="obraativa-reception-ai" aria-label="Assistente inteligente integrada ao ObraAtiva">
-        <span class="obraativa-reception-ai-avatar" aria-hidden="true"><img src="/public-assets/assistant-avatar-v1.png" alt=""><i></i></span>
-        <span class="obraativa-reception-ai-copy"><small>ASSISTENTE INTELIGENTE <i>IA</i></small><b>Sua aliada na gestão de obras.</b><em>Mais dados, melhores decisões.</em></span>
-      </article>
       <blockquote><i aria-hidden="true">“</i><span>Tecnologia e gestão trabalhando juntas para construir resultados reais.</span></blockquote>
     </aside>`;
   }
