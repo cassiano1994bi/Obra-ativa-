@@ -12,6 +12,8 @@
   let originalShowOnboarding = null;
   let originalShowLoading = null;
   let lastAuthEmail = '';
+  let signupConfirmationCooldown = 0;
+  let signupConfirmationTimer = null;
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -23,8 +25,13 @@
     if (!text) return '';
     const normalized = text.toLocaleLowerCase('pt-BR');
     if (/invalid login|invalid credentials|email or password/.test(normalized)) return 'E-mail ou senha não conferem. Revise os dados e tente novamente.';
-    if (/email_address_invalid|invalid email|email.*invalid|unable to validate email/.test(normalized)) return 'Confira o e-mail digitado. Use o formato nome@exemplo.com.';
-    if (/email not confirmed|email.*confirm/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
+    if (/email_address_invalid|invalid email|email address.*invalid|unable to validate email/.test(normalized)) return 'Confira o e-mail digitado. Use o formato nome@exemplo.com.';
+    if (/email[_ ]not[_ ]confirmed/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
+    if (/otp_expired|token.*expired|token.*invalid|invalid.*token/.test(normalized)) return 'O código não é válido ou expirou. Confira os 6 números do último e-mail ou peça um novo código.';
+    if (/error sending confirmation|error sending.*email|smtp/.test(normalized)) return 'Não conseguimos enviar o e-mail agora. Tente novamente em alguns minutos.';
+    if (/over.?email.?send.?rate.?limit|many requests|muitas tentativas|too many requests|rate limit/.test(normalized)) {
+      return 'Foram feitas muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.';
+    }
     if (/already registered|already exists|user.*registered/.test(normalized)) return 'Este e-mail já possui uma conta. Entre normalmente ou use “Esqueci minha senha”.';
     if (/password.*(least|characters|weak)|senha.*(fraca|caracteres)/.test(normalized)) return 'Crie uma senha com 8 caracteres, incluindo letra maiúscula, minúscula e número.';
     if (/failed to fetch|network|networkerror|load failed/.test(normalized)) return 'Não conseguimos conectar agora. Verifique sua internet e tente novamente.';
@@ -37,29 +44,35 @@
     return /conta criada/.test(normalized) && /(confirme|confirmar|verifique)/.test(normalized) && /e-mail|email/.test(normalized);
   }
 
-  function showEmailConfirmation(email = lastAuthEmail) {
+  function showEmailConfirmation(email = lastAuthEmail, message = '', isError = false) {
+    const rawEmail = String(email || '').trim();
+    if (rawEmail && rawEmail.toLowerCase() !== lastAuthEmail.toLowerCase()) signupConfirmationCooldown = 0;
+    if (rawEmail) lastAuthEmail = rawEmail;
     let gate = $('#cloudGate');
     if (!gate) {
       document.body.insertAdjacentHTML('beforeend', '<div class="cloud-gate" id="cloudGate"></div>');
       gate = $('#cloudGate');
     }
-    const safeEmail = escapeHtml(String(email || '').trim() || 'o e-mail informado');
-    gate.innerHTML = `<section class="cloud-auth-card" style="position:relative">
+    const safeEmail = escapeHtml(rawEmail || lastAuthEmail || 'o e-mail informado');
+    gate.innerHTML = `<section class="cloud-auth-card obraativa-auth-confirmation" style="position:relative">
       <button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>
       <div class="top-brand"><span>✓ CONTA CRIADA COM SUCESSO</span><strong>CONTROLE DE OBRA</strong></div>
       <div class="obraativa-email-confirmation-heading">
         <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
         <div><span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span><h1>Conta criada — verifique seu e-mail</h1></div>
       </div>
-      <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Sem essa confirmação, o aplicativo ainda não libera o primeiro acesso.</p>
-      <div class="obraativa-email-confirmation-address"><small>Abra o Gmail, Outlook ou outro aplicativo deste e-mail</small><b>${safeEmail}</b></div>
-      <ol class="obraativa-email-confirmation-steps">
-        <li><b>Procure a mensagem do ObraAtiva</b><span>Ela foi enviada para o endereço mostrado acima.</span></li>
-        <li><b>Abra a mensagem e toque em “Confirmar e-mail”</b><span>Se não aparecer, confira Spam ou Lixo eletrônico.</span></li>
-        <li><b>Volte ao ObraAtiva e entre</b><span>Use o mesmo e-mail e a senha que você acabou de criar.</span></li>
-      </ol>
-      <div class="obraativa-email-confirmation-note"><b>Não é um erro:</b> sua conta foi criada. Falta apenas clicar no link recebido por e-mail.</div>
-      <button type="button" class="btn obraativa-auth-primary obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei no e-mail — entrar</button>
+      <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Enviamos uma mensagem para o endereço abaixo.</p>
+      <div class="obraativa-email-confirmation-address"><small>E-MAIL QUE RECEBEU A CONFIRMAÇÃO</small><b>${safeEmail}</b></div>
+      <form class="obraativa-email-code-form" onsubmit="CloudSync.confirmSignupCode(event)">
+        <label for="obraativaSignupCode">Digite o código de 6 dígitos</label>
+        <input id="obraativaSignupCode" name="token" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required aria-describedby="obraativaSignupCodeHelp" placeholder="000000">
+        <small id="obraativaSignupCodeHelp">O código confirma o e-mail e abre o aplicativo. Se a mensagem recebida ainda tiver um botão, você também pode confirmar por ele.</small>
+        <button type="submit" class="btn obraativa-auth-primary">Confirmar código e entrar</button>
+      </form>
+      ${message ? `<div class="cloud-message ${isError ? 'error' : ''}">${escapeHtml(message)}</div>` : ''}
+      <div class="obraativa-email-confirmation-note obraativa-email-confirmation-note--warning"><b>Não encontrou?</b> Aguarde alguns minutos e veja Spam ou Lixo eletrônico. Marque a mensagem como “Não é spam”.</div>
+      <button type="button" class="cloud-link obraativa-email-confirmation-resend" data-email-confirmation-resend="true" title="Reenviar e-mail de confirmação">Não recebeu? Reenviar código</button>
+      <button type="button" class="btn alt obraativa-email-confirmation-enter" onclick="CloudSync.showAuth('signin','Depois de confirmar o e-mail, entre com sua senha.')">Já confirmei pelo botão do e-mail — entrar</button>
       <button type="button" class="cloud-link obraativa-email-confirmation-change" onclick="CloudSync.showAuth('signup')">Digitou outro e-mail? Voltar e corrigir</button>
     </section>`;
     const resetConfirmationScroll = () => {
@@ -67,9 +80,20 @@
       gate.querySelectorAll('.obraativa-reception-access, .cloud-auth-card').forEach((element) => { element.scrollTop = 0; });
     };
     resetConfirmationScroll();
+    updateSignupResend();
     schedule();
     const frame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
     frame(() => frame(resetConfirmationScroll));
+  }
+
+  function updateSignupResend() {
+    window.clearTimeout(signupConfirmationTimer);
+    const button = $('[data-email-confirmation-resend]');
+    if (!button) return;
+    const seconds = Math.max(0, Math.ceil((signupConfirmationCooldown - Date.now()) / 1000));
+    button.disabled = seconds > 0;
+    button.textContent = seconds ? `Reenviar código em ${seconds}s` : 'Não recebeu? Reenviar código';
+    if (seconds) signupConfirmationTimer = window.setTimeout(updateSignupResend, 1000);
   }
 
   function passwordToggleMarkup(visible) {
@@ -486,6 +510,15 @@
     document.body.addEventListener('click', (event) => {
       if (event.target.closest('[data-resume-account]')) resumeRemembered();
       if (event.target.closest('[data-forget-account]')) forgetAndShowAuth();
+      const resendBtn = event.target.closest('[data-email-confirmation-resend]');
+      if (resendBtn && window.CloudSync?.resendSignupConfirmation) {
+        const now = Date.now();
+        if (now < signupConfirmationCooldown) { updateSignupResend(); return; }
+        signupConfirmationCooldown = now + 60000;
+        updateSignupResend();
+        window.CloudSync.resendSignupConfirmation(lastAuthEmail).catch(() => {}).finally(updateSignupResend);
+        return;
+      }
       const toggle = event.target.closest('[data-password-toggle]');
       if (toggle) {
         const input = $('input', toggle.closest('.obraativa-password-shell'));
@@ -519,7 +552,7 @@
     }, true);
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('resize', schedule, { passive: true });
-    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore, showEmailConfirmation });
+    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore, showEmailConfirmation, lastAuthEmail: () => lastAuthEmail });
     schedule();
   }
 

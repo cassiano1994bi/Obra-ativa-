@@ -110,10 +110,31 @@ body:has(#cloudGate){overflow:hidden}
 .obraativa-email-confirmation-steps b{color:#173f55;font-size:12px;line-height:1.3}
 .obraativa-email-confirmation-steps span{color:#617581;font-size:10px;line-height:1.4}
 .obraativa-email-confirmation-note{margin:11px 0 13px;padding:9px 11px;border-left:3px solid #e0a225;border-radius:7px;background:#fff8e9;color:#745518;font-size:10px;line-height:1.45}
+.obraativa-email-confirmation-note--warning{
+  background:#fff0f2;
+  border-left-color:#dc2626;
+  color:#8f2d31;
+}
+.obraativa-email-code-form{display:grid;gap:8px;margin:12px 0 7px}
+.obraativa-email-code-form label{color:#173f55;font-size:12px;font-weight:900;text-align:center}
+#cloudGate .obraativa-email-code-form input{width:100%;min-height:52px;padding:8px 14px;border:1px solid #aac5d2;border-radius:11px;background:#f8fbfc;color:#0f2d4a;font-size:25px;font-weight:900;letter-spacing:.38em;text-align:center;font-variant-numeric:tabular-nums}
+#cloudGate .obraativa-email-code-form input:focus{border-color:#16a34a;outline:3px solid #16a34a22}
+.obraativa-email-code-form>small{color:#617581;font-size:9px;line-height:1.4;text-align:center}
+#cloudGate .obraativa-email-code-form .btn{margin:0}
 #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-enter{width:100%;margin-top:0}
+#cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-resend{display:block;width:100%;min-height:34px;margin:5px 0;color:#2563eb;border-radius:9px;font-size:11px}
+#cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-resend:hover{background:#eef2ff;color:#1d4ed8}
 #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-change{display:block;width:100%;min-height:34px;margin-top:5px;color:#78909e;font-size:11px;font-weight:700}
 #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-change:hover{background:#f4f7f8;color:#365d70}
 #cloudGate .obraativa-auth-confirmation>[data-usage-privacy]{display:none!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-code-form label{color:#f4f8fc!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-code-form>small{color:#c4d2df!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-lead{color:#dce7ef!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-lead b{color:#86efac!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-auth-step{color:#a7f3c4!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-resend{color:#75baff!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-change{color:#c4d2df!important}
+.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-resend:hover,.obraativa-reception-access .obraativa-auth-confirmation .obraativa-email-confirmation-change:hover{background:#ffffff12!important;color:#fff!important}
 .obraativa-auth-optional{grid-column:1/-1;border:1px solid #d8e3e8;border-radius:10px;background:#f8fbfc}
 .obraativa-auth-optional summary{padding:11px 12px;color:#24536a;font-size:12px;font-weight:850;cursor:pointer}
 .obraativa-auth-optional summary small{color:#758891;font-weight:650}
@@ -163,6 +184,12 @@ body:has(#cloudGate){overflow:hidden}
   .obraativa-email-confirmation-steps b{font-size:9px}
   .obraativa-email-confirmation-steps span{font-size:8px;line-height:1.3}
   .obraativa-email-confirmation-note{margin:7px 0;padding:6px 8px;font-size:8px}
+  .obraativa-email-code-form{grid-template-columns:minmax(180px,.8fr) minmax(220px,1.2fr);align-items:center;gap:5px 10px;margin:6px 0}
+  .obraativa-email-code-form label,.obraativa-email-code-form>small{text-align:left}
+  .obraativa-email-code-form label{grid-column:1}
+  #cloudGate .obraativa-email-code-form input{grid-column:1;grid-row:2;min-height:42px;font-size:20px}
+  .obraativa-email-code-form>small{grid-column:2;grid-row:1/3}
+  #cloudGate .obraativa-email-code-form .btn{grid-column:1/-1;min-height:40px}
   #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-enter{min-height:42px}
   #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-change{min-height:34px;margin-top:1px;padding:4px 6px}
   #cloudGate .cloud-loading{width:min(520px,calc(100vw - 20px));padding:10px 13px}
@@ -180,6 +207,9 @@ body:has(#cloudGate){overflow:hidden}
   .obraativa-email-confirmation-steps{gap:4px}
   .obraativa-email-confirmation-steps li{padding-top:5px;padding-bottom:5px}
   .obraativa-email-confirmation-note{margin:4px 0;padding:5px 7px}
+  .obraativa-email-code-form{grid-template-columns:minmax(150px,.7fr) minmax(220px,1.3fr);margin:4px 0}
+  #cloudGate .obraativa-email-code-form input{min-height:36px;padding:4px 10px;font-size:18px}
+  #cloudGate .obraativa-email-code-form .btn{min-height:36px}
   #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-enter{min-height:38px}
   #cloudGate .obraativa-auth-confirmation .obraativa-email-confirmation-change{min-height:28px;margin-top:0;padding:2px 5px}
 }

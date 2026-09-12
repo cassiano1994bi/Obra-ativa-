@@ -401,7 +401,7 @@
   <link rel="stylesheet" href="public-assets/obraativa-mobile-brand-v1.css?v=20260831-logo-no-frame">
   <link rel="stylesheet" href="public-assets/obraativa-home-premium-v2.css?v=20260831-1700">
   <link rel="stylesheet" href="public-assets/obraativa-auth-brand-v1.css?v=20260831-compact-opening">
-  <link rel="stylesheet" href="public-assets/account-session-controls-v1.css?v=20260906-email-confirmation-top">
+  <link rel="stylesheet" href="public-assets/account-session-controls-v1.css?v=20260912-email-code-confirmation">
   <link rel="stylesheet" href="public-assets/obraativa-reception-v1.css?v=20260906-email-confirmation-top">
   <link rel="stylesheet" href="public-assets/obraativa-product-site-v2.css?v=20260906-free-account">
   <link rel="stylesheet" href="public-assets/work-phase-density-v1.css?v=20260831-phase-four-columns">
@@ -1180,7 +1180,7 @@ window.CloudSync={
   schedule(){if(!this.ready||this.suppress){return}clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),700)},
   async flush(force=false){if(!this.ready||!this.session?.user?.id||this.syncing)return;let payload=this.payload(),snapshot=JSON.stringify(payload);if(!force&&snapshot===this.lastSnapshot)return;this.syncing=true;try{await this.request('/rest/v1/app_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:this.session.user.id,data:payload,updated_at:new Date().toISOString()})},this.session.access_token);this.lastSnapshot=snapshot;this.rememberCloudSnapshot?.(snapshot);this.status='Salvo na nuvem';this.decorate()}catch(error){this.status='Alteração ficou salva neste aparelho';this.decorate();console.warn('Sincronização pendente:',error.message)}finally{this.syncing=false;if(this.ready&&JSON.stringify(this.payload())!==this.lastSnapshot)this.schedule()}},
   async syncNow(){await this.flush(true);alert(this.status==='Salvo na nuvem'?'Dados salvos na nuvem.':'Não foi possível salvar agora. Seus dados continuam protegidos neste aparelho.')},
-  async signIn(event){event.preventDefault();let form=event.currentTarget,email=form.elements.email.value.trim(),password=form.elements.password.value;this.showLoading('Entrando com segurança...');try{let session=await this.request('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});this.saveSession(session);await this.activate()}catch(error){this.showAuth('signin',error.message||'Não foi possível entrar.',true)}},
+  async signIn(event){event.preventDefault();let form=event.currentTarget,email=form.elements.email.value.trim(),password=form.elements.password.value;this.showLoading('Entrando com segurança...');try{let session=await this.request('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});this.saveSession(session);await this.activate()}catch(error){if((error?.code==='email_not_confirmed'||/email not confirmed/i.test(error?.message||''))&&this.showEmailConfirmation)this.showEmailConfirmation(email,'Confirme seu e-mail com o código recebido. Se precisar, peça um novo código abaixo.');else this.showAuth('signin',error.message||'Não foi possível entrar.',true)}},
   authReturnUrl(){let params=new URLSearchParams(),inviteToken=pendingCompanyInviteToken(),inviteName=pendingCompanyInviteName();if(inviteToken)params.set('invite',inviteToken);if(inviteName)params.set('empresa',inviteName);return canonicalAppEntryUrl(params)},
   async signUp(event){
     event.preventDefault();
@@ -1191,8 +1191,72 @@ window.CloudSync={
       // Meta: CompleteRegistration só é disparado depois de o Supabase confirmar que o cadastro foi criado.
       window.ObraAtivaMetaPixel?.track('CompleteRegistration',{},response?.user?.id||response?.id||'cadastro-deste-dispositivo');
       if(response.access_token){this.saveSession(response);await this.activate()}
-      else this.showAuth('signin','Conta criada. Verifique seu e-mail e confirme o acesso antes de entrar.')
-    }catch(error){this.showAuth('signup',error.message||'Não foi possível criar o acesso.',true)}
+      else if(window.CloudSync?.showEmailConfirmation){
+        window.CloudSync.showEmailConfirmation(email);
+      } else {
+        this.showAuth('signin','Conta criada. Verifique seu e-mail e confirme o acesso antes de entrar.');
+      }
+    }catch(error){
+      const message = String(error?.message || 'Não foi possível criar o acesso.');
+      if (error?.code==='user_already_exists'||/already registered|already exists|user.*registered/i.test(message)) {
+        this.showAuth('signin','Este e-mail já possui uma conta. Entre normalmente ou use “Esqueci minha senha”.',true);
+      } else {
+        this.showAuth('signup',message,true);
+      }
+    }
+  },
+  async resendSignupConfirmation(email){
+    // Reenvia o e-mail de confirmação sem perder o fluxo atual de cadastro.
+    const target=(String(email||'').trim().toLowerCase());
+    if(!target){
+      this.showAuth('signin','Digite o e-mail da conta para reenviar a confirmação.',true);
+      return;
+    }
+    this.showLoading('Enviando nova confirmação...');
+    try{
+      await this.request('/auth/v1/resend',{method:'POST',body:JSON.stringify({email:target,type:'signup'})});
+      if(this.showEmailConfirmation) this.showEmailConfirmation(target,'Enviamos um novo código. Confira sua caixa de entrada.');
+      else this.showAuth('signin','Enviamos novamente a confirmação. Confira sua caixa de entrada.',false);
+    }catch(error){
+      const message=window.ObraAtivaAccountControls?.humanizeAuthMessage?.(error?.message)||'Não foi possível reenviar o código agora. Tente novamente em alguns minutos.';
+      if(this.showEmailConfirmation) this.showEmailConfirmation(target,message,true);
+      else this.showAuth('signin',message,true);
+      throw error;
+    }
+  },
+  async confirmSignupCode(event){
+    event.preventDefault();
+    const form=event.currentTarget;
+    const email=String(window.ObraAtivaAccountControls?.lastAuthEmail?.()||'').trim().toLowerCase();
+    const token=String(form.elements.token?.value||'').replace(/\D/g,'').slice(0,6);
+    if(!email){
+      this.showAuth('signup','Digite novamente seu e-mail para confirmar a conta.',true);
+      return;
+    }
+    if(token.length!==6){
+      this.showEmailConfirmation?.(email,'Digite os 6 números enviados para seu e-mail.',true);
+      return;
+    }
+    this.showLoading('Confirmando seu código...');
+    let session;
+    try{
+      // Confirmação nativa do Supabase: valida o OTP enviado ao e-mail e retorna a sessão autenticada.
+      session=await this.request('/auth/v1/verify',{method:'POST',body:JSON.stringify({email,token,type:'email'})});
+    }catch(error){
+      this.showEmailConfirmation?.(email,error.message||'O código não foi aceito. Confira os números ou peça um novo código.',true);
+      return;
+    }
+    if(!session?.access_token){
+      this.showAuth('signin','E-mail confirmado. Agora entre com sua senha.');
+      return;
+    }
+    try{
+      this.saveSession(session);
+      await this.activate();
+    }catch(error){
+      // O código já foi aceito: uma falha ao carregar a empresa não deve exigir outro OTP.
+      this.showAuth('signin','E-mail confirmado. Não foi possível abrir o aplicativo agora. Entre novamente com seu e-mail e senha.',true);
+    }
   },
   async signOut(){try{if(this.session?.access_token)await this.request('/auth/v1/logout',{method:'POST'},this.session.access_token)}catch(error){}localStorage.removeItem(CLOUD_CONFIG.sessionKey);this.session=null;this.ready=false;this.showAuth('signin','Você saiu com segurança.')},
   decorate(){if(!this.ready||isOfficePublic())return;let status=$('.user'),label=this.status==='Salvo na nuvem'||!this.status?'Nuvem conectada':this.status;if(status)status.innerHTML=`<span class="cloud-status">● ${label}</span>`;$('#cloudTopActions')?.remove()}
@@ -3196,7 +3260,7 @@ paymentsV2=function(){return financePaymentCenterPage('payments',paymentsV2Befor
 </script>
 <script defer src="public-assets/obraativa-product-site-v2.js?v=20260906-free-account" onload="finishProductPageOpening()" onerror="showProductPageOpeningError()"></script>
 <script defer src="public-assets/action-feedback-v1.js?v=20260831-top"></script>
-<script defer src="public-assets/finance-legacy-view-v1.js"></script><script defer src="public-assets/orcamentos-admin-v1.js"></script><script defer src="public-assets/orcamentos-links-v1.js"></script><script defer src="public-assets/orcamentos-distribuicao-v1.js"></script><script defer src="public-assets/mobile-ui-v2.js"></script><script defer src="public-assets/responsive-ui-v3.js?v=20260828-2305"></script><script defer src="public-assets/landscape-density-v1.js?v=20260831-payments-admin"></script><script defer src="public-assets/responsive-visual-phase1-v1.js?v=20260831-work-actions"></script><script defer src="public-assets/responsive-visual-phase2-v1.js?v=20260829-0700"></script><script defer src="public-assets/responsive-visual-phase3-v1.js?v=20260829-0900"></script><script defer src="public-assets/sidebar-scroll-v1.js?v=20260831-scale-label"></script><script defer src="public-assets/home-weather-v1.js?v=20260831-saved-device"></script><script defer src="public-assets/owner-center-v1.js?v=20260905-campaign-tracking"></script><script defer src="public-assets/admin-navigation-v1.js?v=20260905-owner-users"></script><script defer src="public-assets/employee-performance-v1.js?v=20260830-0700"></script><script defer src="public-assets/account-deletion-v1.js"></script><script defer src="public-assets/pwa-register-v1.js?v=20260831-pwa15"></script><script defer src="public-assets/obraativa-home-v1.js?v=20260910-central-conferida"></script><script defer src="public-assets/home-shortcut-editor-v1.js?v=20260831-page-editor"></script><script defer src="public-assets/obraativa-mobile-brand-v1.js?v=20260831-app-brand"></script><script defer src="public-assets/obraativa-auth-brand-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/account-session-controls-v1.js?v=20260906-email-confirmation-top"></script><script defer src="public-assets/obraativa-reception-config-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/obraativa-social-auth-v1.js?v=20260906-official-domain"></script><script defer src="public-assets/obraativa-reception-v1.js?v=20260906-access-compact"></script><script defer src="public-assets/meta-pixel-v1.js?v=20260907-registration-trial" data-meta-dynamic></script><script defer src="public-assets/product-activity-v1.js?v=20260907-meta-events"></script><script defer src="public-assets/mobile-control-standards-v1.js?v=20260831"></script><script defer src="public-assets/app-brand-lock-v1.js?v=20260831"></script>
+<script defer src="public-assets/finance-legacy-view-v1.js"></script><script defer src="public-assets/orcamentos-admin-v1.js"></script><script defer src="public-assets/orcamentos-links-v1.js"></script><script defer src="public-assets/orcamentos-distribuicao-v1.js"></script><script defer src="public-assets/mobile-ui-v2.js"></script><script defer src="public-assets/responsive-ui-v3.js?v=20260828-2305"></script><script defer src="public-assets/landscape-density-v1.js?v=20260831-payments-admin"></script><script defer src="public-assets/responsive-visual-phase1-v1.js?v=20260831-work-actions"></script><script defer src="public-assets/responsive-visual-phase2-v1.js?v=20260829-0700"></script><script defer src="public-assets/responsive-visual-phase3-v1.js?v=20260829-0900"></script><script defer src="public-assets/sidebar-scroll-v1.js?v=20260831-scale-label"></script><script defer src="public-assets/home-weather-v1.js?v=20260831-saved-device"></script><script defer src="public-assets/owner-center-v1.js?v=20260905-campaign-tracking"></script><script defer src="public-assets/admin-navigation-v1.js?v=20260905-owner-users"></script><script defer src="public-assets/employee-performance-v1.js?v=20260830-0700"></script><script defer src="public-assets/account-deletion-v1.js"></script><script defer src="public-assets/pwa-register-v1.js?v=20260831-pwa15"></script><script defer src="public-assets/obraativa-home-v1.js?v=20260910-central-conferida"></script><script defer src="public-assets/home-shortcut-editor-v1.js?v=20260831-page-editor"></script><script defer src="public-assets/obraativa-mobile-brand-v1.js?v=20260831-app-brand"></script><script defer src="public-assets/obraativa-auth-brand-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/account-session-controls-v1.js?v=20260912-email-code-confirmation"></script><script defer src="public-assets/obraativa-reception-config-v1.js?v=20260831-premium-reference"></script><script defer src="public-assets/obraativa-social-auth-v1.js?v=20260906-official-domain"></script><script defer src="public-assets/obraativa-reception-v1.js?v=20260906-access-compact"></script><script defer src="public-assets/meta-pixel-v1.js?v=20260907-registration-trial" data-meta-dynamic></script><script defer src="public-assets/product-activity-v1.js?v=20260907-meta-events"></script><script defer src="public-assets/mobile-control-standards-v1.js?v=20260831"></script><script defer src="public-assets/app-brand-lock-v1.js?v=20260831"></script>
 <script defer src="public-assets/work-control-core-v1.js?v=20260910-central-conferida"></script>
 <script defer src="public-assets/work-cost-core-v1.js?v=20260910-central-conferida"></script>
 <script defer src="public-assets/work-control-sync-v1.js?v=20260910-central-conferida"></script>
