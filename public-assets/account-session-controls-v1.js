@@ -374,6 +374,13 @@
       message.classList.toggle('success', success);
       message.setAttribute('role', success ? 'status' : 'alert');
       message.setAttribute('aria-live', success ? 'polite' : 'assertive');
+      // Cadastro repetido: a orientação precisa ficar visível antes dos campos, não no rodapé.
+      if (mode === 'signin' && form && /este e-mail já possui uma conta/i.test(message.textContent)) {
+        form.insertAdjacentElement('beforebegin', message);
+        message.setAttribute('tabindex', '-1');
+        message.focus({ preventScroll: true });
+        message.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      }
     }
     const notice = $('.notice', card);
     if (notice && ['signin', 'signup'].includes(mode)) notice.classList.add('obraativa-auth-trust');
