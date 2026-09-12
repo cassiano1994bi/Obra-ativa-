@@ -27,7 +27,7 @@
     if (/invalid login|invalid credentials|email or password/.test(normalized)) return 'E-mail ou senha não conferem. Revise os dados e tente novamente.';
     if (/email_address_invalid|invalid email|email address.*invalid|unable to validate email/.test(normalized)) return 'Confira o e-mail digitado. Use o formato nome@exemplo.com.';
     if (/email[_ ]not[_ ]confirmed/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
-    if (/otp_expired|token.*expired|token.*invalid|invalid.*token/.test(normalized)) return 'O código não é válido ou expirou. Confira os 6 números do último e-mail ou peça um novo código.';
+    if (/otp_expired|token.*expired|token.*invalid|invalid.*token/.test(normalized)) return 'O código não é válido ou expirou. Confira todos os números do último e-mail ou peça um novo código.';
     if (/error sending confirmation|error sending.*email|smtp/.test(normalized)) return 'Não conseguimos enviar o e-mail agora. Tente novamente em alguns minutos.';
     if (/over.?email.?send.?rate.?limit|many requests|muitas tentativas|too many requests|rate limit/.test(normalized)) {
       return 'Foram feitas muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.';
@@ -64,9 +64,9 @@
       <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Enviamos uma mensagem para o endereço abaixo.</p>
       <div class="obraativa-email-confirmation-address"><small>E-MAIL QUE RECEBEU A CONFIRMAÇÃO</small><b>${safeEmail}</b></div>
       <form class="obraativa-email-code-form" onsubmit="CloudSync.confirmSignupCode(event)">
-        <label for="obraativaSignupCode">Digite o código de 6 dígitos</label>
-        <input id="obraativaSignupCode" name="token" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required aria-describedby="obraativaSignupCodeHelp" placeholder="000000">
-        <small id="obraativaSignupCodeHelp">O código confirma o e-mail e abre o aplicativo. Se a mensagem recebida ainda tiver um botão, você também pode confirmar por ele.</small>
+        <label for="obraativaSignupCode">Digite o código recebido no e-mail</label>
+        <input id="obraativaSignupCode" name="token" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="32" pattern="(?:[0-9]{6}|[0-9]{8})" required aria-describedby="obraativaSignupCodeHelp" placeholder="000000">
+        <small id="obraativaSignupCodeHelp">Os novos códigos têm 6 dígitos. Se você recebeu um código anterior de 8 dígitos, digite todos os números.</small>
         <button type="submit" class="btn obraativa-auth-primary">Confirmar código e entrar</button>
       </form>
       ${message ? `<div class="cloud-message ${isError ? 'error' : ''}">${escapeHtml(message)}</div>` : ''}
@@ -540,6 +540,11 @@
       }
     });
     document.body.addEventListener('input', (event) => {
+      if (event.target.matches('#obraativaSignupCode')) {
+        // A colagem pode incluir espaços; manter todos os dígitos antes da validação do formulário.
+        const code = event.target.value.replace(/\s/g, '');
+        if (event.target.value !== code) event.target.value = code;
+      }
       if (event.target.matches('#cloudGate input[name="email"]')) lastAuthEmail = event.target.value.trim();
       if (event.target.matches('#cloudGate input[name="password"], #cloudGate input[name="confirmation"]')) updatePasswordStrength(event.target);
     });

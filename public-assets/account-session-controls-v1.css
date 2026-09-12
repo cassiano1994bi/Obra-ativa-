@@ -117,7 +117,7 @@ body:has(#cloudGate){overflow:hidden}
 }
 .obraativa-email-code-form{display:grid;gap:8px;margin:12px 0 7px}
 .obraativa-email-code-form label{color:#173f55;font-size:12px;font-weight:900;text-align:center}
-#cloudGate .obraativa-email-code-form input{width:100%;min-height:52px;padding:8px 14px;border:1px solid #aac5d2;border-radius:11px;background:#f8fbfc;color:#0f2d4a;font-size:25px;font-weight:900;letter-spacing:.38em;text-align:center;font-variant-numeric:tabular-nums}
+#cloudGate .obraativa-email-code-form input{width:100%;min-height:52px;padding:8px 14px;border:1px solid #aac5d2;border-radius:11px;background:#f8fbfc;color:#0f2d4a;font-size:25px;font-weight:900;letter-spacing:.16em;text-align:center;font-variant-numeric:tabular-nums}
 #cloudGate .obraativa-email-code-form input:focus{border-color:#16a34a;outline:3px solid #16a34a22}
 .obraativa-email-code-form>small{color:#617581;font-size:9px;line-height:1.4;text-align:center}
 #cloudGate .obraativa-email-code-form .btn{margin:0}
