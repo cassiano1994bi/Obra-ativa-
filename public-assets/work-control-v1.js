@@ -293,9 +293,19 @@
   };
   const previousBulk = saveBulkDistribution;
   saveBulkDistribution = function () {
-    const selects = document.querySelectorAll('[data-wc-plan-person]'); if (!selects.length) return previousBulk();
+    // Scope the read to the visible schedule. After a date/tab change an old
+    // table can briefly remain in the DOM; reading it could overwrite the
+    // phase chosen in the current Central da Obra table.
+    const scope = document.querySelector('.oa-work-hub-schedule[data-work][data-date]') || document;
+    const boxes = scope.querySelectorAll('[data-plan-employee]');
+    const selects = scope.querySelectorAll('[data-wc-plan-person]'); if (!selects.length) return previousBulk();
     try {
-      const selected = [...document.querySelectorAll('[data-plan-employee]:checked')].map((box) => ({ employeeId: box.dataset.planEmployee, phaseId: [...selects].find((s) => s.dataset.wcPlanPerson === box.dataset.planEmployee)?.value || '', contractId: [...document.querySelectorAll('[data-oa-contract-person]')].find((s) => s.dataset.oaContractPerson === box.dataset.planEmployee)?.value }));
+      const selected = [...boxes].filter((box) => box.checked).map((box) => {
+        const row = box.closest('tr');
+        const phase = row?.querySelector('[data-wc-plan-person]') || [...selects].find((s) => s.dataset.wcPlanPerson === box.dataset.planEmployee);
+        const contract = row?.querySelector('[data-oa-contract-person]');
+        return { employeeId: box.dataset.planEmployee, phaseId: phase?.value || '', contractId: contract?.value };
+      });
       const next = C.schedulePhases(db, planningWorkId, planningDate || tomorrow(), selected, ctx());
       commit(next, 'Distribuição em lote salva', workById(planningWorkId)?.name || 'Obra', 'planning'); render();
     } catch (error) { message(error.message, true); }
