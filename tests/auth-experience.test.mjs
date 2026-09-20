@@ -29,6 +29,29 @@ test('cadastro e recuperação ganham clareza sem alterar autenticação', () =>
   assert.doesNotMatch(source, /fetch\(/);
 });
 
+test('confirmação de cadastro usa o OTP nativo e mantém alternativa pelo link', () => {
+  assert.match(source, /Digite o código recebido no e-mail/);
+  assert.match(source, /autocomplete="one-time-code"/);
+  const codeInput = source.match(/<input\b[^>]*\bid="obraativaSignupCode"[^>]*>/)?.[0];
+  assert.ok(codeInput, 'O campo de código precisa continuar presente.');
+  assert.match(codeInput, /maxlength="32"/, 'A colagem de um código com espaços não deve ser truncada antes da normalização.');
+  const pattern = codeInput.match(/\bpattern="([^"]+)"/)?.[1];
+  assert.equal(pattern, '(?:[0-9]{6}|[0-9]{8})');
+  const validCode = new RegExp(`^(?:${pattern})$`);
+  for (const code of ['001234', '00123456']) assert.equal(validCode.test(code), true);
+  for (const code of ['1234', '12345', '1234567', '123456789', '1234567890', '123a456', '123-456']) {
+    assert.equal(validCode.test(code), false, `O campo não deve aceitar o código fictício ${code}.`);
+  }
+  assert.match(source, /Os novos códigos têm 6 dígitos\. Se você recebeu um código anterior de 8 dígitos, digite todos os números\./);
+  assert.match(source, /Já confirmei pelo botão do e-mail/);
+  assert.match(source, /Spam ou Lixo eletrônico/);
+  assert.match(appSource, /async confirmSignupCode\(event\)/);
+  assert.match(appSource, /\/auth\/v1\/verify/);
+  assert.match(appSource, /JSON\.stringify\(\{email,token,type:'email'\}\)/);
+  assert.match(appSource, /\/auth\/v1\/resend/);
+  assert.match(style, /\.obraativa-email-code-form/);
+});
+
 test('recepção comercial envolve os formulários sem substituir a autenticação', () => {
   for (const token of ['Mais controle', 'Menos perdas', 'Bem-vindo de volta', 'Seus dados estão protegidos', 'App Store · Em breve']) {
     assert.match(receptionSource, new RegExp(token));
