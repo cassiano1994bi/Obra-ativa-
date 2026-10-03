@@ -1,7 +1,7 @@
 'use strict';
 
 const CACHE_PREFIX = 'controle-de-obra-';
-const CACHE_VERSION = 'v67';
+const CACHE_VERSION = 'v68';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${CACHE_VERSION}`;
 const APP_SHELL = '/index.html';
@@ -96,6 +96,8 @@ const STATIC_ASSETS = [...new Set([...CORE_ASSETS, ...OPTIONAL_ASSETS])];
 // vir primeiro da publicação atual. Isso evita que o aplicativo instalado no
 // celular fique visualmente atrás da versão aberta no computador.
 const NETWORK_FIRST_ASSETS = new Set([
+  '/public-assets/account-session-controls-v1.js',
+  '/public-assets/account-session-controls-v1.css',
   '/public-assets/obraativa-product-site-v2.js',
   '/public-assets/obraativa-product-site-v2.css',
   '/public-assets/obraativa-social-auth-v1.js',

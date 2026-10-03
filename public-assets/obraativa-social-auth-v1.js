@@ -122,7 +122,16 @@
     if (callback.error || callback.errorDescription) {
       cleanOAuthLocation();
       clearPendingProvider();
-      window.CloudSync.showAuth('signin', providerFailureMessage(provider, callback.errorDescription || callback.error || callback.errorCode), true);
+      if (provider) {
+        window.CloudSync.showAuth('signin', providerFailureMessage(provider, callback.errorDescription || callback.error || callback.errorCode), true);
+      } else {
+        const pending = window.ObraAtivaAccountControls?.pendingConfirmation?.();
+        const message = /otp_expired/.test(callback.errorCode)
+          ? 'Este link de acesso expirou ou já foi usado. Peça uma nova confirmação ou entre com sua senha.'
+          : 'Não foi possível validar este link de acesso. Peça uma nova confirmação ou entre com sua senha.';
+        if (pending?.email && window.CloudSync.showEmailConfirmation) window.CloudSync.showEmailConfirmation(pending.email, message, true);
+        else window.CloudSync.showAuth('signin', message + ' Se era recuperação de senha, use “Esqueci minha senha”.', true);
+      }
       return true;
     }
     if (!callback.accessToken || callback.type === 'recovery') return false;
@@ -137,10 +146,9 @@
         token_type: callback.tokenType,
         user
       };
-      window.CloudSync.saveSession(session);
       cleanOAuthLocation();
       clearPendingProvider();
-      await window.CloudSync.activate();
+      await window.CloudSync.openAuthenticatedSession(session);
     } catch (error) {
       cleanOAuthLocation();
       clearPendingProvider();

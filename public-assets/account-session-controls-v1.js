@@ -14,6 +14,45 @@
   let lastAuthEmail = '';
   let signupConfirmationCooldown = 0;
   let signupConfirmationTimer = null;
+  let signupConfirmationSending = false;
+  let signupCodeDraft = '';
+  let signupCodeEmail = '';
+  const PENDING_CONFIRMATION_KEY = 'obraativa.auth.pending-confirmation.v1';
+
+  function readPendingConfirmation() {
+    try {
+      const pending = JSON.parse(sessionStorage.getItem(PENDING_CONFIRMATION_KEY) || 'null');
+      if (!pending?.email || !pending.savedAt || Date.now() - pending.savedAt > 86400000) return null;
+      return pending;
+    } catch { return null; }
+  }
+
+  function savePendingConfirmation() {
+    try { sessionStorage.setItem(PENDING_CONFIRMATION_KEY, JSON.stringify({ email: signupCodeEmail || lastAuthEmail, cooldown: signupConfirmationCooldown, savedAt: Date.now() })); } catch { /* opcional */ }
+  }
+
+  function clearPendingConfirmation() {
+    signupCodeDraft = ''; signupCodeEmail = ''; signupConfirmationCooldown = 0;
+    try { sessionStorage.removeItem(PENDING_CONFIRMATION_KEY); } catch { /* opcional */ }
+  }
+
+  function markConfirmationSent(email) {
+    const target = String(email || '').trim().toLowerCase();
+    if (signupCodeEmail !== target) signupCodeDraft = '';
+    lastAuthEmail = signupCodeEmail = target;
+    signupConfirmationCooldown = Date.now() + 60000;
+    savePendingConfirmation(); updateSignupResend();
+  }
+
+  function handleConfirmationFailure(error) {
+    const detail = `${error?.code || ''} ${error?.message || ''}`.toLowerCase();
+    if (error?.status === 429 || /rate.?limit|too many|request this after/.test(detail)) {
+      const seconds = Number(error?.retryAfter) || Number(detail.match(/after\s+(\d+)\s+seconds/)?.[1]) || 60;
+      signupConfirmationCooldown = Date.now() + seconds * 1000;
+      savePendingConfirmation();
+    }
+    updateSignupResend();
+  }
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -21,19 +60,22 @@
   })[char]);
 
   function humanizeAuthMessage(message) {
-    const text = String(message || '').trim();
+    const text = String(message?.message || message || '').trim();
     if (!text) return '';
-    const normalized = text.toLocaleLowerCase('pt-BR');
+    const normalized = `${String(message?.code || '').replace(/[_-]+/g, ' ')} ${text}`.toLocaleLowerCase('pt-BR');
+    const retrySeconds = Number(message?.retryAfter) || Number(normalized.match(/request this after\s+(\d+)\s+seconds/)?.[1]);
+    if (retrySeconds > 0) return `Aguarde ${Math.ceil(retrySeconds)} segundos antes de pedir outro código.`;
+    if (message?.status === 429) return 'Foram feitas muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.';
     if (/invalid login|invalid credentials|email or password/.test(normalized)) return 'E-mail ou senha não conferem. Revise os dados e tente novamente.';
     if (/email_address_invalid|invalid email|email address.*invalid|unable to validate email/.test(normalized)) return 'Confira o e-mail digitado. Use o formato nome@exemplo.com.';
     if (/email[_ ]not[_ ]confirmed/.test(normalized)) return 'Confirme o e-mail enviado para sua caixa de entrada antes de entrar.';
-    if (/otp_expired|token.*expired|token.*invalid|invalid.*token/.test(normalized)) return 'O código não é válido ou expirou. Confira todos os números do último e-mail ou peça um novo código.';
+    if (/otp[_ ]expired|token.*expired|token.*invalid|invalid.*token/.test(normalized)) return 'O código não é válido ou expirou. Confira todos os números do último e-mail ou peça um novo código.';
     if (/error sending confirmation|error sending.*email|smtp/.test(normalized)) return 'Não conseguimos enviar o e-mail agora. Tente novamente em alguns minutos.';
     if (/over.?email.?send.?rate.?limit|many requests|muitas tentativas|too many requests|rate limit/.test(normalized)) {
       return 'Foram feitas muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.';
     }
     if (/already registered|already exists|user.*registered/.test(normalized)) return 'Este e-mail já possui uma conta. Entre normalmente ou use “Esqueci minha senha”.';
-    if (/password.*(least|characters|weak)|senha.*(fraca|caracteres)/.test(normalized)) return 'Crie uma senha com 8 caracteres, incluindo letra maiúscula, minúscula e número.';
+    if (/weak password|password.*(least|characters|weak)|senha.*(fraca|caracteres)/.test(normalized)) return 'Crie uma senha com 8 caracteres, incluindo letra maiúscula, minúscula e número.';
     if (/failed to fetch|network|networkerror|load failed/.test(normalized)) return 'Não conseguimos conectar agora. Verifique sua internet e tente novamente.';
     if (/rate limit|too many requests|too many attempts/.test(normalized)) return 'Foram feitas muitas tentativas. Aguarde alguns minutos e tente novamente.';
     return text;
@@ -45,9 +87,10 @@
   }
 
   function showEmailConfirmation(email = lastAuthEmail, message = '', isError = false) {
-    const rawEmail = String(email || '').trim();
-    if (rawEmail && rawEmail.toLowerCase() !== lastAuthEmail.toLowerCase()) signupConfirmationCooldown = 0;
-    if (rawEmail) lastAuthEmail = rawEmail;
+    const rawEmail = String(email || '').trim().toLowerCase();
+    if (rawEmail && rawEmail !== signupCodeEmail) { signupConfirmationCooldown = 0; signupCodeDraft = ''; }
+    if (rawEmail) lastAuthEmail = signupCodeEmail = rawEmail;
+    savePendingConfirmation();
     let gate = $('#cloudGate');
     if (!gate) {
       document.body.insertAdjacentHTML('beforeend', '<div class="cloud-gate" id="cloudGate"></div>');
@@ -56,17 +99,17 @@
     const safeEmail = escapeHtml(rawEmail || lastAuthEmail || 'o e-mail informado');
     gate.innerHTML = `<section class="cloud-auth-card obraativa-auth-confirmation" style="position:relative">
       <button type="button" class="cloud-close" aria-label="Fechar esta tela" title="Fechar" onclick="CloudSync.closeAuth()">×</button>
-      <div class="top-brand"><span>✓ CONTA CRIADA COM SUCESSO</span><strong>CONTROLE DE OBRA</strong></div>
+      <div class="top-brand"><span>CONFIRMAÇÃO DE E-MAIL</span><strong>CONTROLE DE OBRA</strong></div>
       <div class="obraativa-email-confirmation-heading">
         <span class="obraativa-email-confirmation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/><path d="m15.5 16 1.7 1.7 3.3-3.7"/></svg></span>
-        <div><span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span><h1>Conta criada — verifique seu e-mail</h1></div>
+        <div><span class="obraativa-auth-step">ÚLTIMO PASSO PARA ENTRAR</span><h1>Confirme seu e-mail</h1></div>
       </div>
-      <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Enviamos uma mensagem para o endereço abaixo.</p>
-      <div class="obraativa-email-confirmation-address"><small>E-MAIL QUE RECEBEU A CONFIRMAÇÃO</small><b>${safeEmail}</b></div>
+      <p class="obraativa-email-confirmation-lead"><b>Falta somente confirmar sua conta.</b> Use o código de confirmação recebido no endereço abaixo.</p>
+      <div class="obraativa-email-confirmation-address"><small>E-MAIL PARA CONFIRMAR</small><b>${safeEmail}</b></div>
       <form class="obraativa-email-code-form" onsubmit="CloudSync.confirmSignupCode(event)">
         <label for="obraativaSignupCode">Digite o código recebido no e-mail</label>
         <input id="obraativaSignupCode" name="token" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="32" pattern="(?:[0-9]{6}|[0-9]{8})" required aria-describedby="obraativaSignupCodeHelp" placeholder="000000">
-        <small id="obraativaSignupCodeHelp">Os novos códigos têm 6 dígitos. Se você recebeu um código anterior de 8 dígitos, digite todos os números.</small>
+        <small id="obraativaSignupCodeHelp">Digite todos os números do código recebido (6 ou 8 dígitos). Após reenviar, use o e-mail mais recente; o servidor verifica a validade.</small>
         <button type="submit" class="btn obraativa-auth-primary">Confirmar código e entrar</button>
       </form>
       ${message ? `<div class="cloud-message ${isError ? 'error' : ''}">${escapeHtml(message)}</div>` : ''}
@@ -79,6 +122,8 @@
       gate.scrollTop = 0;
       gate.querySelectorAll('.obraativa-reception-access, .cloud-auth-card').forEach((element) => { element.scrollTop = 0; });
     };
+    const codeInput = $('#obraativaSignupCode', gate);
+    if (codeInput) codeInput.value = signupCodeDraft;
     resetConfirmationScroll();
     updateSignupResend();
     schedule();
@@ -91,8 +136,8 @@
     const button = $('[data-email-confirmation-resend]');
     if (!button) return;
     const seconds = Math.max(0, Math.ceil((signupConfirmationCooldown - Date.now()) / 1000));
-    button.disabled = seconds > 0;
-    button.textContent = seconds ? `Reenviar código em ${seconds}s` : 'Não recebeu? Reenviar código';
+    button.disabled = signupConfirmationSending || seconds > 0;
+    button.textContent = signupConfirmationSending ? 'Solicitando reenvio…' : seconds ? `Reenviar código em ${seconds}s` : 'Não recebeu? Reenviar código';
     if (seconds) signupConfirmationTimer = window.setTimeout(updateSignupResend, 1000);
   }
 
@@ -500,6 +545,8 @@
     }
     if (originalShowLoading) {
       window.CloudSync.showLoading = function (...args) {
+        const codeInput = $('#obraativaSignupCode');
+        if (codeInput) signupCodeDraft = codeInput.value;
         const result = originalShowLoading(...args);
         schedule();
         return result;
@@ -520,10 +567,10 @@
       const resendBtn = event.target.closest('[data-email-confirmation-resend]');
       if (resendBtn && window.CloudSync?.resendSignupConfirmation) {
         const now = Date.now();
-        if (now < signupConfirmationCooldown) { updateSignupResend(); return; }
-        signupConfirmationCooldown = now + 60000;
+        if (signupConfirmationSending || now < signupConfirmationCooldown) { updateSignupResend(); return; }
+        signupConfirmationSending = true;
         updateSignupResend();
-        window.CloudSync.resendSignupConfirmation(lastAuthEmail).catch(() => {}).finally(updateSignupResend);
+        window.CloudSync.resendSignupConfirmation(lastAuthEmail).catch(() => {}).finally(() => { signupConfirmationSending = false; updateSignupResend(); });
         return;
       }
       const toggle = event.target.closest('[data-password-toggle]');
@@ -544,6 +591,7 @@
         // A colagem pode incluir espaços; manter todos os dígitos antes da validação do formulário.
         const code = event.target.value.replace(/\s/g, '');
         if (event.target.value !== code) event.target.value = code;
+        signupCodeDraft = code;
       }
       if (event.target.matches('#cloudGate input[name="email"]')) lastAuthEmail = event.target.value.trim();
       if (event.target.matches('#cloudGate input[name="password"], #cloudGate input[name="confirmation"]')) updatePasswordStrength(event.target);
@@ -564,7 +612,13 @@
     }, true);
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('resize', schedule, { passive: true });
-    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore, showEmailConfirmation, lastAuthEmail: () => lastAuthEmail });
+    window.ObraAtivaAccountControls = Object.freeze({ openSignOut, resumeRemembered, forgetRemembered, humanizeAuthMessage, passwordScore, showEmailConfirmation, markConfirmationSent, handleConfirmationFailure, clearPendingConfirmation, pendingConfirmation: readPendingConfirmation, lastAuthEmail: () => signupCodeEmail || lastAuthEmail });
+    const pending = readPendingConfirmation();
+    if (pending && !window.CloudSync.session && !location.hash && !/[?&](?:code|error|error_description)=/.test(location.search) && $('#cloudGate form[onsubmit*="signIn"]')) {
+      lastAuthEmail = signupCodeEmail = pending.email;
+      signupConfirmationCooldown = Number(pending.cooldown) || 0;
+      showEmailConfirmation(pending.email, 'Continue a confirmação do seu e-mail.');
+    }
     schedule();
   }
 

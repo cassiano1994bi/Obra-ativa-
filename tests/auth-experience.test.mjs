@@ -79,7 +79,7 @@ test('confirmação, recuperação, convites e login social retornam ao domínio
   assert.match(appSource, /passwordRecoveryRedirectUrl\(\)\{return canonicalAppEntryUrl\(\)\}/);
   assert.match(appSource, /return canonicalAppEntryUrl\(params\)/);
   assert.doesNotMatch(appSource, /emailRedirectTo:location\.origin\+location\.pathname/);
-  assert.match(serviceWorkerSource, /CACHE_VERSION = 'v67'/);
+  assert.match(serviceWorkerSource, /CACHE_VERSION = 'v68'/);
   assert.match(serviceWorkerSource, /NETWORK_FIRST_ASSETS[\s\S]*?'\/public-assets\/obraativa-social-auth-v1\.js'/);
 });
 

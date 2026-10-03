@@ -95,7 +95,7 @@ test('eventos estão ligados apenas aos pontos de sucesso e o script está em to
   const index = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const activity = fs.readFileSync(new URL('../public-assets/product-activity-v1.js', import.meta.url), 'utf8');
   const netlify = fs.readFileSync(new URL('../netlify.toml', import.meta.url), 'utf8');
-  assert.match(index, /Supabase confirmar que o cadastro foi criado[\s\S]{0,220}track\('CompleteRegistration'/);
+  assert.match(index, /Date\.parse\(user\.created_at\)>=startedAt-1000[\s\S]{0,120}track\('CompleteRegistration'/);
   assert.match(index, /teste grátis de 30 dias iniciarem com sucesso[\s\S]{0,220}track\('StartTrial'/);
   assert.match(activity, /ObraAtivaMetaPixel\?\.pageView\(\)/);
   assert.doesNotMatch(`${index}\n${activity}\n${code}`, /track\('Purchase'/);
