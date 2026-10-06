@@ -2776,30 +2776,51 @@ if(!document.getElementById('financeGuideDuplicateStyle'))document.head.insertAd
 /* Escala diária: repete somente a distribuição do dia anterior, sem substituir o que já foi lançado. */
 function previousPlanningDate(date){let d=new Date(`${date}T12:00:00`);d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
 function repeatPreviousScale(){let targetDate=planningDate||tomorrow(),sourceDate=previousPlanningDate(targetDate),previous=planAssignments(sourceDate);if(!previous.length)return alert(`Não encontrei uma escala registrada em ${dateBR(sourceDate)} para repetir.`);let activeIds=new Set(activeEmployees().map(e=>e.id)),activeWorkIds=new Set(activeWorksForDistribution().map(w=>w.id)),candidates=previous.filter(item=>activeIds.has(item.employeeId)&&activeWorkIds.has(item.workId)),currentIds=new Set(planAssignments(targetDate).map(item=>item.employeeId)),toCopy=candidates.filter(item=>!currentIds.has(item.employeeId));if(!toCopy.length)return alert(`A escala de ${dateBR(targetDate)} já está preenchida para os funcionários ativos encontrados no dia anterior.`);if(!confirm(`Repetir ${toCopy.length} funcionário(s) da escala de ${dateBR(sourceDate)} para ${dateBR(targetDate)}? O que já estiver lançado será mantido.`))return;let now=new Date().toISOString();toCopy.forEach(item=>db.distributions.push({id:uid(),employeeId:item.employeeId,workId:item.workId,phaseId:item.phaseId||'',contractId:item.contractId||'',paymentMode:item.contractId?'contract':'daily',date:targetDate,createdAt:now,copiedFrom:sourceDate}));save('Escala do dia anterior repetida',`${dateBR(sourceDate)} → ${dateBR(targetDate)} · ${toCopy.length} distribuição(ões)`);render();alert(`Escala repetida: ${toCopy.length} funcionário(s) adicionado(s).`)}
-/* Inicializa apenas uma nova data da escala; edições e dias esvaziados ficam preservados. */
-function initializeAutomaticPlanning(date){
+/* Completa novos funcionários sem substituir escolhas já salvas ou exclusões explícitas. */
+function completeAutomaticPlanning(date){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<today()||window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return false;
   let initialized=db.settings.automaticPlanningDates||[];
-  if(initialized.includes(date)||planAssignments(date).length)return false;
+  let current=planAssignments(date),excluded=new Set(db.settings.automaticPlanningExcluded?.[date]||[]),candidates;
+  if(initialized.includes(date)||current.length){
+    if(!initialized.includes(date)||!current.length)return false;
+    let snapshots=current.filter(item=>item.copiedFrom);
+    if(!snapshots.length)return false;
+    let baseline=snapshots.reduce((earliest,item)=>item.copiedFrom<earliest?item.copiedFrom:earliest,snapshots[0].copiedFrom),snapshotTime=snapshots.map(item=>item.createdAt).filter(Boolean).sort()[0],first=new Map(),latest=new Map();
+    db.distributions.forEach(item=>{if(item.date>=date)return;let old=first.get(item.employeeId);if(!old||item.date<old.date||(item.date===old.date&&(item.createdAt||'')<(old.createdAt||'')))first.set(item.employeeId,item);let last=latest.get(item.employeeId);if(!last||item.date>last.date)latest.set(item.employeeId,item)});
+    candidates=[...latest.values()].filter(item=>{let start=first.get(item.employeeId);return item.automaticPlanningNewcomer||start.date>baseline||(start.date===baseline&&snapshotTime&&start.createdAt&&start.createdAt>snapshotTime)});
+  }
   let sourceDate=db.distributions.reduce((latest,item)=>item.date<date&&item.date>latest?item.date:latest,'');
   if(!sourceDate)return false;
-  let activeIds=new Set(activeEmployees().map(e=>e.id)),activeWorkIds=new Set(activeWorksForDistribution().map(w=>w.id)),copiedIds=new Set(),now=new Date().toISOString();
-  let copies=planAssignments(sourceDate).filter(item=>{
-    if(!activeIds.has(item.employeeId)||!activeWorkIds.has(item.workId)||copiedIds.has(item.employeeId))return false;
+  let activeIds=new Set(activeEmployees().map(e=>e.id)),activeWorkIds=new Set(activeWorksForDistribution().map(w=>w.id)),copiedIds=new Set(current.map(item=>item.employeeId)),now=new Date().toISOString();
+  let copies=(candidates||planAssignments(sourceDate)).filter(item=>{
+    if(!activeIds.has(item.employeeId)||!activeWorkIds.has(item.workId)||copiedIds.has(item.employeeId)||excluded.has(item.employeeId))return false;
+    if(Object.entries(db.settings.automaticPlanningExcluded||{}).some(([day,ids])=>day>=item.date&&day<date&&ids.includes(item.employeeId)))return false;
     copiedIds.add(item.employeeId);return true;
-  }).map(item=>({id:uid(),employeeId:item.employeeId,workId:item.workId,phaseId:item.phaseId||'',contractId:item.contractId||'',paymentMode:item.paymentMode||(item.contractId?'contract':'daily'),date,createdAt:now,copiedFrom:sourceDate}));
+  }).map(item=>({id:uid(),employeeId:item.employeeId,workId:item.workId,phaseId:item.phaseId||'',contractId:item.contractId||'',paymentMode:item.paymentMode||(item.contractId?'contract':'daily'),date,createdAt:now,copiedFrom:item.date,...(candidates||item.automaticPlanningNewcomer?{automaticPlanningNewcomer:true}:{})}));
   if(!copies.length)return false;
   db.distributions.push(...copies);
-  db.settings.automaticPlanningDates=[...initialized,date];
+  db.settings.automaticPlanningDates=[...new Set([...initialized,date])];
   save('Escala repetida automaticamente',`${dateBR(sourceDate)} → ${dateBR(date)} · ${copies.length} distribuição(ões)`);
   return true;
+}
+function initializeAutomaticPlanning(date){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<today()||window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return false;
+  let changed=false;
+  [...new Set(db.settings.automaticPlanningDates||[])].filter(day=>day>=today()&&day<date).sort().forEach(day=>{changed=completeAutomaticPlanning(day)||changed});
+  return completeAutomaticPlanning(date)||changed;
 }
 function installAutomaticPlanningSave(){
   const previousSave=saveBulkDistribution;
   saveBulkDistribution=function(){
     if(window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return;
     let date=planningDate||tomorrow();
-    if(workById(planningWorkId))db.settings.automaticPlanningDates=[...new Set([...(db.settings.automaticPlanningDates||[]),date])];
+    if(workById(planningWorkId)){
+      let selected=new Set([...document.querySelectorAll('[data-plan-employee]:checked')].map(item=>item.dataset.planEmployee)),excluded=new Set(db.settings.automaticPlanningExcluded?.[date]||[]);
+      planAssignments(date).filter(item=>item.workId===planningWorkId&&!selected.has(item.employeeId)).forEach(item=>excluded.add(item.employeeId));
+      selected.forEach(id=>excluded.delete(id));
+      db.settings.automaticPlanningExcluded={...(db.settings.automaticPlanningExcluded||{}),[date]:[...excluded]};
+      db.settings.automaticPlanningDates=[...new Set([...(db.settings.automaticPlanningDates||[]),date])];
+    }
     return previousSave();
   };
   window.saveBulkDistribution=saveBulkDistribution;
