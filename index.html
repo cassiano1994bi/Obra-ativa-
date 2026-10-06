@@ -2776,8 +2776,33 @@ if(!document.getElementById('financeGuideDuplicateStyle'))document.head.insertAd
 /* Escala diária: repete somente a distribuição do dia anterior, sem substituir o que já foi lançado. */
 function previousPlanningDate(date){let d=new Date(`${date}T12:00:00`);d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
 function repeatPreviousScale(){let targetDate=planningDate||tomorrow(),sourceDate=previousPlanningDate(targetDate),previous=planAssignments(sourceDate);if(!previous.length)return alert(`Não encontrei uma escala registrada em ${dateBR(sourceDate)} para repetir.`);let activeIds=new Set(activeEmployees().map(e=>e.id)),activeWorkIds=new Set(activeWorksForDistribution().map(w=>w.id)),candidates=previous.filter(item=>activeIds.has(item.employeeId)&&activeWorkIds.has(item.workId)),currentIds=new Set(planAssignments(targetDate).map(item=>item.employeeId)),toCopy=candidates.filter(item=>!currentIds.has(item.employeeId));if(!toCopy.length)return alert(`A escala de ${dateBR(targetDate)} já está preenchida para os funcionários ativos encontrados no dia anterior.`);if(!confirm(`Repetir ${toCopy.length} funcionário(s) da escala de ${dateBR(sourceDate)} para ${dateBR(targetDate)}? O que já estiver lançado será mantido.`))return;let now=new Date().toISOString();toCopy.forEach(item=>db.distributions.push({id:uid(),employeeId:item.employeeId,workId:item.workId,phaseId:item.phaseId||'',contractId:item.contractId||'',paymentMode:item.contractId?'contract':'daily',date:targetDate,createdAt:now,copiedFrom:sourceDate}));save('Escala do dia anterior repetida',`${dateBR(sourceDate)} → ${dateBR(targetDate)} · ${toCopy.length} distribuição(ões)`);render();alert(`Escala repetida: ${toCopy.length} funcionário(s) adicionado(s).`)}
+/* Inicializa apenas uma nova data da escala; edições e dias esvaziados ficam preservados. */
+function initializeAutomaticPlanning(date){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<today()||window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return false;
+  let initialized=db.settings.automaticPlanningDates||[];
+  if(initialized.includes(date)||planAssignments(date).length)return false;
+  let sourceDate=db.distributions.reduce((latest,item)=>item.date<date&&item.date>latest?item.date:latest,'');
+  if(!sourceDate)return false;
+  let activeIds=new Set(activeEmployees().map(e=>e.id)),activeWorkIds=new Set(activeWorksForDistribution().map(w=>w.id)),copiedIds=new Set(),now=new Date().toISOString();
+  let copies=planAssignments(sourceDate).filter(item=>{
+    if(!activeIds.has(item.employeeId)||!activeWorkIds.has(item.workId)||copiedIds.has(item.employeeId))return false;
+    copiedIds.add(item.employeeId);return true;
+  }).map(item=>({id:uid(),employeeId:item.employeeId,workId:item.workId,phaseId:item.phaseId||'',contractId:item.contractId||'',paymentMode:item.paymentMode||(item.contractId?'contract':'daily'),date,createdAt:now,copiedFrom:sourceDate}));
+  if(!copies.length)return false;
+  db.distributions.push(...copies);
+  db.settings.automaticPlanningDates=[...initialized,date];
+  save('Escala repetida automaticamente',`${dateBR(sourceDate)} → ${dateBR(date)} · ${copies.length} distribuição(ões)`);
+  return true;
+}
+const saveBulkDistributionBeforeAutomaticPlanning=saveBulkDistribution;
+saveBulkDistribution=function(){
+  if(window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return;
+  let date=planningDate||tomorrow();
+  if(workById(planningWorkId))db.settings.automaticPlanningDates=[...new Set([...(db.settings.automaticPlanningDates||[]),date])];
+  return saveBulkDistributionBeforeAutomaticPlanning();
+};
 const planningDailyBeforeRepeatScale=planningDaily;
-planningDaily=function(){let html=planningDailyBeforeRepeatScale();return html.replace('<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button>','<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button> <button class="btn alt" type="button" title="Copiar a escala do dia anterior para a data selecionada" onclick="repeatPreviousScale()">↶ Repetir dia anterior</button>')};
+planningDaily=function(){initializeAutomaticPlanning(planningDate||tomorrow());let html=planningDailyBeforeRepeatScale().replace('Marque rapidamente a equipe de cada obra. A distribuição é somente um planejamento diário.','Em uma nova data, a escala repete automaticamente a última equipe registrada. Altere só quem mudou de obra e salve. A presença continua sendo confirmada separadamente.');return html.replace('<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button>','<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button> <button class="btn alt" type="button" title="Copiar a escala do dia anterior para a data selecionada" onclick="repeatPreviousScale()">↶ Repetir dia anterior</button>')};
 </script>
 <script>
 /* Presença: a marcação em massa pode ser desfeita sem apagar registros existentes. */
