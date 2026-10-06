@@ -2794,13 +2794,19 @@ function initializeAutomaticPlanning(date){
   save('Escala repetida automaticamente',`${dateBR(sourceDate)} → ${dateBR(date)} · ${copies.length} distribuição(ões)`);
   return true;
 }
-const saveBulkDistributionBeforeAutomaticPlanning=saveBulkDistribution;
-saveBulkDistribution=function(){
-  if(window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return;
-  let date=planningDate||tomorrow();
-  if(workById(planningWorkId))db.settings.automaticPlanningDates=[...new Set([...(db.settings.automaticPlanningDates||[]),date])];
-  return saveBulkDistributionBeforeAutomaticPlanning();
-};
+function installAutomaticPlanningSave(){
+  const previousSave=saveBulkDistribution;
+  saveBulkDistribution=function(){
+    if(window.AccessControl?.isReadOnly()||window.AccessControl?.canOpen('planning')===false)return;
+    let date=planningDate||tomorrow();
+    if(workById(planningWorkId))db.settings.automaticPlanningDates=[...new Set([...(db.settings.automaticPlanningDates||[]),date])];
+    return previousSave();
+  };
+  window.saveBulkDistribution=saveBulkDistribution;
+}
+installAutomaticPlanningSave();
+// As integrações de fases carregam depois deste bloco; preserve também o salvamento final.
+window.addEventListener('DOMContentLoaded',installAutomaticPlanningSave,{once:true});
 const planningDailyBeforeRepeatScale=planningDaily;
 planningDaily=function(){initializeAutomaticPlanning(planningDate||tomorrow());let html=planningDailyBeforeRepeatScale().replace('Marque rapidamente a equipe de cada obra. A distribuição é somente um planejamento diário.','Em uma nova data, a escala repete automaticamente a última equipe registrada. Altere só quem mudou de obra e salve. A presença continua sendo confirmada separadamente.');return html.replace('<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button>','<button class="btn" onclick="saveBulkDistribution()">Salvar escala</button> <button class="btn alt" type="button" title="Copiar a escala do dia anterior para a data selecionada" onclick="repeatPreviousScale()">↶ Repetir dia anterior</button>')};
 </script>
