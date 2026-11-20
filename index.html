@@ -1565,7 +1565,59 @@ function saveAttendanceDetailsDraft(employeeId,date){let form=$('#attendanceDeta
 const pickPresenceBeforeAttendanceRanking=pickPresence;
 pickPresence=function(button){pickPresenceBeforeAttendanceRanking(button);if(page==='attendance'){let date=attendanceDate||$('#attDate')?.value||today();attendanceStatusDrafts[attendanceDraftKey(button.dataset.e,date)]=button.dataset.s}}
 function attendanceSetAudit(action,detail){db.audit??=[];db.audit.unshift({at:new Date().toLocaleString('pt-BR'),action,detail})}
-function saveAttendanceGlobal(){let date=$('#attDate').value,changed=0,created=0,visibleEmployees=new Set([...document.querySelectorAll('[data-e]')].map(button=>button.dataset.e));document.querySelectorAll('[data-e]').forEach(button=>{if(!button.classList.contains('active'))return;let employeeId=button.dataset.e,status=button.dataset.s,workId=attendanceWorkFor(employeeId,date),key=attendanceDraftKey(employeeId,date),details=attendanceDetailDrafts[key]||{},record=attendanceEditableRecord(employeeId,date,workId),now=new Date().toISOString();if(record){let before={status:record.status||'',time:record.time||'',notes:record.notes||'',late:!!record.late};let after={status,time:details.time??before.time,notes:details.notes??before.notes,late:details.late??before.late};if(before.status!==after.status||before.time!==after.time||before.notes!==after.notes||before.late!==after.late){attendanceEnsureHistory(record).push({at:now,status:after.status,time:after.time,notes:after.notes,late:after.late,previousStatus:before.status,action:'Correção de presença'});Object.assign(record,after,{updatedAt:now});attendanceSetAudit('Presença corrigida',`${emp(employeeId)?.name||'Funcionário'} · ${dateBR(date)} · ${before.status||'Sem status'} → ${after.status}`);changed++}}else{record={id:uid(),workId,employeeId,date,status,time:details.time||'',notes:details.notes||'',late:!!details.late,manual:false,createdAt:now,registeredAt:now,statusHistory:[{at:now,status,time:details.time||'',notes:details.notes||'',late:!!details.late,action:'Registro inicial'}]};db.attendance.push(record);attendanceSetAudit('Presença registrada',`${emp(employeeId)?.name||'Funcionário'} · ${dateBR(date)} · ${status}`);created++}delete attendanceDetailDrafts[key];delete attendanceStatusDrafts[key]});if(window.ObraAtivaWorkCostCore)db.attendance.filter(item=>item.date===date&&visibleEmployees.has(item.employeeId)).forEach(item=>{let assignment=distributionFor(item.employeeId,date);if(assignment?.contractId&&(!item.workId||item.workId===assignment.workId))Object.assign(item,{paymentMode:'contract',contractId:assignment.contractId,phaseId:assignment.phaseId||'',workId:assignment.workId})});save('Presença salva',`${dateBR(date)} · ${created} novo(s), ${changed} correção(ões)`);alert('Presença salva. Os registros anteriores foram preservados no histórico.');render()}
+async function saveAttendanceGlobal(){
+ let date=$('#attDate')?.value||attendanceDate||today(),changed=0,created=0,
+ visibleEmployees=new Set([...document.querySelectorAll('[data-e]')].map(button=>button.dataset.e));
+ try{
+  document.querySelectorAll('[data-e][data-s]').forEach(button=>{
+   if(!button.classList.contains('active'))return;
+   let employeeId=button.dataset.e,status=button.dataset.s,workId=attendanceWorkFor(employeeId,date),
+       key=attendanceDraftKey(employeeId,date),details=attendanceDetailDrafts[key]||{},
+       record=attendanceEditableRecord(employeeId,date,workId),now=new Date().toISOString();
+   if(record){
+    let before={status:record.status||'',time:record.time||'',notes:record.notes||'',late:!!record.late};
+    let after={status,time:details.time??before.time,notes:details.notes??before.notes,late:details.late??before.late};
+    if(before.status!==after.status||before.time!==after.time||before.notes!==after.notes||before.late!==after.late){
+     attendanceEnsureHistory(record).push({at:now,status:after.status,time:after.time,notes:after.notes,late:after.late,previousStatus:before.status,action:'Correção de presença'});
+     Object.assign(record,after,{updatedAt:now});
+     attendanceSetAudit('Presença corrigida',`${emp(employeeId)?.name||'Funcionário'} · ${dateBR(date)} · ${before.status||'Sem status'} → ${after.status}`);
+     changed++;
+    }
+   }else{
+    record={id:uid(),workId,employeeId,date,status,time:details.time||'',notes:details.notes||'',late:!!details.late,manual:false,createdAt:now,registeredAt:now,statusHistory:[{at:now,status,time:details.time||'',notes:details.notes||'',late:!!details.late,action:'Registro inicial'}]};
+    db.attendance.push(record);
+    attendanceSetAudit('Presença registrada',`${emp(employeeId)?.name||'Funcionário'} · ${dateBR(date)} · ${status}`);
+    created++;
+   }
+   delete attendanceDetailDrafts[key];delete attendanceStatusDrafts[key];
+  });
+  if(window.ObraAtivaWorkCostCore)db.attendance.filter(item=>item.date===date&&visibleEmployees.has(item.employeeId)).forEach(item=>{
+   let assignment=distributionFor(item.employeeId,date);
+   if(assignment?.contractId&&(!item.workId||item.workId===assignment.workId))Object.assign(item,{paymentMode:'contract',contractId:assignment.contractId,phaseId:assignment.phaseId||'',workId:assignment.workId});
+  });
+  save('Presença salva',`${dateBR(date)} · ${created} novo(s), ${changed} correção(ões)`);
+  attendanceBulkSnapshot=null;
+  let sync=window.CloudSync;
+  if(!sync?.ready||!sync.session?.user?.id){
+   alert('Presença gravada neste aparelho. A nuvem não está conectada neste momento; conecte-se para sincronizar.');
+   render();return;
+  }
+  let deadline=Date.now()+15000;
+  while(sync.syncing&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,100));
+  if(sync.syncing){
+   sync.schedule?.();
+   alert('Presença gravada neste aparelho. A sincronização anterior ainda está em andamento; confira o status da nuvem antes de sair.');
+   render();return;
+  }
+  await sync.flush(true);
+  if(sync.status==='Salvo na nuvem')alert(`Presença salva na nuvem com sucesso! ${created} novo(s), ${changed} correção(ões).`);
+  else alert('Presença gravada neste aparelho, mas a nuvem não confirmou o envio. Os dados locais foram preservados; verifique a conexão e tente sincronizar novamente.');
+  render();
+ }catch(error){
+  console.error('Falha ao salvar presença:',error);
+  alert('Não foi possível concluir o salvamento da presença. Confira a conexão e tente novamente. Detalhe: '+(error?.message||'erro inesperado'));
+ }
+}
 function attendanceRankingRange(){let current=today(),range=attendanceRankingFilters.range;if(range==='month'){let from=current.slice(0,7)+'-01',to=new Date(Number(current.slice(0,4)),Number(current.slice(5,7)),0).toISOString().slice(0,10);return{from,to,label:'Mês atual'}}if(range==='fortnight'){let day=Number(current.slice(8)),from=current.slice(0,7)+(day<=15?'-01':'-16'),to=day<=15?current.slice(0,7)+'-15':new Date(Number(current.slice(0,4)),Number(current.slice(5,7)),0).toISOString().slice(0,10);return{from,to,label:'Quinzena atual'}}if(range==='cycle'){let period=paymentPeriod(nextFriday());return{from:period.from,to:period.to,label:`Ciclo de pagamento · ${dateBR(period.from)} a ${dateBR(period.to)}`}}if(range==='custom'){let from=attendanceRankingFilters.from||'',to=attendanceRankingFilters.to||'';return{from,to,label:from||to?`${from?dateBR(from):'Início'} a ${to?dateBR(to):'Hoje'}`:'Período personalizado'}}return{from:'',to:'',label:'Todo o histórico'}}
 function attendanceRankingRows(){let range=attendanceRankingRange(),workId=attendanceRankingFilters.workId||'',eligible=attendanceRankingFilters.includeInactive?db.employees:activeEmployees(),exact=new Map();db.attendance.filter(item=>(!range.from||item.date>=range.from)&&(!range.to||item.date<=range.to)&&(!workId||(item.workId||'')===workId)).forEach(item=>{let key=`${item.employeeId}|${item.date}|${item.workId||''}`,previous=exact.get(key);if(!previous||String(item.updatedAt||item.createdAt||'')>String(previous.updatedAt||previous.createdAt||''))exact.set(key,item)});let byEmployeeDay=new Map();exact.forEach(item=>{let key=`${item.employeeId}|${item.date}`,previous=byEmployeeDay.get(key);if(!previous||String(item.updatedAt||item.createdAt||'')>String(previous.updatedAt||previous.createdAt||''))byEmployeeDay.set(key,item)});let records=[...byEmployeeDay.values()];return eligible.map(employee=>{let own=records.filter(item=>item.employeeId===employee.id),present=own.reduce((total,item)=>total+attendancePresenceValue(item.status),0),absences=own.filter(item=>item.status==='Faltou').length,late=own.filter(item=>item.late||item.status==='Atraso').length,base=present+absences,percent=base?present/base*100:0,last=own.map(item=>item.date).sort().at(-1)||'';return{employee,present,absences,late,percent,last,records:own}}).sort((a,b)=>b.present-a.present||a.absences-b.absences||b.percent-a.percent||String(a.employee.name).localeCompare(String(b.employee.name),'pt-BR'))}
 function attendanceNumber(value){return Number(value||0).toLocaleString('pt-BR',{maximumFractionDigits:1})}
